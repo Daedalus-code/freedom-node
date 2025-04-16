@@ -1,0 +1,2 @@
+# Freedom-node
+FreedomCoin node
