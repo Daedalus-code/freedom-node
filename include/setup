@@ -1,0 +1,266 @@
+#!/bin/bash
+
+################################################################################
+
+source /etc/pi-node/include/color
+
+################################################################################
+
+# home directory
+HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+
+################################################################################
+# model & cpu info
+################################################################################
+
+VER_FOUND="$(uname -v)"
+REL_FOUND="$(uname -r)"
+MOD_FOUND="$(grep "Model" /proc/cpuinfo | awk -F: '{ print $2 }' | xargs)"
+
+# if zero
+if [[ -z "$MOD_FOUND" ]] &>/dev/null; then
+  MOD_FOUND="$(grep "vendor_id" /proc/cpuinfo | awk -F: '{ print $2 }' | head -1 | xargs)"
+fi
+
+CPU_FOUND="$(grep "model name" /proc/cpuinfo | head -1 | awk -F: '{ print $2 }' | xargs)"
+
+# if zero
+if [[ -z "$CPU_FOUND" ]] &>/dev/null; then
+  CPU_FOUND="$(lscpu | grep "Model name" | awk -F: '{ print $2 }' | xargs)"
+fi
+
+################################################################################
+# system info
+################################################################################
+
+BOG_FOUND="$(egrep "bogomips|BogoMIPS" /proc/cpuinfo | awk '{ print $NF }' | head -1)"
+COR_FOUND="$(egrep -c "bogomips|BogoMIPS" /proc/cpuinfo)"
+MEM_FOUND="$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null) MB"
+HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
+HDD_TOTAL="$(echo "$HDD_FOUND" | awk '{ print $2 }')"
+HDD_FREE="$(echo "$HDD_FOUND" | awk '{ print $4 }')"
+
+################################################################################
+# bogomips
+################################################################################
+
+# if found
+if [[ -n "$BOG_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Score   : BogoMIPS: ${CY}$BOG_FOUND${N0}\n"
+else
+  printf '%b' "[${GR}!!${N0}] Score   : Error\n" && exit
+fi
+
+################################################################################
+# kernal release version
+################################################################################
+
+# if found
+if [[ -n "$VER_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Version : $VER_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] System  : Error\n" && exit
+fi
+
+# if found
+if [[ -n "$REL_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Release : $REL_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] System  : Error\n" && exit
+fi
+
+################################################################################
+# model
+################################################################################
+
+# if found
+if [[ -n "$MOD_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Model   : $MOD_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] Model   : ${GR}Not found${N0}\n"
+fi
+
+################################################################################
+# cpu
+################################################################################
+
+# if found
+if [[ -n "$CPU_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] CPU     : $CPU_FOUND $COR_FOUND Core(s)\n"
+else
+  printf '%b' "[${GR}!!${N0}] CPU     : Error\n" && exit
+fi
+
+################################################################################
+# memory
+################################################################################
+
+# if found
+if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Memory  : $MEM_FOUND\n"
+  # if not enough memory
+  if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "2000" ]] &>/dev/null; then
+    printf '%b' "[${GR}!!${N0}] Memory  : Not enough memory!\n" && sleep 1
+    printf '%b' "[${G1}OK${N0}] mkswap  : Creating 2G Swap..\n"
+    # create 2G swap ###########################################################
+    sudo fallocate -l 2G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    ############################################################################
+    # if swapfile is not already in /etc/fstab, append it
+    if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
+      printf '%b' "[${G1}OK${N0}] echo    : Updating fstab..\n"
+      echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
+    fi
+    # backup fstab before modification
+    sudo cp /etc/fstab /etc/fstab.bak
+    # format `/etc/fstab` properly using `column -t`
+    sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
+    # output data
+    printf '%b' "[${G1}OK${N0}] fstab   : Output data
+
+  $(cat /etc/fstab 2>/dev/null | column -t)
+  \n"
+  fi
+else
+  printf '%b' "[${GR}!!${N0}] Memory  : Error\n" && exit
+fi
+
+################################################################################
+# hard drive
+################################################################################
+
+# if found
+if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Drive   : Total $HDD_TOTAL Free $HDD_FREE\n"
+  # if not enough space
+  if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -lt "7" ]] &>/dev/null; then
+    printf '%b' "[${GR}!!${N0}] Drive   : Not enough space..\n" && exit
+  fi
+else
+  printf '%b' "[${GR}!!${N0}] Drive   : Error\n" && exit
+fi
+
+################################################################################
+# missing wallet daemon or client
+################################################################################
+
+# if VPS already, skip this
+if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
+  echo "[!!] Console : This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
+  # remove obsolete dash for vps server
+  sudo rm /usr/local/bin/dash &>/dev/null
+
+else
+
+  # download wallet
+  bash /etc/pi-node/include/download
+
+  ##############################################################################
+  # wallet configuration
+  ##############################################################################
+
+  # if missing
+  if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" ]] &>/dev/null; then
+    printf '%b' "[${N0}!!${N0}] Config  : Setup rpcuser and rpcpassword..\n"
+    # add random rpc credentials
+    echo "
+# RPC credentials
+rpcuser=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+rpcpassword=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+rpcallowip=127.0.0.1
+rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
+  fi
+
+  ##############################################################################
+  # dashbord (dash)
+  ##############################################################################
+
+  # install dash
+  cd || exit && sudo cp pi-node/dash /usr/local/bin
+  sudo chmod +x "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
+  sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
+
+  ##############################################################################
+  # proxy (tor) configuration
+  ##############################################################################
+
+  # if missing
+  if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
+    # update tor configuration
+    printf '%b' "[${G1}OK${N0}] Proxy   : Updating configuration!\n"
+    echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
+HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
+    # update tor configuration
+    printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
+    sudo service tor@default restart
+  fi
+
+  ##############################################################################
+  # network interface
+  ##############################################################################
+
+  # fetch lan from ifconfig
+  ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }' >/tmp/lanip.tmp
+  printf '%b' "[${G1}OK${N0}] LAN     : ${N0}$(cat /tmp/lanip.tmp 2>/dev/null)${N0}\n"
+  # fetch wan from whatismyip
+  curl -s http://whatismyip.akamai.com/ >/tmp/wanip.tmp
+  printf '%b' "[${G1}OK${N0}] WAN     : ${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}\n"
+  # fetch onion from hidden service
+  sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/pi-node/hostname.onion
+  printf '%b' "[${G1}OK${N0}] Proxy   : ${P1}$(cat /etc/pi-node/hostname.onion 2>/dev/null)${N0}\n"
+
+  ##############################################################################
+  # bootstrap
+  ##############################################################################
+
+  bash /etc/pi-node/include/bootstrap
+
+  ##############################################################################
+  # freedomcoin daemon service
+  ##############################################################################
+
+  if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Service : Creating FreedomCoin service..\n"
+
+    echo "[Unit]
+Description=freedomcoind service
+After=network-online.target
+
+[Service]
+Type=simple
+User=$USER_NAME
+Group=$USER_NAME
+ExecStart=/etc/pi-node/include/start
+ExecReload=/etc/pi-node/include/restart
+ExecStop=/usr/local/bin/freedomcoin-cli stop
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target" >/tmp/service.tmp
+
+    # install service
+    sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
+    # enable service
+    printf '%b' "[${G1}OK${N0}] Service : Enabling FreedomCoin service..\n"
+    sudo systemctl enable freedomcoind
+  fi
+
+  ##############################################################################
+  # freedomcoin start
+  ##############################################################################
+
+  # daemon running
+  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
+  else
+    # start service
+    sudo service freedomcoind restart
+  fi
+fi
+
+# END

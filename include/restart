@@ -1,0 +1,21 @@
+#!/bin/bash
+
+################################################################################
+
+source /etc/pi-node/include/color
+
+################################################################################
+
+HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+
+################################################################################
+# freedomcoin client & daemon
+################################################################################
+
+# stop daemon with client
+/usr/local/bin/./freedomcoin-cli stop
+sleep 0.5
+# start daemon
+bash /etc/pi-node/include/start
+
+# END

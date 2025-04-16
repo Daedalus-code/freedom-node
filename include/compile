@@ -1,0 +1,110 @@
+#!/bin/bash
+
+################################################################################
+
+source /etc/pi-node/include/color
+
+################################################################################
+
+# home directory
+HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+
+################################################################################
+# compile counter start (seconds)
+################################################################################
+
+# start counting
+START="$SECONDS"
+
+################################################################################
+# cpu architecture & requirements
+################################################################################
+
+# detect CPU arch
+ARCH=$(uname -m)
+# define build concurrency
+CORES=$(nproc)
+
+# system Update
+sudo apt update && sudo apt upgrade -y
+# dependencies
+sudo apt install -y \
+  build-essential libtool autotools-dev automake pkg-config \
+  bsdmainutils curl git libevent-dev libssl-dev \
+  libboost-system-dev libboost-filesystem-dev libboost-chrono-dev \
+  libboost-test-dev libboost-thread-dev libzmq3-dev libqrencode-dev \
+  libminiupnpc-dev software-properties-common
+
+# berkeley DB 4.8
+cd ~
+wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+tar -xzf db-4.8.30.NC.tar.gz
+cd db-4.8.30.NC/build_unix
+../dist/configure --prefix=/usr/local --enable-cxx
+make -j"$CORES"
+sudo make install
+cd ~
+
+# clone freedomcoin
+git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+cd FreedomCoin-Core
+
+# checkout latest tag
+TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+git checkout "$TAG"
+
+./autogen.sh
+
+CONFIG_OPTS=(
+  "--with-incompatible-bdb"
+  "--disable-tests"
+  "--disable-bench"
+  "BDB_LIBS=-L/usr/local/lib -ldb_cxx-4.8"
+  "BDB_CFLAGS=-I/usr/local/include"
+)
+
+if [[ "$ARCH" == "aarch64" ]]; then
+  CONFIG_OPTS+=("--host=aarch64-linux-gnu")
+elif [[ "$ARCH" == "armv7l" ]]; then
+  CONFIG_OPTS+=("--host=arm-linux-gnueabihf")
+fi
+
+./configure "${CONFIG_OPTS[@]}"
+
+make -j"$CORES"
+
+################################################################################
+# compile counter end (seconds)
+################################################################################
+
+# calculate build time
+DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
+TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+################################################################################
+# freedomcoin daemon & freedomcoin client
+################################################################################
+
+# if found
+if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
+  # strip binaries to save space
+  strip src/freedomcoind src/freedomcoin-cli || true
+  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
+  # copy wallet binaries
+  sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind /usr/local/bin &>/dev/null
+  sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli /usr/local/bin &>/dev/null
+fi
+
+################################################################################
+# build output
+################################################################################
+
+echo
+printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
+echo
+read -r -p "[Ok] Press Enter to continue" </dev/tty
+echo
+
+# END

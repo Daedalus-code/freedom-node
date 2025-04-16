@@ -1,0 +1,29 @@
+#!/bin/bash
+
+################################################################################
+
+for (( ; ; )); do # loop dashbord
+
+  source /etc/pi-node/include/color
+
+  ##############################################################################
+
+  HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+
+  ##############################################################################
+  # freedomcoin daemon
+  ##############################################################################
+
+  # daemon running
+  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -eq "0" ]] &>/dev/null; then
+    # reset old debug.log
+    truncate -s 0 "$HOME"/.trumpcoin/debug.log &>/dev/null
+    # output daemon
+    printf '%b' "[${G1}OK${N0}] Daemon  : "
+    # start daemon
+    /usr/local/bin/./freedomcoind -datadir="$HOME_DIR/.trumpcoin" -debuglogfile="$HOME_DIR/.trumpcoin/debug.log" -conf="$HOME_DIR/.trumpcoin/trumpcoin.conf" -debug="tor" -proxy="127.0.0.1:9050" -daemon
+  fi
+  sleep 60
+done
+
+# END

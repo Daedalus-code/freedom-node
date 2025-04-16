@@ -1,0 +1,726 @@
+#!/bin/bash
+
+################################################################################
+
+source /etc/pi-node/include/color
+
+################################################################################
+
+# home directory
+HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+
+################################################################################
+# client commands
+################################################################################
+
+# client updated data age (seconds)
+CLIENT_UPDATED_DATA="$(($(date +%s) - $(stat -c '%Y' /tmp/KEK.tmp 2>/dev/null || echo 0)))"
+
+# if older than n, if missing
+if [[ "$CLIENT_UPDATED_DATA" -gt "55" ]] &>/dev/null; then
+  # getinfo
+  /usr/local/bin/./freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >/tmp/getinfo.tmp 2>/dev/null
+  # getwalletinfo
+  /usr/local/bin/freedomcoin-cli getwalletinfo 2>/dev/null | grep -v "Error" >/tmp/getwalletinfo.tmp 2>/dev/null
+  # getbestblockhash
+  /usr/local/bin/freedomcoin-cli getbestblockhash 2>/dev/null | grep -v "Error" >/tmp/getbestblockhash.tmp 2>/dev/null
+  # getmempoolinfo
+  /usr/local/bin/freedomcoin-cli getmempoolinfo 2>/dev/null | grep -v "Error" >/tmp/getmempoolinfo.tmp 2>/dev/null
+  # getpeerinfo
+  /usr/local/bin/freedomcoin-cli getpeerinfo 2>/dev/null | grep -v "Error" >/tmp/getpeerinfo.tmp 2>/dev/null
+  # listunspent
+  /usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >/tmp/listunspent.tmp 2>/dev/null
+  # version
+  if [[ ! -f /tmp/version.tmp || ! -s /tmp/version.tmp ]] &>/dev/null; then
+    /usr/local/bin/./freedomcoin-cli -version 2>/dev/null | grep -v "Error" >/tmp/version.tmp 2>/dev/null
+  fi
+  # getblockchaininfo
+  if [[ ! -f /tmp/getblockchaininfo.tmp || ! -s /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
+    /usr/local/bin/freedomcoin-cli getblockchaininfo 2>/dev/null | grep -v "Error" >/tmp/getblockchaininfo.tmp 2>/dev/null
+  fi
+  echo "CHECKED @ $(date | xargs)" >/tmp/KEK.tmp
+fi
+
+################################################################################
+# display resolutions
+################################################################################
+
+# if found
+if [ -x "$(command -v fbset)" ]; then
+  RES="$(fbset 2>/dev/null | grep "geometry" | awk '{print $2 "x" $3}')"
+
+  # fallback to tvservice if fbset gives nothing
+  if [ -z "$RES" ]; then
+    RES=$(tvservice -s 2>/dev/null | awk -F@ '{ print $1 }' | awk '{ print $NF }')
+  fi
+
+  case "$RES" in
+  # setfont for display Screen 3.5, 480x320 (~160 PPI)
+  "320x480" | "480x320")
+    FONT="Lat7-Terminus20x10.psf.gz"
+    ;;
+  "800x480")
+    # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
+    FONT="Lat7-Terminus24x12.psf.gz"
+    ;;
+  "1024x600")
+    FONT="Lat7-Terminus20x10.psf.gz"
+    ;;
+  "1280x720" | "1920x1080")
+    FONT="Lat7-Terminus16.psf.gz"
+    ;;
+  *)
+    FONT="Lat7-Terminus20x10.psf.gz"
+    ;;
+  esac
+  sudo setfont /usr/share/consolefonts/"$FONT"
+fi
+
+################################################################################
+# wallet sync w progress bar
+################################################################################
+
+# if not synced
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+  # function to draw the progress bar
+  draw_progress_bar() {
+    PROGRESS="$1"
+    local PERCENT
+    BAR_WIDTH=50
+    local FILLED
+    local EMPTY
+
+    # if any data
+    if [[ -n "$PERCENT_RAW" ]] &>/dev/null; then
+      PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
+    else
+      PERCENT_RAW="0"
+    fi
+    # if 100.000%
+    if [[ "$PERCENT_RAW" == "100.000" ]] &>/dev/null; then
+      PERCENT_RAW=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
+    fi
+    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
+    FILLED=$((PERCENT * BAR_WIDTH / 100))
+    EMPTY=$((BAR_WIDTH - FILLED))
+    # bar
+    printf ""
+    for ((I = 0; I < FILLED; I++)); do printf "#"; done
+    for ((I = 0; I < EMPTY; I++)); do printf "."; done
+    printf " %s%%\n" "$PERCENT_RAW"
+  }
+  # extract the progress value
+  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1)"
+  # draw the progress bar
+  SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
+  # if zero
+  if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+    SYNC_PROGRESS_BAR="${CY}       Loading${N0}"
+  fi
+fi
+
+WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
+echo "$WALLET_SYNC" >/tmp/progress.tmp
+
+WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
+# if synced
+if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
+  WALLET_SYNC="${G1}OK${N0}"
+else
+  WALLET_SYNC="${G1}$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')%${N0}"
+fi
+
+# if zero
+if [[ -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  WALLET_SYNC="${GR}0%${N0}"
+fi
+
+################################################################################
+# repository version
+################################################################################
+
+REPO_VERSION="${N0}v$(wc -l /etc/pi-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+" | sed 's/./&./g;s/\.$//')"
+
+################################################################################
+# date
+################################################################################
+
+DATE="$(date '+%D %H:%M:%S' 2>/dev/null)"
+SYSTEM_DATE="${GR}$(echo "$DATE" | awk '{ print $1 }')${N0}"
+SYSTEM_CLOCK="$(echo "$DATE" | awk '{ print $2 }')"
+
+################################################################################
+# logo, tx colors
+################################################################################
+
+# default color (idle)
+CB="${GR}"
+TX="${GR}"
+
+################################################################################
+# wallet movements
+################################################################################
+
+# if new addtowallet
+if [[ ! "$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' | tail -1)" == "$(tail -1 /tmp/movements.tmp)" ]] &>/dev/null; then
+  # fetch addtowallet
+  grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' >/tmp/movements.tmp
+fi
+
+# reset after midnight
+if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
+  truncate -s 0 /tmp/movements.tmp &>/dev/null
+fi
+
+WALLET_MOVEMENT="$(wc -l /tmp/movements.tmp 2>/dev/null | awk '{ print $1 }')"
+WALLET_MOVEMENT_AGE="$(stat -c '%Y' /tmp/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+# if any movements
+if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
+  CB="${Y1}"
+  TX="${Y1}"
+fi
+
+################################################################################
+# proof-of-stake count
+################################################################################
+
+# if new signed block
+if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes.tmp)" ]] &>/dev/null; then
+  # fetch signed proof-of-stake block
+  grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>/tmp/stakes.tmp
+  # remove duplicates
+  echo "$(awk '!a[$0]++' /tmp/stakes.tmp 2>/dev/null)" >/tmp/stakes.tmp
+fi
+
+# reset after midnight
+if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
+  truncate -s 0 /tmp/stakes.tmp &>/dev/null
+fi
+
+# default
+WALLET_POS_REWARDS="$(wc -l /tmp/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
+# if zero
+if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
+  WALLET_POS_REWARDS="0"
+fi
+WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+
+# if any rewards and less than n age
+if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &>/dev/null; then
+  WALLET_POS_REWARDS="Stakes ${G1}$WALLET_POS_REWARDS${N0}"
+  CB="${G1}"
+  TX="${G1}"
+else
+  # if any rewards but after the fact
+  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+    WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
+  else
+    WALLET_POS_REWARDS="Stakes ${GR}$WALLET_POS_REWARDS${N0}"
+  fi
+  CB="${GR}"
+  TX="${GR}"
+fi
+
+################################################################################
+# patriotnode status (masternode)
+################################################################################
+
+MASTER_STATUS=""
+
+# if zero
+if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
+  MASTER_STATUS="${GR}M${N0}"
+fi
+
+################################################################################
+# dash theme
+################################################################################
+
+THEME_STATUS=""
+
+# if zero
+if [[ -z "$THEME_STATUS" ]] &>/dev/null; then
+  THEME_STATUS="${GR}D${N0}"
+fi
+
+################################################################################
+# proof-of-stake status
+################################################################################
+
+POS_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo.tmp 2>/dev/null)"
+
+# if zero
+if [[ "$POS_STATUS" == "0" || -z "$POS_STATUS" ]] &>/dev/null; then
+  POS_STATUS="${G1}S${N0}"
+fi
+
+# if active
+if [[ "$POS_STATUS" == "1" ]] &>/dev/null; then
+  POS_STATUS="${GR}S${N0}"
+fi
+
+################################################################################
+# tor status (tor)
+################################################################################
+
+TOR_STATUS="$(grep "proxy" /tmp/getinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
+
+# if zero
+if [[ "$TOR_STATUS" == "0" || -z "$TOR_STATUS" ]] &>/dev/null; then
+  TOR_STATUS="${GR}S${N0}"
+fi
+
+# if active
+if [[ "$TOR_STATUS" == "1" ]] &>/dev/null; then
+  TOR_STATUS="${P1}P${N0}"
+fi
+
+################################################################################
+# lan status (network interface)
+################################################################################
+
+LAN_STATUS="$(ifconfig | head -1 | awk '{ print $1 }' | tr -d ':')"
+
+# if zero
+if [[ -z "$LAN_STATUS" ]] &>/dev/null; then
+  LAN_STATUS="${GR}nul1${N0}"
+else
+  LAN_STATUS="${CY}${LAN_STATUS:0:4}${N0}"
+fi
+
+################################################################################
+# system load
+################################################################################
+
+SYSTEM_LOAD="$(awk '{ print $1,$2,$3 }' /proc/loadavg 2>/dev/null)"
+
+################################################################################
+# cpu temperatue
+################################################################################
+
+# read raw temp in millidegrees
+CPU_CTEMP_RAW=$(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
+# integer celsius
+CPU_CTEMP_C=$((CPU_CTEMP_RAW / 1000))
+# integer fahrenheit (using integer math)
+CPU_FTEMP=$(((CPU_CTEMP_C * 9 / 5) + 32))
+# with symbol
+CPU_CTEMP_C="${CPU_CTEMP_C}°C"
+CPU_FTEMP="${CPU_FTEMP}°F"
+
+################################################################################
+# system memory
+################################################################################
+
+TOTAL_MEM="${G0}$(echo "$(echo "$(grep "MemTotal" /proc/meminfo 2>/dev/null | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo 2>/dev/null | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null)${N0}"
+FREE_MEM="${G1}$(echo "$(grep "MemFree" /proc/meminfo 2>/dev/null | awk '{ print $2 }')/1024" | bc 2>/dev/null)${N0}"
+
+################################################################################
+# hard drive
+################################################################################
+
+TOTAL_HDD="${G0}$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $2 }')${N0}"
+USED_HDD="${G1}$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $3 }')${N0}"
+USED_HDD_P="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $5 }' | tr -d 'G')"
+
+################################################################################
+# system user
+################################################################################
+
+SYSTEM_USER="$USER_NAME"
+
+################################################################################
+# ip address
+################################################################################
+
+IP_ADDRESS="$(ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
+
+################################################################################
+# download
+################################################################################
+
+# get all RX byte counts from ifconfig
+DOWNLOAD_TOTAL=$(ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+# convert RX bytes to MB and GB
+DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }') GB"
+
+################################################################################
+# upload
+################################################################################
+
+# get all TX byte counts from ifconfig
+UPLOAD_TOTAL_BYTES=$(ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+# convert RX bytes to MB and GB
+UPLOAD="$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }') GB"
+
+################################################################################
+# wallet daemon
+################################################################################
+
+WALLET_DAEMON="freedomcoind"
+
+################################################################################
+# wallet version
+################################################################################
+
+WALLET_VERSION="$(tail -1 /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
+
+################################################################################
+# wallet chain
+################################################################################
+
+WALLET_CHAIN="$(grep -w "chain" /tmp/getblockchaininfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',"')"
+
+# if main
+if [[ "$WALLET_CHAIN" == "main" ]] &>/dev/null; then
+  WALLET_CHAIN="${G1}mainnet${N0}"
+fi
+
+# if test
+if [[ "$WALLET_CHAIN" == "test" ]] &>/dev/null; then
+  WALLET_CHAIN="${CY}testnet${N0}"
+fi
+
+# if zero
+if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
+  WALLET_CHAIN="${GR}nonet${N0}"
+fi
+
+################################################################################
+# public ip address
+################################################################################
+
+# if missing
+if [[ ! -f /tmp/wanip.tmp ]] &>/dev/null; then
+  PUBLIC_IP="$(curl -s http://whatismyip.akamai.com/)"
+  echo "$PUBLIC_IP" >/tmp/wanip.tmp
+fi
+
+# random start number
+RANDOM_PUBLIC_IP=$((((RANDOM % 2) + 1)))
+
+# onion ip address
+if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
+  PUBLIC_IP="$(cat /etc/pi-node/hostname.onion 2>/dev/null)"
+  PUBLIC_IP="${P1}${PUBLIC_IP:0:9}...onion${N0:?}"
+fi
+# wan ip address
+if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
+  PUBLIC_IP="${CY}$(cat /tmp/wanip.tmp 2>/dev/null):15110${N0}"
+fi
+# if zero
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+  PUBLIC_IP="${GR}Updating..${N0}"
+fi
+
+################################################################################
+# wallet peers total
+################################################################################
+
+WALLET_PEERS_TOTAL="$(grep "connections" /tmp/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
+
+# if zero
+if [[ -z "$WALLET_PEERS_TOTAL" ]] &>/dev/null; then
+  WALLET_PEERS_TOTAL="0"
+else
+  WALLET_PEERS_TOTAL="${G1}$WALLET_PEERS_TOTAL${N0}"
+fi
+
+################################################################################
+# wallet peers ip4 address
+################################################################################
+
+# ip4 address
+WALLET_PEERS_IP4="$(grep "addrlocal" /tmp/getpeerinfo.tmp 2>/dev/null | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | egrep -v "[a-z]+" | grep -oP '\b(?:\d{1,3}\.){3}\d{1,3}\b' | wc -l)"
+
+# if zero
+if [[ -z "$WALLET_PEERS_IP4" ]] &>/dev/null; then
+  WALLET_PEERS_IP4="${GR}0${N0}"
+else
+  WALLET_PEERS_IP4="${G0}$WALLET_PEERS_IP4${N0}"
+fi
+
+################################################################################
+# wallet peers ip6 address
+################################################################################
+
+# ip6 address
+WALLET_PEERS_IP6="$(grep "addrlocal" /tmp/getpeerinfo.tmp 2>/dev/null | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | grep -oP '\[?' | wc -l)"
+
+# if zero
+if [[ -z "$WALLET_PEERS_IP6" ]] &>/dev/null; then
+  WALLET_PEERS_IP6="${GR}0${N0}"
+else
+  WALLET_PEERS_IP6="${P1}$WALLET_PEERS_IP6${N0}"
+fi
+
+################################################################################
+# wallet balances
+################################################################################
+
+WALLET_BALANCES="$(grep "balance" /tmp/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
+
+if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+  WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
+fi
+
+# if zero
+if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
+  WALLET_BALANCES="${GR}0${N0}"
+else
+  WALLET_BALANCES="${G1}$WALLET_BALANCES${N0}"
+fi
+
+################################################################################
+# wallet inputs
+################################################################################
+
+WALLET_INPUTS_NODES="$(grep -c "amount" /tmp/listunspent.tmp 2>/dev/null)"
+
+# if zero
+if [[ -z "$WALLET_INPUTS_NODES" || "$WALLET_INPUTS_NODES" == "0" ]] &>/dev/null; then
+  WALLET_INPUTS_NODES="Inputs ${GR}0${N0}"
+else
+  WALLET_INPUTS_NODES="Inputs ${G1}$WALLET_INPUTS_NODES${N0}"
+fi
+
+################################################################################
+# wallet tx count
+################################################################################
+
+WALLET_TXCOUNT="$(grep "txcount" /tmp/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
+
+# if zero
+if [[ -z "$WALLET_TXCOUNT" || "$WALLET_TXCOUNT" == "0" ]] &>/dev/null; then
+  WALLET_TXCOUNT="${GR}0${N0}"
+fi
+
+################################################################################
+# wallet mempool
+################################################################################
+
+WALLET_MEMPOOL="$(grep "size" /tmp/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
+
+# if zero
+if [[ -z "$WALLET_MEMPOOL" || "$WALLET_MEMPOOL" == "0" ]] &>/dev/null; then
+  WALLET_MEMPOOL="${GR}0${N0}"
+else
+  WALLET_MEMPOOL="${G1}$WALLET_MEMPOOL${N0}"
+fi
+
+################################################################################
+# wallet heads
+################################################################################
+
+WALLET_HEADS="$(grep "blocks" /tmp/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
+
+# if zero
+if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
+  WALLET_HEADS="${GR}0${N0}"
+fi
+
+################################################################################
+# random quotes
+################################################################################
+
+# random quote start
+RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
+# quotes - art of the deal
+if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
+  TIMELINE="${GR}Think big${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
+  TIMELINE="${GR}Maximize your options${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "3" ] &>/dev/null; then
+  TIMELINE="${GR}Know your market${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "4" ] &>/dev/null; then
+  TIMELINE="${GR}Use your leverage${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "5" ] &>/dev/null; then
+  TIMELINE="${GR}Enhance your location${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "6" ] &>/dev/null; then
+  TIMELINE="${GR}Get the word out${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "7" ] &>/dev/null; then
+  TIMELINE="${GR}Fight back${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "8" ] &>/dev/null; then
+  TIMELINE="${GR}Deliver the goods${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
+  TIMELINE="${GR}Contain the costs${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
+  TIMELINE="${GR}Have fun${N0:?}"
+fi
+
+# if zero
+if [[ -z "$TIMELINE" ]] &>/dev/null; then
+  TIMELINE="Always something.."
+fi
+
+################################################################################
+# random quotes from quote database
+################################################################################
+
+# random quote age (seconds)
+RANDOM_QUOTE_AGE="$(stat -c '%Y' /tmp/rq.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+
+# if missing, if older than n, less than n
+if [[ ! -f /tmp/rq.tmp || "$RANDOM_QUOTE_AGE" -gt "$(echo "180+$(wc -l /tmp/quotes 2>/dev/null | awk '{ print $1 }')" | bc 2>/dev/null)" || "$(wc -l /tmp/rq.tmp | awk '{ print $1 }')" -lt "2" ]] &>/dev/null; then
+  # fetch quotes with proxy from quotedb
+  curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss >/tmp/rq.tmp
+fi
+
+RANDOM_QUOTES="$(html2text /tmp/rq.tmp | awk -F. '{ print $1 }' | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | tr -d '\n')"
+RANDOM_AUTHOR="$(html2text /tmp/rq.tmp 2>/dev/null | grep "authors" | tr '/' ' ' | awk -Fauthors '{ print $2 }' | xargs)"
+
+# create quotes
+echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/tmp/quotes
+# disregard duplicates, sort randomly, disregard lines less than n, html loc, errors
+echo "$(tail -777 /tmp/quotes 2>/dev/null | awk 'length($0)<188' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524")" >/tmp/quotes
+
+# if found
+if [[ -f /tmp/quotes.banned ]] &>/dev/null; then
+  # banned quotes by authors
+  echo "$(sort /tmp/quotes | grep -v "$(cat /tmp/quotes.banned)")" >/tmp/quotes
+fi
+
+# if enough quotes
+if [[ "$(wc -l /tmp/quotes 2>/dev/null | awk '{ print $1 }')" -gt "10" ]] &>/dev/null; then
+  # random quote log start
+  RANDOM_QUOTE_LOG=$((((RANDOM % 2) + 1)))
+  if [[ "$RANDOM_QUOTE_LOG" == "1" ]] &>/dev/null; then
+    LAST_LOG_QUOTE="1"
+  else
+    LAST_LOG_QUOTE="0"
+  fi
+fi
+
+################################################################################
+# wallet tx last
+################################################################################
+
+# if no proof-of-stake and wallet movements
+if [[ "$(wc -l /tmp/stakes.tmp 2>/dev/null | awk '{ print $1 }')" -eq "0" && "$WALLET_MOVEMENT" -eq "0" || "$WALLET_MOVEMENT_AGE" -gt "2777" && "$WALLET_POS_REWARDS_AGE" -gt "2777" ]] &>/dev/null; then
+  # get best block hash
+  WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
+fi
+
+# if any wallet movements
+if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
+  WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+fi
+
+# if any proof-of-stake
+if [[ "$(wc -l /tmp/stakes.tmp 2>/dev/null | awk '{ print $1 }')" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &>/dev/null; then
+  WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+fi
+
+# if syncing
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+  WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
+fi
+
+# if loading block index
+if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  WALLET_TXLAST="       ${GR}Loading${N0}"
+fi
+
+################################################################################
+# last log
+################################################################################
+
+LAST_LOG="$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)"
+
+# if enough quotes
+if [[ "$LAST_LOG_QUOTE" == "1" ]] &>/dev/null; then
+  # output random quotes
+  LAST_LOG="$(sort -R /tmp/quotes 2>/dev/null | tail -1)"
+  LAST_LOG="${N0}${LAST_LOG:0:188}${N0}"
+else
+  # output normal node log w size
+  LOG_SIZE=$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }')
+  LAST_LOG="${N0}${LAST_LOG:0:188} log=${LOG_SIZE}${N0}"
+fi
+
+# if zero
+if [[ -z "$LAST_LOG" ]] &>/dev/null; then
+  LAST_LOG="debug.log is empty.."
+fi
+
+# if more than n megabytes
+if [[ "$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
+  # trim debug.log
+  echo "$(tail -1001 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" >"$HOME_DIR"/.trumpcoin/debug.log
+fi
+
+################################################################################
+# peers list
+################################################################################
+
+# create peers list
+grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' >/etc/pi-node/peers
+
+################################################################################
+# arp list
+################################################################################
+
+# if missing
+if [[ ! -f /etc/pi-node/arp ]] &>/dev/null; then
+  # create arp list
+  cd /tmp || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/pi-node/arp
+  # fetch ip address
+  echo "$(awk '{ print $1 }' /etc/pi-node/arp | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+")" >/etc/pi-node/arp
+  cd || exit
+fi
+
+################################################################################
+# addnode onetry
+################################################################################
+
+# if found
+if [[ -f /etc/pi-node/peers && -f /etc/pi-node/arp && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
+  # ip address peers
+  IP_ADDRESS_PEERS="$(cat /etc/pi-node/peers 2>/dev/null)"
+  # ip address addnodes
+  IP_ADDRESS_ARP="$(cat /etc/pi-node/arp 2>/dev/null)"
+  # fetch failed connections
+  IP_ADDRESS_FAILED="$(grep "(111)" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' | awk -F: '{ print $1 }' | awk '!a[$0]++')"
+  # if any data
+  if [[ -n "$IP_ADDRESS_FAILED" ]] &>/dev/null; then
+    # disregard already connected peers, create add list
+    echo "$(echo "$IP_ADDRESS_ARP" | grep -v "$IP_ADDRESS_PEERS" | grep -v "$IP_ADDRESS_FAILED")" >/etc/pi-node/add
+  else
+    # disregard already connected peers, create add list
+    echo "$(echo "$IP_ADDRESS_ARP" | grep -v "$IP_ADDRESS_PEERS")" >/etc/pi-node/add
+  fi
+  # fetch random address to add, duplicates removed
+  IP_ADDRESS_ADD="$(cat /etc/pi-node/add 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
+  # if any numbers
+  if [[ "$(echo "$IP_ADDRESS_ADD" | egrep -c "[0-9]+")" -eq "1" ]] &>/dev/null; then
+    # add node
+    /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADD" onetry 2>/dev/null | grep -v "Error"
+  fi
+fi
+
+################################################################################
+# time (loop) w time fix (correction)
+################################################################################
+
+TIME="60" # loop every n second
+
+# shellcheck disable=SC2034  # Unused variables left for readability
+
+# after the fact (script), remove leading zero
+TIME_SECONDS=$(LC_ALL=de_US.utf8 date +"%S" | sed 's/^0*//g; s/\.0*/./g' 2>/dev/null)
+if [ -z "$TIME_SECONDS" ] &>/dev/null; then
+  # too many zeros, create fiction
+  TIME_SECONDS="1"
+fi
+if [[ "$TIME_SECONDS" -gt "30" ]] &>/dev/null; then
+  # wait extra n seconds
+  TIME_FIX=$(echo "${TIME:?}-${TIME_SECONDS:?}" | bc -l 2>/dev/null)
+  TIME=$(echo "${TIME:?}+${TIME_FIX:?}" | bc -l 2>/dev/null)
+else
+  # wait less n seconds
+  TIME=$(echo "${TIME:?}-${TIME_SECONDS:?}" | bc -l 2>/dev/null)
+fi
+
+# END

@@ -1,0 +1,147 @@
+#!/bin/bash
+
+################################################################################
+
+# colors
+B0='\e[34m'   # Blue
+B1='\e[94m'   # Blue light
+CY='\e[36m'   # Cyan
+C1='\e[96m'   # Cyan light
+G0='\e[32m'   # Green
+G1='\e[92m'   # Green light
+GR='\e[90m'   # Grey
+N0='\033[0m'  # No color
+P0='\e[0;35m' # Purple
+P1='\e[1;35m' # Purple light
+R0='\e[31m'   # Red
+R1='\e[91m'   # Red light
+Y0='\e[33m'   # Yellow
+Y1='\e[93m'   # Yellow light
+BLD='\e[1m'   # Bold\brighter
+
+################################################################################
+
+clear
+printf '%b' "${Y0}${BLD}
+F   R   E   E   D   O   M   C   O   I   N${B1}
+
+@${N0}@${B1}@${N0}  @${B1}@${N0}@${B1}    @${N0}@${B1}@${N0}@${B1}@${N0}@${B1}    @${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}    @${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}
+${B1}@${N0}@${B1}@${N0}@${B1} @${N0}@${B1}@${N0}   @${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}
+${N0}@${B1}@${N0}!${B1}@${N0}!${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}!  ${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}!  ${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}!
+!@!!@!@!   !@!  @!@   !@!  @!@   !@!${R1}
+@!@ !!@!   @!@  !@!   @!@  !@!   @!!!:!${N0}
+!@!  !!!   !@!  !!!   !@!  !!!   !!!!!:${R1}
+!!:  !!!   !!:  !!!   !!:  !!!   !!:${N0}
+:!:  !:!   :!:  !:!   :!:  !:!   :!:${R1}
+::   ::    :::: ::    :::: ::    :: ::::${N0}
+::    :     : :  :    :: :  :    : :: ::${R1}
+
+${GR}The original TrumpCoin!${N0}
+
+Installing Freedom node! ${GR}Version 1${N0}
+\n"
+
+################################################################################
+# repository updates
+################################################################################
+
+# any updates
+printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository..\n"
+printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
+
+################################################################################
+# pi-node directory & user
+################################################################################
+
+# if missing
+if [[ ! -d /etc/pi-node ]] &>/dev/null; then
+  printf '%b' "[${N0}!!${N0}] mkdir   : Creating pi-node directory..\n"
+fi
+
+# create install directory
+sudo mkdir /etc/pi-node &>/dev/null
+# fix ownership for pi-node (whoami)
+sudo chown -R "$(whoami)":"$(whoami)" /etc/pi-node/ 2>/dev/null
+
+# fetch user
+echo "$(whoami)" >/etc/pi-node/user
+# user name
+USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+printf '%b' "[${G1}OK${N0}] user    : USER_NAME=${G1}$USER_NAME${N0}\n" && sleep 1
+
+# fetch home directory
+echo "$HOME" >/etc/pi-node/homedir
+# home directory
+HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+printf '%b' "[${G1}OK${N0}] homedir : HOME_DIR=${G1}$HOME_DIR${N0}\n" && sleep 1
+
+################################################################################
+# .trumpcoin directory
+################################################################################
+
+# if missing
+if [[ ! -d "$HOME"/.trumpcoin ]] &>/dev/null; then
+  printf '%b' "[${N0}!!${N0}] mkdir   : Creating .trumpcoin directory..\n"
+  # create wallet directory
+  mkdir "$HOME"/.trumpcoin &>/dev/null
+fi
+
+# fix ownership for trumpcoin
+sudo chown -R "$USER_NAME":"$USER_NAME" "$HOME_DIR"/.trumpcoin/ 2>/dev/null
+
+################################################################################
+# install files & create executable
+################################################################################
+
+# install pi-node files
+cd || exit && cp -rf pi-node/include /etc/pi-node
+# create executable file
+chmod +x "$USER_NAME":"$USER_NAME" /etc/pi-node/include/start 2>/dev/null
+
+################################################################################
+# requirements
+################################################################################
+
+# not installed
+if ! [ -x "$(command -v ifconfig)" ]; then
+  printf '%b' "[${G1}OK${N0}] window  : Installing net-tools!\n"
+  sudo apt-get install net-tools -y
+fi
+
+# not installed
+if [[ ! "$(curl --version)" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Curl    : Installing curl!\n"
+  sudo apt-get install curl -y
+fi
+
+# not installed
+if ! [ -x "$(command -v tor)" ]; then
+  printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
+  sudo apt-get install tor -y
+fi
+
+# not installed
+if ! [ -x "$(command -v html2text)" ]; then
+  printf '%b' "[${G1}OK${N0}] text    : Installing html2text!\n"
+  sudo apt-get install html2text -y
+fi
+
+# not installed
+if ! [ -x "$(command -v dialog)" ]; then
+  printf '%b' "[${G1}OK${N0}] window  : Installing dialog!\n"
+  sudo apt-get install dialog -y
+fi
+
+# not installed
+if [[ ! "$(arp-scan --version)" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] window  : Installing arp-scan!\n"
+  sudo apt-get install arp-scan -y
+fi
+
+################################################################################
+# run setup
+################################################################################
+
+bash /etc/pi-node/include/setup
+
+# END

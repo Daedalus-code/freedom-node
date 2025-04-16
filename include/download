@@ -1,0 +1,93 @@
+#!/bin/bash
+
+################################################################################
+
+source /etc/pi-node/include/color
+
+################################################################################
+
+# home directory
+HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+
+################################################################################
+# freedomcoin client
+################################################################################
+
+# if no daemon found, if no client found
+if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
+  printf '%b' "[${Y1}Ok${N0}] Console : Daemon/Client not found!\n"
+
+  # linux
+  LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
+  printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
+  echo
+
+  ##############################################################################
+  # detect box64
+  ##############################################################################
+
+  # default
+  BOX64="0"
+  # box64
+  if [[ "$(box64 --version)" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Console : ${R1}Box64${N0} detected!\n"
+    BOX64="1"
+  fi
+
+  ##############################################################################
+  # cpu architecture (machine)
+  ##############################################################################
+
+  # machine
+  UNAME_M="$(uname -m)"
+
+  # if any
+  if [[ "$(echo "$UNAME_M" | grep -c "x86_64")" == "1" || "$BOX64" == "1" ]] &>/dev/null; then
+    WALLET_DOWNLOAD="FreedomCoin-Core-Linux"
+  elif [[ "$(echo "$UNAME_M" | grep -c "aarch64")" == "1" ]] &>/dev/null; then
+    WALLET_DOWNLOAD="FreedomCoin-aarch64"
+  elif [[ "$(echo "$UNAME_M" | grep -c "arm")" == "1" ]] &>/dev/null; then
+    WALLET_DOWNLOAD="FreedomCoin_arm"
+  fi
+
+  ##############################################################################
+  # freedomcoin wallet download
+  ##############################################################################
+
+  # if missing
+  if [[ ! -f "$HOME_DIR"/"$WALLET_DOWNLOAD".zip ]]; then
+    cd || exit
+    if wget -c "https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/$LATEST_RELEASE/$WALLET_DOWNLOAD.zip"; then
+      printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
+      # if missing
+      if [[ ! -d "$HOME_DIR"/"$WALLET_DOWNLOAD" ]] &>/dev/null; then
+        # unzip file
+        unzip "$WALLET_DOWNLOAD".zip
+        printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
+      fi
+      # clean up __MACOSX & zip
+      rm -r "$HOME_DIR"/__MACOSX &>/dev/null
+      rm "$WALLET_DOWNLOAD".zip &>/dev/null
+      # install deamon
+      sudo mv "$HOME_DIR"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+      # install client
+      sudo mv "$HOME_DIR"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+      # remove old directory
+      rm -r "$HOME_DIR"/"$WALLET_DOWNLOAD"
+    else
+      printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running compile script instead!\n"
+      bash /etc/pi-node/include/compile
+    fi
+  fi
+  # fix ownership
+  sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/freedomcoin* 2>/dev/null
+  printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
+else
+  printf '%b' "[${G1}OK${N0}] Console : FreedomCoin Daemon and Client installed!\n"
+fi
+
+# END
