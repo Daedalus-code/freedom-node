@@ -1,7 +1,7 @@
 
-# Pi-Node - FreedomCoin blockchain.
+# Freedom-Node  
 
-### Spin up a Freedom node!
+### Spin up a Freedom node!  
 
 ``sudo apt-get install git -y``  
 
