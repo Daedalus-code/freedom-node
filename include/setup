@@ -2,14 +2,14 @@
 
 ################################################################################
 
-source /etc/pi-node/include/color
+source /etc/freedom-node/include/color
 
 ################################################################################
 
 # home directory
-HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # user
-USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 # model & cpu info
@@ -157,7 +157,7 @@ if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
 else
 
   # download wallet
-  bash /etc/pi-node/include/download
+  bash /etc/freedom-node/include/download
 
   ##############################################################################
   # wallet configuration
@@ -180,7 +180,7 @@ rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
   ##############################################################################
 
   # install dash
-  cd || exit && sudo cp pi-node/dash /usr/local/bin
+  cd || exit && sudo cp freedom-node/dash /usr/local/bin
   sudo chmod +x "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
   sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
 
@@ -210,14 +210,14 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   curl -s http://whatismyip.akamai.com/ >/tmp/wanip.tmp
   printf '%b' "[${G1}OK${N0}] WAN     : ${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}\n"
   # fetch onion from hidden service
-  sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/pi-node/hostname.onion
-  printf '%b' "[${G1}OK${N0}] Proxy   : ${P1}$(cat /etc/pi-node/hostname.onion 2>/dev/null)${N0}\n"
+  sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/freedom-node/hostname.onion
+  printf '%b' "[${G1}OK${N0}] Proxy   : ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
 
   ##############################################################################
   # bootstrap
   ##############################################################################
 
-  bash /etc/pi-node/include/bootstrap
+  bash /etc/freedom-node/include/bootstrap
 
   ##############################################################################
   # freedomcoin daemon service
@@ -234,8 +234,8 @@ After=network-online.target
 Type=simple
 User=$USER_NAME
 Group=$USER_NAME
-ExecStart=/etc/pi-node/include/start
-ExecReload=/etc/pi-node/include/restart
+ExecStart=/etc/freedom-node/include/start
+ExecReload=/etc/freedom-node/include/restart
 ExecStop=/usr/local/bin/freedomcoin-cli stop
 Restart=always
 RestartSec=60

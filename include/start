@@ -4,11 +4,11 @@
 
 for (( ; ; )); do # loop dashbord
 
-  source /etc/pi-node/include/color
+  source /etc/freedom-node/include/color
 
   ##############################################################################
 
-  HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+  HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
   ##############################################################################
   # freedomcoin daemon

@@ -2,14 +2,14 @@
 
 ################################################################################
 
-source /etc/pi-node/include/color
+source /etc/freedom-node/include/color
 
 ################################################################################
 
 # home directory
-HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # user
-USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 # freedomcoin client
@@ -80,7 +80,7 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
       rm -r "$HOME_DIR"/"$WALLET_DOWNLOAD"
     else
       printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running compile script instead!\n"
-      bash /etc/pi-node/include/compile
+      bash /etc/freedom-node/include/compile
     fi
   fi
   # fix ownership

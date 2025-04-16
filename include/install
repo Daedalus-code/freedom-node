@@ -46,33 +46,33 @@ Installing Freedom node! ${GR}Version 1${N0}
 ################################################################################
 
 # any updates
-printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository..\n"
-printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
+printf '%b' "[${N0}!!${N0}] Github  : Updating freedom-node repository..\n"
+printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd freedom-node && git pull)\n"
 
 ################################################################################
-# pi-node directory & user
+# freedom-node directory & user
 ################################################################################
 
 # if missing
-if [[ ! -d /etc/pi-node ]] &>/dev/null; then
-  printf '%b' "[${N0}!!${N0}] mkdir   : Creating pi-node directory..\n"
+if [[ ! -d /etc/freedom-node ]] &>/dev/null; then
+  printf '%b' "[${N0}!!${N0}] mkdir   : Creating freedom-node directory..\n"
 fi
 
 # create install directory
-sudo mkdir /etc/pi-node &>/dev/null
-# fix ownership for pi-node (whoami)
-sudo chown -R "$(whoami)":"$(whoami)" /etc/pi-node/ 2>/dev/null
+sudo mkdir /etc/freedom-node &>/dev/null
+# fix ownership for freedom-node (whoami)
+sudo chown -R "$(whoami)":"$(whoami)" /etc/freedom-node/ 2>/dev/null
 
 # fetch user
-echo "$(whoami)" >/etc/pi-node/user
+echo "$(whoami)" >/etc/freedom-node/user
 # user name
-USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 printf '%b' "[${G1}OK${N0}] user    : USER_NAME=${G1}$USER_NAME${N0}\n" && sleep 1
 
 # fetch home directory
-echo "$HOME" >/etc/pi-node/homedir
+echo "$HOME" >/etc/freedom-node/homedir
 # home directory
-HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 printf '%b' "[${G1}OK${N0}] homedir : HOME_DIR=${G1}$HOME_DIR${N0}\n" && sleep 1
 
 ################################################################################
@@ -93,10 +93,10 @@ sudo chown -R "$USER_NAME":"$USER_NAME" "$HOME_DIR"/.trumpcoin/ 2>/dev/null
 # install files & create executable
 ################################################################################
 
-# install pi-node files
-cd || exit && cp -rf pi-node/include /etc/pi-node
+# install freedom-node files
+cd || exit && cp -rf freedom-node/include /etc/freedom-node
 # create executable file
-chmod +x "$USER_NAME":"$USER_NAME" /etc/pi-node/include/start 2>/dev/null
+chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/start 2>/dev/null
 
 ################################################################################
 # requirements
@@ -142,6 +142,6 @@ fi
 # run setup
 ################################################################################
 
-bash /etc/pi-node/include/setup
+bash /etc/freedom-node/include/setup
 
 # END

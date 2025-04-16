@@ -5,9 +5,9 @@
 
 ``sudo apt-get install git -y``  
 
-``cd && git clone https://github.com/Daedalus-code/pi-node.git``  
+``cd && git clone https://github.com/Daedalus-code/Freedom-node.git``  
 
-``bash pi-node/include/install``  
+``bash freedom-node/include/install``  
 
 ### Setup rc.local
 

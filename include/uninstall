@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # home directory
-HOME_DIR="$(cat /etc/pi-node/homedir 2>/dev/null)"
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # user
-USER_NAME="$(cat /etc/pi-node/user 2>/dev/null)"
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 
@@ -44,8 +44,8 @@ if [[ -n "$HOME_DIR" && -n "$USER_NAME" ]] &>/dev/null; then
     fi
 
     # if found
-    if [[ -d "$HOME_DIR"/pi-node ]] &>/dev/null; then
-      sudo rm -r "$HOME_DIR"/pi-node &>/dev/null
+    if [[ -d "$HOME_DIR"/freedom-node ]] &>/dev/null; then
+      sudo rm -r "$HOME_DIR"/freedom-node &>/dev/null
     fi
 
     # if found
@@ -59,8 +59,8 @@ if [[ -n "$HOME_DIR" && -n "$USER_NAME" ]] &>/dev/null; then
     fi
 
     # if found
-    if [[ -d /etc/pi-node ]] &>/dev/null; then
-      sudo rm -r /etc/pi-node &>/dev/null
+    if [[ -d /etc/freedom-node ]] &>/dev/null; then
+      sudo rm -r /etc/freedom-node &>/dev/null
     fi
 
     sudo rm -r /tmp/*.tmp &>/dev/null
