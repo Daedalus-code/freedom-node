@@ -53,7 +53,7 @@ cp /usr/share/misc/config.* ../dist/ 2>/dev/null || {
 }
 chmod +x ../dist/config.guess ../dist/config.sub
 # configure
-../distconfigure --prefix=/usr/local --enable-cxx
+../dist/configure --prefix=/usr/local --enable-cxx
 make -j"$CORES"
 sudo make install
 cd "$HOME_DIR" || exit
