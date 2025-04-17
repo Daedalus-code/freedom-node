@@ -46,12 +46,13 @@ if [[ ! -f db-4.8.30.NC.tar.gz ]] || [[ ! -d db-4.8.30.NC ]]; then
 fi
 
 # Patch ancient config scripts for ARM/aarch64 support
+rm -f "$HOME_DIR"/db-4.8.30.NC/dist/config.guess "$HOME_DIR"/db-4.8.30.NC/dist/config.sub
 cd "$HOME_DIR/db-4.8.30.NC/build_unix" || exit
 cp /usr/share/misc/config.* ../dist/ 2>/dev/null || {
   wget -qO ../dist/config.guess "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
   wget -qO ../dist/config.sub "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
 }
-chmod +x ../dist/config.guess ../dist/config.sub
+chmod +x "$HOME_DIR"/db-4.8.30.NC/dist/config.guess "$HOME_DIR"/db-4.8.30.NC/dist/config.sub
 # configure
 ../dist/configure --prefix=/usr/local --enable-cxx
 make -j"$CORES"
