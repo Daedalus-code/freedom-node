@@ -1,65 +1,68 @@
 #!/bin/bash
 
 ################################################################################
-
-source /etc/freedom-node/include/color
-
+# Load colors if available
 ################################################################################
 
-# home directory
-HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
-# user
-USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
+if [[ -f /etc/freedom-node/include/color ]]; then
+  source /etc/freedom-node/include/color
+else
+  G1=""
+  N0=""
+fi
 
 ################################################################################
-# cpu architecture & requirements
+# Set home and user
 ################################################################################
 
-# detect CPU arch
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null || echo "$HOME")"
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null || echo "$USER")"
+
+################################################################################
+# CPU architecture & system setup
+################################################################################
+
 ARCH=$(uname -m)
-# define build concurrency
 CORES=$(nproc)
 
-# system Update
+# Update and install dependencies
 sudo apt update && sudo apt upgrade -y
-# dependencies
 sudo apt install -y \
   build-essential libtool autotools-dev automake pkg-config \
   bsdmainutils curl git libevent-dev libssl-dev \
   libboost-system-dev libboost-filesystem-dev libboost-chrono-dev \
   libboost-test-dev libboost-thread-dev libzmq3-dev libqrencode-dev \
-  libminiupnpc-dev software-properties-common
+  libminiupnpc-dev software-properties-common \
+  python3
 
-cd || exit
-# if missing
-if [[ ! -f db-4.8.30.NC.tar.gz || ! -d db-4.8.30.NC ]] &>/dev/null; then
-  # berkeley DB 4.8
+################################################################################
+# Berkeley DB 4.8 Build
+################################################################################
+
+cd "$HOME_DIR" || exit
+
+if [[ ! -f db-4.8.30.NC.tar.gz ]] || [[ ! -d db-4.8.30.NC ]]; then
   wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
   tar -xzf db-4.8.30.NC.tar.gz
 fi
-
-################################################################################
-# compile
-################################################################################
-
-# start counting
-START="$SECONDS"
 
 cd db-4.8.30.NC/build_unix || exit
 ../dist/configure --prefix=/usr/local --enable-cxx
 make -j"$CORES"
 sudo make install
-cd || exit
+cd "$HOME_DIR" || exit
 
-# if missing
-if [[ ! -d FreedomCoin-Core ]] &>/dev/null; then
-  # clone freedomcoin
+################################################################################
+# Clone and build FreedomCoin
+################################################################################
+
+if [[ ! -d FreedomCoin-Core ]]; then
   git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
-  cd || exit && cd FreedomCoin-Core
 fi
 
-# checkout latest tag
-TAG="$(git describe --tags $(git rev-list --tags --max-count=1))"
+cd FreedomCoin-Core || exit
+git fetch --tags
+TAG="$(git describe --tags "$(git rev-list --tags --max-count=1)")"
 git checkout "$TAG"
 
 ./autogen.sh
@@ -68,6 +71,7 @@ CONFIG_OPTS=(
   "--with-incompatible-bdb"
   "--disable-tests"
   "--disable-bench"
+  "--with-gui=no"
   "BDB_LIBS=-L/usr/local/lib -ldb_cxx-4.8"
   "BDB_CFLAGS=-I/usr/local/include"
 )
@@ -79,33 +83,28 @@ elif [[ "$ARCH" == "armv7l" ]]; then
 fi
 
 ./configure "${CONFIG_OPTS[@]}"
-
 make -j"$CORES"
 
-# calculate build time
-DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
-TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
-
 ################################################################################
-# freedomcoin daemon & freedomcoin client
+# Post-Build Actions
 ################################################################################
 
-# if found
-if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
-  # strip binaries to save space
+DURATION=$((SECONDS - START))
+TIMER=$(printf '%dh:%dm:%ds\n' $((DURATION / 3600)) $((DURATION % 3600 / 60)) $((DURATION % 60)))
+
+if [[ -f src/freedomcoind && -f src/freedomcoin-cli ]]; then
   strip src/freedomcoind src/freedomcoin-cli || true
-  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
-  # copy wallet binaries
-  sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind /usr/local/bin &>/dev/null
-  sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli /usr/local/bin &>/dev/null
+  echo -e "[${G1}OK${N0}] Console : Installing daemon and cli.."
+  sudo cp src/freedomcoind /usr/local/bin/
+  sudo cp src/freedomcoin-cli /usr/local/bin/
 fi
 
 ################################################################################
-# compile output
+# Done
 ################################################################################
 
 echo
-printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
+echo -e "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}"
 echo
 read -r -p "[Ok] Press Enter to continue" </dev/tty
 echo
