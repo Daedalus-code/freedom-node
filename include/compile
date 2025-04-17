@@ -12,13 +12,6 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
-# compile counter start (seconds)
-################################################################################
-
-# start counting
-START="$SECONDS"
-
-################################################################################
 # cpu architecture & requirements
 ################################################################################
 
@@ -37,22 +30,36 @@ sudo apt install -y \
   libboost-test-dev libboost-thread-dev libzmq3-dev libqrencode-dev \
   libminiupnpc-dev software-properties-common
 
-# berkeley DB 4.8
-cd ~
-wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-tar -xzf db-4.8.30.NC.tar.gz
-cd db-4.8.30.NC/build_unix
+cd || exit
+# if missing
+if [[ ! -f db-4.8.30.NC.tar.gz || ! -d db-4.8.30.NC ]] &>/dev/null; then
+  # berkeley DB 4.8
+  wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+  tar -xzf db-4.8.30.NC.tar.gz
+fi
+
+################################################################################
+# compile
+################################################################################
+
+# start counting
+START="$SECONDS"
+
+cd db-4.8.30.NC/build_unix || exit
 ../dist/configure --prefix=/usr/local --enable-cxx
 make -j"$CORES"
 sudo make install
-cd ~
+cd || exit
 
-# clone freedomcoin
-git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
-cd FreedomCoin-Core
+# if missing
+if [[ ! -d FreedomCoin-Core ]] &>/dev/null; then
+  # clone freedomcoin
+  git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+  cd || exit && cd FreedomCoin-Core
+fi
 
 # checkout latest tag
-TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+TAG="$(git describe --tags $(git rev-list --tags --max-count=1))"
 git checkout "$TAG"
 
 ./autogen.sh
@@ -75,10 +82,6 @@ fi
 
 make -j"$CORES"
 
-################################################################################
-# compile counter end (seconds)
-################################################################################
-
 # calculate build time
 DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
 TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
@@ -98,7 +101,7 @@ if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/Freedom
 fi
 
 ################################################################################
-# build output
+# compile output
 ################################################################################
 
 echo
