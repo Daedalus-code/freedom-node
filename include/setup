@@ -101,7 +101,7 @@ fi
 if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Memory  : $MEM_FOUND\n"
   # if not enough memory
-  if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "2000" ]] &>/dev/null; then
+  if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "4000" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Memory  : Not enough memory!\n" && sleep 1
     printf '%b' "[${GR}!!${N0}] mkswap  : Creating 2G Swap..\n"
     # create 2G swap ###########################################################
