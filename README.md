@@ -9,7 +9,7 @@
 
 ``bash freedom-node/include/install``  
 
-### Setup rc.local
+### Setup rc.local for dashbord at boot
 
 edit rc.local  
 ``sudo nano /etc/rc.local``  
