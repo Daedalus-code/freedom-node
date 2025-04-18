@@ -103,7 +103,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   # if not enough memory
   if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "2000" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Memory  : Not enough memory!\n" && sleep 1
-    printf '%b' "[${G1}OK${N0}] mkswap  : Creating 2G Swap..\n"
+    printf '%b' "[${GR}!!${N0}] mkswap  : Creating 2G Swap..\n"
     # create 2G swap ###########################################################
     sudo fallocate -l 2G /swapfile
     sudo chmod 600 /swapfile
@@ -112,7 +112,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     ############################################################################
     # if swapfile is not already in /etc/fstab, append it
     if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
-      printf '%b' "[${G1}OK${N0}] echo    : Updating fstab..\n"
+      printf '%b' "[${GR}!!${N0}] echo    : Updating fstab..\n"
       echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
     fi
     # backup fstab before modification
@@ -120,8 +120,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     # format `/etc/fstab` properly using `column -t`
     sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
     # output data
-    printf '%b' "[${G1}OK${N0}] fstab   : Output data
-
+    printf '%b' "[${GR}!!${N0}] fstab   : Output data
   $(cat /etc/fstab 2>/dev/null | column -t)
   \n"
   fi
@@ -139,6 +138,10 @@ if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
   # if not enough space
   if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -lt "7" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Drive   : Not enough space..\n" && exit
+  fi
+  # if tiny sd card found
+  if [[ "$(echo "$HDD_TOTAL" | tr -d 'G')" -lt "32" ]] &>/dev/null; then
+    printf '%b' "[${GR}!!${N0}] Drive   : 32GB SD card recommended.\n" && exit
   fi
 else
   printf '%b' "[${GR}!!${N0}] Drive   : Error\n" && exit
@@ -191,11 +194,11 @@ rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
   # if missing
   if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
     # update tor configuration
-    printf '%b' "[${G1}OK${N0}] Proxy   : Updating configuration!\n"
+    printf '%b' "[${GR}!!${N0}] Proxy   : Updating configuration!\n"
     echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # update tor configuration
-    printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
+    printf '%b' "[${GR}!!${N0}] Proxy   : Restarting tor!\n"
     sudo service tor@default restart
   fi
 
@@ -224,7 +227,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   ##############################################################################
 
   if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Service : Creating FreedomCoin service..\n"
+    printf '%b' "[${GR}!!${N0}] Service : Creating FreedomCoin service..\n"
 
     echo "[Unit]
 Description=freedomcoind service
