@@ -103,8 +103,9 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   # if not enough memory
   if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "4000" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Memory  : Not enough memory!\n" && sleep 1
-    printf '%b' "[${GR}!!${N0}] mkswap  : Creating 2G Swap..\n"
-    # create 2G swap ###########################################################
+    printf '%b' "[${GR}!!${N0}] mkswap  : Creating 3G Swap..\n"
+    # create 3G swap ###########################################################
+    sudo swapoff /swapfile
     sudo fallocate -l 3G /swapfile
     sudo chmod 600 /swapfile
     sudo mkswap /swapfile
