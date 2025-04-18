@@ -108,7 +108,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     sudo swapoff /swapfile
     sudo fallocate -l 3G /swapfile
     sudo chmod 600 /swapfile
-    sudo mkswap /swapfile
+    printf '%b' "[${GR}!!${N0}] mkswap  : $(sudo mkswap /swapfile).\n"
     sudo swapon /swapfile
     ############################################################################
     # if swapfile is not already in /etc/fstab, append it
@@ -121,9 +121,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     # format `/etc/fstab` properly using `column -t`
     sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
     # output data
-    printf '%b' "[${GR}!!${N0}] fstab   : Output data
-  $(cat /etc/fstab 2>/dev/null | column -t)
-  \n"
+    printf '%b' "[${GR}!!${N0}] fstab   : $(cat /etc/fstab 2>/dev/null | column -t)\n"
   fi
 else
   printf '%b' "[${GR}!!${N0}] Memory  : Error\n" && exit
