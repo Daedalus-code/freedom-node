@@ -1,117 +1,162 @@
-#!/bin/bash
-
-################################################################################
-# load colors if available
 ################################################################################
 
-if [[ -f /etc/freedom-node/include/color ]]; then
-  source /etc/freedom-node/include/color
+source /etc/freedom-node/include/color
+
+################################################################################
+
+# CPU architecture
+CPU_ARCH="$(uname -m)"
+# CPU cores
+CPU_CORES="$(nproc)"
+# whoami
+WHOAMI="$(whoami)"
+
+################################################################################
+
+# decide HOST based on CPU_ARCH
+if [[ "$CPU_ARCH" == "aarch64" ]]; then
+  HOST="aarch64-linux-gnu"
+  TOOLCHAIN_PKGS="gcc-aarch64-linux-gnu g++-aarch64-linux-gnu"
+elif [[ "$CPU_ARCH" == "armv7l" ]]; then
+  HOST="arm-linux-gnueabihf"
+  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
+elif [[ "$CPU_ARCH" == "x86_64" ]]; then
+  HOST="arm-linux-gnueabihf"
+  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
 else
-  G1=""
-  N0=""
+  printf '%b' "[${R1}!!${N0}] Console : Unsupported architecture. Exiting.\n"
+  exit 1
 fi
 
-################################################################################
-# set home and user
-################################################################################
-
-HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null || echo "$HOME")"
-USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null || echo "$USER")"
+printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
 
 ################################################################################
-# cpu architecture & system setup
-################################################################################
 
-ARCH=$(uname -m)
-CORES=$(nproc)
-
+# install dependencies
+printf '%b' "[${G1}OK${N0}] Console : Please wait. Installing dependencies...\n"
+# if missing
+if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
+  echo "updated $(date | xargs)" >/tmp/upd.tmp
+  sudo apt-get update
+fi
 # update and install dependencies
+sudo apt update
+sudo apt upgrade -y
 sudo apt install -y \
-  build-essential libtool autotools-dev automake pkg-config \
-  bsdmainutils curl git libevent-dev libssl-dev \
-  libboost-system-dev libboost-filesystem-dev libboost-chrono-dev \
-  libboost-test-dev libboost-thread-dev libzmq3-dev libqrencode-dev \
-  libminiupnpc-dev software-properties-common \
-  libgmp-dev python3
+  build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
+  git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
+  libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
+  protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
+sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
+  libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
+sudo apt-get autoremove -y
 
 ################################################################################
-# Berkeley DB 4.8 Build
+
+# rust and cargo
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
 ################################################################################
 
-cd "$HOME_DIR" || exit
+# start counting (seconds)
+START="$SECONDS"
 
-if [[ ! -f db-4.8.30.NC.tar.gz ]] || [[ ! -d db-4.8.30.NC ]]; then
-  wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-  tar -xzf db-4.8.30.NC.tar.gz
-fi
-
-# Patch ancient config scripts for ARM/aarch64 support
-rm -f "$HOME_DIR"/db-4.8.30.NC/dist/config.guess "$HOME_DIR"/db-4.8.30.NC/dist/config.sub
-cd "$HOME_DIR/db-4.8.30.NC/build_unix" || exit
-cp /usr/share/misc/config.* ../dist/ 2>/dev/null || {
-  wget -qO ../dist/config.guess "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
-  wget -qO ../dist/config.sub "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
-}
-chmod +x "$HOME_DIR"/db-4.8.30.NC/dist/config.guess "$HOME_DIR"/db-4.8.30.NC/dist/config.sub
-# configure
-../dist/configure --prefix=/usr/local --enable-cxx
-make -j"$CORES"
+cd || exit
+wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
+bash install_db4.sh "$HOME"
+# build and install Berkeley DB
+cd "$HOME/db4/db-4.8.30.NC" || exit
+export BDB_PREFIX="$HOME/db4"
+./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
+sudo make -j"$CPU_CORES"
 sudo make install
-cd "$HOME_DIR" || exit
+# copy Berkeley DB header files
+sudo cp /usr/local/berkeleydb/include/* /usr/include/
 
-################################################################################
-# clone and build FreedomCoin
-################################################################################
-
-if [[ ! -d FreedomCoin-Core ]]; then
-  git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+# if repo doesn't exist
+if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
+  # download and extract wallet source
+  cd "$HOME" || exit
+  git clone "https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
 fi
 
-cd FreedomCoin-Core || exit
-git fetch --tags
-TAG="$(git describe --tags "$(git rev-list --tags --max-count=1)")"
-git checkout "$TAG"
+# set user ownership
+sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
+
+# build dependencies without Qt
+cd "$HOME/FreedomCoin-Core/depends" || exit
+make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
+
+# build wallet without wallet and GUI
+cd "$HOME/FreedomCoin-Core" || exit
+
+export CFLAGS="-O2 -mno-strict-align"
+export CXXFLAGS="$CFLAGS"
 
 ./autogen.sh
 
-CONFIG_OPTS=(
-  "--with-incompatible-bdb"
-  "--disable-tests"
-  "--disable-bench"
-  "--with-gui=no"
-  "BDB_LIBS=-L/usr/local/lib -ldb_cxx-4.8"
-  "BDB_CFLAGS=-I/usr/local/include"
-)
-
-if [[ "$ARCH" == "aarch64" ]]; then
-  CONFIG_OPTS+=("--host=aarch64-linux-gnu")
-elif [[ "$ARCH" == "armv7l" ]]; then
-  CONFIG_OPTS+=("--host=arm-linux-gnueabihf")
-fi
-
-./configure "${CONFIG_OPTS[@]}"
-make -j"$CORES"
-
 ################################################################################
-# post-Build Actions
+# patches
 ################################################################################
 
-DURATION=$((SECONDS - START))
-TIMER=$(printf '%dh:%dm:%ds\n' $((DURATION / 3600)) $((DURATION % 3600 / 60)) $((DURATION % 60)))
-
-if [[ -f src/freedomcoind && -f src/freedomcoin-cli ]]; then
-  strip src/freedomcoind src/freedomcoin-cli || true
-  echo -e "[${G1}OK${N0}] Console : Installing daemon and cli.."
-  sudo cp src/freedomcoind /usr/local/bin/
-  sudo cp src/freedomcoin-cli /usr/local/bin/
+# if aarch64
+if [[ "$(uname -m)" == "aarch64" ]] &>/dev/null; then
+  echo "[INFO] Applying aarch64-specific source patches..."
+  # patch missing <deque> include
+  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
+  # patch non-constexpr sysconf() usage in Catch2 test framework
+  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
+  # add missing include <memory> to chiabls/src/threshold.cpp
+  sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
 fi
 
 ################################################################################
-# done
+
+# configure with Berkeley DB
+export BDB_PREFIX="$HOME/db4"
+./configure --prefix=$PWD/depends/$HOST \
+  --enable-glibc-back-compat \
+  --enable-reduce-exports \
+  LDFLAGS="-static-libstdc++" \
+  CPPFLAGS="-I${BDB_PREFIX}/include" \
+  LDFLAGS="-L${BDB_PREFIX}/lib -static-libstdc++" \
+  --with-incompatible-bdb=${BDB_PREFIX} \
+  --without-gui
+
+################################################################################
+
+make -j"$CPU_CORES"
+
+################################################################################
+
+# strip binaries to save space
+strip src/freedomcoind src/freedomcoin-cli || true
+
+################################################################################
+
+# copy binaries
+sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
+
+################################################################################
+
+# calculate build time
+DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
+TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+################################################################################
+
+# built wallet exist
+if [[ -f /home/"$(whoami)"/freedomcoind && -f /home/"$(whoami)"/freedomcoin-cli ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
+  sudo cp /home/"$(whoami)"/freedomcoind /usr/local/bin &>/dev/null
+  sudo cp /home/"$(whoami)"/freedomcoin-cli /usr/local/bin &>/dev/null
+fi
+
 ################################################################################
 
 echo
-echo -e "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}"
+printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
 echo
 read -r -p "[Ok] Press Enter to continue" </dev/tty
 echo
