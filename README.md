@@ -2,6 +2,7 @@
 # Freedom-Node  
 
 ### Spin up a Freedom node!  
+Raspberry pi + [Raspberry Pi OS  ](https://www.raspberrypi.com/software/)  
 
 ``sudo apt-get install git -y``  
 
