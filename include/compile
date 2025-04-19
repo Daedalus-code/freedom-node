@@ -111,7 +111,7 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   # patch missing <deque> include
   sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME_DIR/FreedomCoin-Core/src/httpserver.cpp"
   # patch non-constexpr sysconf() usage in Catch2 test framework
-  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/src/contrib/catch/catch.hpp"
+  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/src/chiabls/catch/catch.hpp"
   # add missing include <memory> to chiabls/src/threshold.cpp
   sed -i '1s/^/#include <memory>\n/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
 fi
