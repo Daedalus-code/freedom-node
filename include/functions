@@ -655,8 +655,10 @@ fi
 # connected peers list
 ################################################################################
 
-# create peers list
+# create ip4 list
 grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' >/etc/freedom-node/connected.peers
+# include ip6
+grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep ":|::" | egrep "[a-z]+" | awk -F] '{ print $1 }' | tr -d '[' >>/etc/freedom-node/connected.peers
 
 ################################################################################
 # arp peers list
