@@ -93,14 +93,14 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
     local EMPTY
 
     # if any data
-    if [[ -n "$PERCENT_RAW" ]] &>/dev/null; then
-      PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
+    if [[ -n "$PERCENT" ]] &>/dev/null; then
+      PERCENT=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
     else
-      PERCENT_RAW="0"
+      PERCENT="0"
     fi
     # if 100.000%
-    if [[ "$PERCENT_RAW" == "100.000" ]] &>/dev/null; then
-      PERCENT_RAW=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
+    if [[ "$PERCENT" == "100.000" ]] &>/dev/null; then
+      PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
     fi
     PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
     FILLED=$((PERCENT * BAR_WIDTH / 100))
@@ -109,7 +109,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
     printf ""
     for ((I = 0; I < FILLED; I++)); do printf "#"; done
     for ((I = 0; I < EMPTY; I++)); do printf "."; done
-    printf " %s%%\n" "$PERCENT_RAW"
+    printf " %s%%\n" "$PERCENT"
   }
   # extract the progress value
   PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1)"
