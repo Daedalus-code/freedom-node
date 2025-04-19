@@ -104,41 +104,38 @@ export CXXFLAGS="$CFLAGS"
 ./autogen.sh
 
 ################################################################################
-# patches
-################################################################################
-
-# if aarch64
-if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
-  printf '%b' "[${GR}!!${N0}] :: Applying aarch64-specific source patches..\n"
-  # add missing <deque> include
-  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME_DIR/FreedomCoin-Core/src/httpserver.cpp"
-  # add non-constexpr sysconf() usage in Catch2 test framework
-  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/src/chiabls/catch/catch.hpp"
-  # add missing include <memory> to chiabls/src/threshold.cpp
-  sed -i '1s/^/#include <memory>\n/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
-  # add alignment attributes to the struct definitions
-  sed -i 's/^typedef struct blake2s_state {/typedef struct __attribute__((aligned(32))) blake2s_state {/' "$HOME_DIR"/contrib/relic/src/md/blake2.h
-  sed -i 's/^typedef struct blake2b_state {/typedef struct __attribute__((aligned(64))) blake2b_state {/' "$HOME_DIR"/contrib/relic/src/md/blake2.h
-  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/contrib/catch/catch.hpp"
-fi
-
+# skip chiabls/relic/test patches entirely
 ################################################################################
 
 # configure with Berkeley DB
-printf '%b' "[${GR}!!${N0}] :: Configure with Berkeley DB..\n"
+printf '%b' "[${GR}!!${N0}] :: Configure with Berkeley DB (minimal build)..\n"
 export BDB_PREFIX="$HOME_DIR/db4"
 ./configure --prefix=$PWD/depends/$HOST \
   --enable-glibc-back-compat \
   --enable-reduce-exports \
-  LDFLAGS="-static-libstdc++" \
+  --disable-tests \
+  --disable-bench \
+  --without-gui \
+  --without-miniupnpc \
+  --without-qt \
+  --without-zmq \
+  --disable-hardening \
   CPPFLAGS="-I${BDB_PREFIX}/include" \
   LDFLAGS="-L${BDB_PREFIX}/lib -static-libstdc++" \
-  --with-incompatible-bdb=${BDB_PREFIX} \
-  --without-gui
+  --with-incompatible-bdb=${BDB_PREFIX}
 
 ################################################################################
 
-make -j"$CPU_CORES"
+# optionally: remove chiabls and relic references from src/Makefile.am
+# or ensure they aren’t included in the build system
+# safer method: delete or rename their folders so they aren’t compiled
+rm -rf "$HOME_DIR/FreedomCoin-Core/src/chiabls"
+rm -rf "$HOME_DIR/FreedomCoin-Core/contrib/relic"
+
+################################################################################
+
+# make only the CLI/daemon
+make -C src freedomcoind freedomcoin-cli -j"$CPU_CORES"
 
 ################################################################################
 
@@ -150,22 +147,8 @@ strip src/freedomcoind src/freedomcoin-cli || true
 
 # copy binaries
 printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
-sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME_DIR" &>/dev/null
-
-################################################################################
-
-# calculate build time
-DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
-TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
-
-################################################################################
-
-# built wallet exist
-if [[ -f /home/"$USER_NAME"/freedomcoind && -f /home/"$USER_NAME"/freedomcoin-cli ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: Installing daemon and cli..\n"
-  sudo cp /home/"$USER_NAME"/freedomcoind /usr/local/bin &>/dev/null
-  sudo cp /home/"$USER_NAME"/freedomcoin-cli /usr/local/bin &>/dev/null
-fi
+sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR" &>/dev/null
+sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli "$HOME_DIR" &>/dev/null
 
 ################################################################################
 
