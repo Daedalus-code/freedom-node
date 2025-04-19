@@ -621,6 +621,11 @@ if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading bl
   WALLET_TXLAST="       ${GR}Loading${N0}"
 fi
 
+# if still zero
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  WALLET_TXLAST="       ${CY}Loading${N0}"
+fi
+
 ################################################################################
 # last log
 ################################################################################
