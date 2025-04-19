@@ -61,9 +61,13 @@ fi
 
 ################################################################################
 
-# rust and cargo
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source "$HOME_DIR"/.cargo/env
+# if missing
+if [[ ! -f /tmp/upd.rust_cargo.tmp ]] &>/dev/null; then
+  # rust and cargo
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  source "$HOME_DIR"/.cargo/env
+  echo "updated $(date | xargs)" >/tmp/upd.rust_cargo.tmp
+fi
 
 ################################################################################
 
