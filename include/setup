@@ -36,6 +36,8 @@ MHZ_FOUND="$(echo "$(lscpu | grep "MHz" | awk -F: '{ print $2 }' | grep -v "%" |
 # if zero
 if [[ -z "$MHZ_FOUND" ]] &>/dev/null; then
   MHZ_FOUND=""
+else
+  MHZ_FOUND="${CY}$MHZ_FOUND${N0}"
 fi
 
 ################################################################################
