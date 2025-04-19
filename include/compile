@@ -127,7 +127,7 @@ if [[ ! -f "$HOME_DIR"/install_db4.sh ]] &>/dev/null; then
 fi
 
 # if missing
-if [[ ! -f "$HOME_DIR"/db-4.8.30.NC/txn/txn_util.c ]] &>/dev/null; then
+if [[ ! -f "$HOME_DIR"/db4/db-4.8.30.NC/txn/txn_util.c ]] &>/dev/null; then
   bash install_db4.sh "$HOME_DIR"
 fi
 
