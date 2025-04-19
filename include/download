@@ -79,7 +79,7 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
       # remove old directory
       rm -r "$HOME_DIR"/"$WALLET_DOWNLOAD"
     else
-      printf '%b' "[${R1}!!${N0}] :: Download failed! Running compile script instead!\n"
+      printf '%b' "[${Y1}!!${N0}] :: Download failed! Running compile script instead!\n"
       bash /etc/freedom-node/include/compile
     fi
   fi

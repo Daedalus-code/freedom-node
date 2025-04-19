@@ -67,7 +67,7 @@ source "$HOME_DIR"/.cargo/env
 # start counting (seconds)
 START="$SECONDS"
 
-printf '%b' "[${R1}!!${N0}] :: Downloading Berkeley DB..\n"
+printf '%b' "[${GR}!!${N0}] :: Downloading Berkeley DB..\n"
 cd || exit
 wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
 bash install_db4.sh "$HOME_DIR"
@@ -109,7 +109,7 @@ export CXXFLAGS="$CFLAGS"
 
 # if aarch64
 if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
-  printf '%b' "[${R1}!!${N0}] :: Applying aarch64-specific source patches..\n"
+  printf '%b' "[${GR}!!${N0}] :: Applying aarch64-specific source patches..\n"
   # add missing <deque> include
   sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME_DIR/FreedomCoin-Core/src/httpserver.cpp"
   # add non-constexpr sysconf() usage in Catch2 test framework
@@ -124,7 +124,7 @@ fi
 ################################################################################
 
 # configure with Berkeley DB
-printf '%b' "[${R1}!!${N0}] :: Configure with Berkeley DB..\n"
+printf '%b' "[${GR}!!${N0}] :: Configure with Berkeley DB..\n"
 export BDB_PREFIX="$HOME_DIR/db4"
 ./configure --prefix=$PWD/depends/$HOST \
   --enable-glibc-back-compat \
@@ -142,13 +142,13 @@ make -j"$CPU_CORES"
 ################################################################################
 
 # strip binaries to save space
-printf '%b' "[${R1}!!${N0}] :: Strip daemon and client..\n"
+printf '%b' "[${GR}!!${N0}] :: Strip daemon and client..\n"
 strip src/freedomcoind src/freedomcoin-cli || true
 
 ################################################################################
 
 # copy binaries
-printf '%b' "[${R1}!!${N0}] :: Installing daemon and client..\n"
+printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
 sudo cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME_DIR" &>/dev/null
 
 ################################################################################
@@ -169,7 +169,7 @@ fi
 ################################################################################
 
 echo
-printf '%b' "[${N0}!!${N0}] :: Build time: ${G1}$TIMER${N0}\n"
+printf '%b' "[${G1}OK${N0}] :: Build time: ${G1}$TIMER${N0}\n"
 echo
 read -r -p "[Ok] :: Press Enter to continue" </dev/tty
 echo
