@@ -4,6 +4,11 @@ source /etc/freedom-node/include/color
 
 ################################################################################
 
+# start counting (seconds)
+START="$SECONDS"
+
+################################################################################
+
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # user
@@ -61,11 +66,6 @@ source "$HOME_DIR"/.cargo/env
 
 ################################################################################
 
-# start counting (seconds)
-START="$SECONDS"
-
-################################################################################
-
 # clone FreedomCoin-Core if missing
 if [[ ! -d "$HOME_DIR/FreedomCoin-Core" ]] &>/dev/null; then
   cd "$HOME_DIR" || exit
@@ -118,11 +118,18 @@ fi
 
 ################################################################################
 
-# build and install Berkeley DB
-printf '%b' "[${GR}!!${N0}] :: Downloading Berkeley DB..\n"
-cd || exit
-wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
-bash install_db4.sh "$HOME_DIR"
+# if missing
+if [[ ! -f "$HOME_DIR"/install_db4.sh ]] &>/dev/null; then
+  # build and install Berkeley DB
+  printf '%b' "[${GR}!!${N0}] :: Downloading Berkeley DB..\n"
+  cd || exit
+  wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
+fi
+
+# if missing
+if [[ ! -f "$HOME_DIR"/db-4.8.30.NC/txn/txn_util.c ]] &>/dev/null; then
+  bash install_db4.sh "$HOME_DIR"
+fi
 
 ################################################################################
 
