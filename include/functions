@@ -675,7 +675,7 @@ fi
 # failed peers list
 ################################################################################
 
-grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >/etc/freedom-node/failed.peers
+grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' | grep -v "failed" >/etc/freedom-node/failed.peers
 
 ################################################################################
 # addnode onetry
