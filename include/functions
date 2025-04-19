@@ -655,10 +655,10 @@ fi
 # connected peers list
 ################################################################################
 
-# create ip4 list
-grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' >/etc/freedom-node/connected.peers
-# include ip6
-grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep ":|::" | egrep "[a-z]+" | awk -F] '{ print $1 }' | tr -d '[' >>/etc/freedom-node/connected.peers
+# create ip4 list, disregard duplicates
+grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' >/etc/freedom-node/connected.peers
+# include ip6, disregard duplicates
+grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep ":|::" | egrep "[a-z]+" | awk -F] '{ print $1 }' | tr -d '[' | awk '!a[$0]++' >>/etc/freedom-node/connected.peers
 
 ################################################################################
 # arp peers list
@@ -668,8 +668,8 @@ grep "addr" /tmp/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' |
 if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
   # create arp list
   cd /tmp || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
-  # fetch ip address
-  echo "$(awk '{ print $1 }' /etc/freedom-node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+")" >/etc/freedom-node/arp.peers
+  # fetch ip address, disregard duplicates
+  echo "$(awk '{ print $1 }' /etc/freedom-node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
   cd || exit
 fi
 
@@ -677,9 +677,9 @@ fi
 # failed peers list
 ################################################################################
 
-# failed
+# failed, disregard duplicates
 grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | grep "15110" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >/etc/freedom-node/failed.peers
-# failed after select() (111)
+# failed after select() (111), disregard duplicates
 grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' | grep "15110" | grep -v "to" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >>/etc/freedom-node/failed.peers
 
 ################################################################################
@@ -698,12 +698,12 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # ip address failed
   IP_ADDRESS_FAILED="$(cat /etc/freedom-node/failed.peers 2>/dev/null)"
 
-  # combine nodes and arp peers list
+  # combine nodes and arp peers list, disregard duplicates
   echo "$IP_ADDRESS_NODES
-$IP_ADDRESS_ARP" >/etc/freedom-node/addnode
+$IP_ADDRESS_ARP" | awk '!a[$0]++' >/etc/freedom-node/addnode
 
   # fetch address to add, disregard duplicates
-  IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++')"
+  IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null)"
 
   # if any data
   if [[ "$(echo "$IP_ADDRESS_FAILED" | egrep -c "[0-9]+|[a-z]+")" -gt "0" ]] &>/dev/null; then
@@ -715,7 +715,7 @@ $IP_ADDRESS_ARP" >/etc/freedom-node/addnode
   fi
 
   # fetch random address to add, disregard uplicates
-  IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
+  IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null | sort -R | tail -1)"
   # onetry age (seconds)
   IP_ONETRY_AGE="$(($(date +%s) - $(stat -c '%Y'/tmp/onetry.tmp 2>/dev/null || echo 0)))"
 
