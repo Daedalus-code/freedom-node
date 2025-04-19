@@ -104,38 +104,56 @@ chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/start 2>/dev/null
 
 # not installed
 if ! [ -x "$(command -v ifconfig)" ]; then
-  printf '%b' "[${G1}OK${N0}] :: Installing net-tools!\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing net-tools!\n"
   sudo apt-get install net-tools -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[${G1}OK${N0}] :: net-tools installed!\n"
+  fi
 fi
 
 # not installed
 if [[ ! "$(curl --version)" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: Installing curl!\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing curl!\n"
   sudo apt-get install curl -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[${G1}OK${N0}] :: curl installed!\n"
+  fi
 fi
 
 # not installed
 if ! [ -x "$(command -v tor)" ]; then
-  printf '%b' "[${G1}OK${N0}] :: Installing tor!\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing tor!\n"
   sudo apt-get install tor -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[${G1}OK${N0}] :: tor installed!\n"
+  fi
 fi
 
 # not installed
 if ! [ -x "$(command -v html2text)" ]; then
-  printf '%b' "[${G1}OK${N0}] :: Installing html2text!\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing html2text!\n"
   sudo apt-get install html2text -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[${G1}OK${N0}] :: html2text installed!\n"
+  fi
 fi
 
 # not installed
 if ! [ -x "$(command -v dialog)" ]; then
-  printf '%b' "[${G1}OK${N0}] :: Installing dialog!\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing dialog!\n"
   sudo apt-get install dialog -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[${G1}OK${N0}] :: dialog installed!\n"
+  fi
 fi
 
 # not installed
 if [[ ! "$(arp-scan --version)" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: Installing arp-scan!\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing arp-scan!\n"
   sudo apt-get install arp-scan -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[${G1}OK${N0}] :: arp-scan installed!\n"
+  fi
 fi
 
 ################################################################################
