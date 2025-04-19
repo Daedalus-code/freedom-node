@@ -31,7 +31,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     cd || exit
     ############################################################################
     # start/continue the download
-    wget -c --progress=dot:mega "$BOOTSTRAP_URL"
+    wget -c "$BOOTSTRAP_URL"
     ############################################################################
     RESULT=$?
     # if any result
