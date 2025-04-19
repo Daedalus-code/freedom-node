@@ -17,11 +17,11 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 # if no daemon found, if no client found
 if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] Console : Daemon/Client not found!\n"
+  printf '%b' "[${Y1}Ok${N0}] :: Daemon/Client not found!\n"
 
   # linux
   LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
-  printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
+  printf '%b' "[${G1}OK${N0}] :: Checking latest release!\n"
   echo
 
   ##############################################################################
@@ -32,7 +32,7 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   BOX64="0"
   # box64
   if [[ "$(box64 --version)" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Console : ${R1}Box64${N0} detected!\n"
+    printf '%b' "[${G1}OK${N0}] :: ${R1}Box64${N0} detected!\n"
     BOX64="1"
   fi
 
@@ -60,34 +60,34 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   if [[ ! -f "$HOME_DIR"/"$WALLET_DOWNLOAD".zip ]]; then
     cd || exit
     if wget -c "https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/$LATEST_RELEASE/$WALLET_DOWNLOAD.zip"; then
-      printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
+      printf '%b' "[${G1}OK${N0}] :: Download complete!\n"
       # if missing
       if [[ ! -d "$HOME_DIR"/"$WALLET_DOWNLOAD" ]] &>/dev/null; then
         # unzip file
         unzip "$WALLET_DOWNLOAD".zip
-        printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
+        printf '%b' "[${G1}OK${N0}] :: Unzip complete!\n"
       fi
       # clean up __MACOSX & zip
       rm -r "$HOME_DIR"/__MACOSX &>/dev/null
       rm "$WALLET_DOWNLOAD".zip &>/dev/null
       # install deamon
       sudo mv "$HOME_DIR"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
-      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+      printf '%b' "[${G1}OK${N0}] :: freedomcoind installed!\n"
       # install client
       sudo mv "$HOME_DIR"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
-      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+      printf '%b' "[${G1}OK${N0}] :: freedomcoin-cli installed!\n"
       # remove old directory
       rm -r "$HOME_DIR"/"$WALLET_DOWNLOAD"
     else
-      printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running compile script instead!\n"
+      printf '%b' "[${R1}!!${N0}] :: Download failed! Running compile script instead!\n"
       bash /etc/freedom-node/include/compile
     fi
   fi
   # fix ownership
   sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/freedomcoin* 2>/dev/null
-  printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
+  printf '%b' "[${G1}OK${N0}] :: Fixing ownership!\n"
 else
-  printf '%b' "[${G1}OK${N0}] Console : FreedomCoin Daemon and Client installed!\n"
+  printf '%b' "[${G1}OK${N0}] :: FreedomCoin Daemon and Client installed!\n"
 fi
 
 # END

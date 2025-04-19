@@ -48,9 +48,9 @@ HDD_FREE="$(echo "$HDD_FOUND" | awk '{ print $4 }')"
 
 # if found
 if [[ -n "$BOG_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Score   : BogoMIPS: ${CY}$BOG_FOUND${N0}\n"
+  printf '%b' "[${G1}OK${N0}] :: BogoMIPS: ${CY}$BOG_FOUND${N0}\n"
 else
-  printf '%b' "[${GR}!!${N0}] Score   : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 ################################################################################
@@ -59,16 +59,16 @@ fi
 
 # if found
 if [[ -n "$VER_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Version : $VER_FOUND\n"
+  printf '%b' "[${G1}OK${N0}] :: $VER_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] System  : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 # if found
 if [[ -n "$REL_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Release : $REL_FOUND\n"
+  printf '%b' "[${G1}OK${N0}] :: $REL_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] System  : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 ################################################################################
@@ -77,9 +77,9 @@ fi
 
 # if found
 if [[ -n "$MOD_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Model   : $MOD_FOUND\n"
+  printf '%b' "[${G1}OK${N0}] :: $MOD_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] Model   : ${GR}Not found${N0}\n"
+  printf '%b' "[${GR}!!${N0}] :: ${GR}Not found${N0}\n"
 fi
 
 ################################################################################
@@ -88,9 +88,9 @@ fi
 
 # if found
 if [[ -n "$CPU_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] CPU     : $CPU_FOUND $COR_FOUND Core(s)\n"
+  printf '%b' "[${G1}OK${N0}] :: $CPU_FOUND $COR_FOUND Core(s)\n"
 else
-  printf '%b' "[${GR}!!${N0}] CPU     : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 ################################################################################
@@ -99,21 +99,21 @@ fi
 
 # if found
 if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Memory  : $MEM_FOUND\n"
+  printf '%b' "[${G1}OK${N0}] :: $MEM_FOUND\n"
   # if not enough memory
   if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "4000" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] Memory  : Not enough memory!\n" && sleep 1
-    printf '%b' "[${GR}!!${N0}] mkswap  : Creating 3G Swap..\n"
+    printf '%b' "[${GR}!!${N0}] :: Not enough memory!\n" && sleep 1
+    printf '%b' "[${GR}!!${N0}] :: Creating 3G Swap..\n"
     # create 3G swap ###########################################################
     sudo swapoff /swapfile
     sudo fallocate -l 3G /swapfile
     sudo chmod 600 /swapfile
-    printf '%b' "[${GR}!!${N0}] mkswap  : $(sudo mkswap /swapfile).\n"
+    printf '%b' "[${GR}!!${N0}] :: $(sudo mkswap /swapfile).\n"
     sudo swapon /swapfile
     ############################################################################
     # if swapfile is not already in /etc/fstab, append it
     if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
-      printf '%b' "[${GR}!!${N0}] echo    : Updating fstab..\n"
+      printf '%b' "[${GR}!!${N0}] :: Updating fstab..\n"
       echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
     fi
     # backup fstab before modification
@@ -121,10 +121,10 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     # format `/etc/fstab` properly using `column -t`
     sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
     # output data
-    printf '%b' "[${GR}!!${N0}] fstab   : $(cat /etc/fstab 2>/dev/null | column -t)\n"
+    printf '%b' "[${GR}!!${N0}] :: $(cat /etc/fstab 2>/dev/null | column -t)\n"
   fi
 else
-  printf '%b' "[${GR}!!${N0}] Memory  : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 ################################################################################
@@ -133,17 +133,17 @@ fi
 
 # if found
 if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Drive   : Total $HDD_TOTAL Free $HDD_FREE\n"
+  printf '%b' "[${G1}OK${N0}] :: Total $HDD_TOTAL Free $HDD_FREE\n"
   # if not enough space
   if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -lt "7" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] Drive   : Not enough space..\n" && exit
+    printf '%b' "[${GR}!!${N0}] :: Not enough space..\n" && exit
   fi
   # if tiny sd card found
   if [[ "$(echo "$HDD_TOTAL" | tr -d 'G')" -lt "32" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] Drive   : 32GB SD card recommended.\n" && exit
+    printf '%b' "[${GR}!!${N0}] :: 32GB SD card recommended.\n" && exit
   fi
 else
-  printf '%b' "[${GR}!!${N0}] Drive   : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 ################################################################################
@@ -152,7 +152,7 @@ fi
 
 # if VPS already, skip this
 if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
-  echo "[!!] Console : This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
+  echo "[!!] :: This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
   # remove obsolete dash for vps server
   sudo rm /usr/local/bin/dash &>/dev/null
 
@@ -167,7 +167,7 @@ else
 
   # if missing
   if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" ]] &>/dev/null; then
-    printf '%b' "[${N0}!!${N0}] Config  : Setup rpcuser and rpcpassword..\n"
+    printf '%b' "[${N0}!!${N0}] :: Setup rpcuser and rpcpassword..\n"
     # add random rpc credentials
     echo "
 # RPC credentials
@@ -193,11 +193,11 @@ rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
   # if missing
   if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
     # update tor configuration
-    printf '%b' "[${GR}!!${N0}] Proxy   : Updating configuration!\n"
+    printf '%b' "[${GR}!!${N0}] :: Updating configuration!\n"
     echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # update tor configuration
-    printf '%b' "[${GR}!!${N0}] Proxy   : Restarting tor!\n"
+    printf '%b' "[${GR}!!${N0}] :: Restarting tor!\n"
     sudo service tor@default restart
   fi
 
@@ -207,13 +207,13 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # fetch lan from ifconfig
   ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }' >/tmp/lanip.tmp
-  printf '%b' "[${G1}OK${N0}] LAN     : ${N0}$(cat /tmp/lanip.tmp 2>/dev/null)${N0}\n"
+  printf '%b' "[${G1}OK${N0}] :: ${N0}$(cat /tmp/lanip.tmp 2>/dev/null)${N0}\n"
   # fetch wan from whatismyip
   curl -s http://whatismyip.akamai.com/ >/tmp/wanip.tmp
-  printf '%b' "[${G1}OK${N0}] WAN     : ${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}\n"
+  printf '%b' "[${G1}OK${N0}] :: ${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}\n"
   # fetch onion from hidden service
   sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/freedom-node/hostname.onion
-  printf '%b' "[${G1}OK${N0}] Proxy   : ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
+  printf '%b' "[${G1}OK${N0}] :: ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
 
   ##############################################################################
   # bootstrap
@@ -226,7 +226,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   ##############################################################################
 
   if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] Service : Creating FreedomCoin service..\n"
+    printf '%b' "[${GR}!!${N0}] :: Creating FreedomCoin service..\n"
 
     echo "[Unit]
 Description=freedomcoind service
@@ -248,7 +248,7 @@ WantedBy=multi-user.target" >/tmp/service.tmp
     # install service
     sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
-    printf '%b' "[${G1}OK${N0}] Service : Enabling FreedomCoin service..\n"
+    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin service..\n"
     sudo systemctl enable freedomcoind
   fi
 
@@ -258,7 +258,7 @@ WantedBy=multi-user.target" >/tmp/service.tmp
 
   # daemon running
   if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
+    printf '%b' "[${G1}OK${N0}] :: Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
   else
     # start service
     sudo service freedomcoind restart

@@ -19,7 +19,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
   # if enough space
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -gt "7" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
+    printf '%b' "[${G1}OK${N0}] :: Downloading bootstrap.zip!\n"
 
     # if zero
     if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
@@ -46,7 +46,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     RESULT=$?
     # if any result
     if [ ! $RESULT -eq "0" ] &>/dev/null; then
-      echo "[!!] Download failed"
+      echo "[!!] :: Download failed"
       sleep 1
     fi
 
@@ -58,34 +58,34 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     ############################################################################
 
     # backup wallet.dat
-    printf '%b' "[${G1}OK${N0}] Blocks  : Creating wallet.dat backup..\n"
+    printf '%b' "[${G1}OK${N0}] :: Creating wallet.dat backup..\n"
     cp "$HOME_DIR"/.trumpcoin/wallet.dat /tmp/ &>/dev/null
     # remove old blockchain files and folders
-    printf '%b' "[${G1}OK${N0}] Blocks  : Removing old blockchain..\n"
+    printf '%b' "[${G1}OK${N0}] :: Removing old blockchain..\n"
     rm -rf "$HOME_DIR"/.trumpcoin/* &>/dev/null
     # restore wallet.dat backup
-    printf '%b' "[${G1}OK${N0}] Blocks  : Restoring wallet.dat backup..\n"
+    printf '%b' "[${G1}OK${N0}] :: Restoring wallet.dat backup..\n"
     mv /tmp/wallet.dat "$HOME_DIR"/.trumpcoin 2>/dev/null
 
     ############################################################################
 
     # unzip bootstrap.zip
-    printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
+    printf '%b' "[${G1}OK${N0}] :: Extracting bootstrap.zip..\n"
     unzip "$HOME_DIR"/bootstrap.zip -d "$HOME_DIR"/.trumpcoin
 
     ############################################################################
 
     # remove blockchain.zip
-    printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
+    printf '%b' "[${G1}OK${N0}] :: Removing bootstrap.zip..\n"
     rm "$HOME_DIR"/bootstrap.zip &>/dev/null
 
     ############################################################################
 
     # move blockchain out of bootstrap folder
-    printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
+    printf '%b' "[${G1}OK${N0}] :: Installing blockchain..\n"
     mv "$HOME_DIR"/.trumpcoin/bootstrap/* "$HOME_DIR"/.trumpcoin
   else
-    printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping! Brace yourself xD ${GR}num num num coffeee${N0}\n"
+    printf '%b' "[${G1}OK${N0}] :: Not enouh space for bootstrap.zip, skipping! ${GR}Brace yourself, Mmmmm coffeee..${N0}\n"
     mkdir "$HOME_DIR"/.trumpcoin/bootstrap &>/dev/null
   fi
 fi

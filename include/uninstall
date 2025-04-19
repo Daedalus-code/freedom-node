@@ -9,22 +9,22 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 # if VPS already, skip this
 if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
-  echo "[!!] Console : This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
+  echo "[!!] :: This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
   exit
 fi
 
 # if any data
 if [[ -n "$HOME_DIR" && -n "$USER_NAME" ]] &>/dev/null; then
-  read -r -p "[YN] Uninstall node! Are you sure? y/n " -n 1 -r
+  read -r -p "[YN] :: Uninstall node! Are you sure? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
     # stop service
-    echo "[!!] Stopping service.."
+    echo "[!!] :: Stopping service.."
     sudo service freedomcoind stop &>/dev/null
 
     # disable service
-    echo "[!!] Disabling service.."
+    echo "[!!] :: Disabling service.."
     sudo systemctl disable freedomcoind &>/dev/null
     # reload units
     sudo systemctl daemon-reload
@@ -32,14 +32,14 @@ if [[ -n "$HOME_DIR" && -n "$USER_NAME" ]] &>/dev/null; then
     # if found
     if [[ -f "$HOME_DIR"/.trumpcoin/wallet.dat ]] &>/dev/null; then
       # backup wallet keys
-      echo "[!!] Backup keys.."
+      echo "[!!] :: Backup keys.."
       cp "$HOME_DIR"/.trumpcoin/wallet.dat "$HOME_DIR" 2>/dev/null
     fi
 
     # if found
     if [[ -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
       # remove install dir, dash, tmp files
-      echo "[!!] Removing old install.."
+      echo "[!!] :: Removing old install.."
       sudo rm /etc/systemd/system/freedomcoind.service &>/dev/null
     fi
 
@@ -66,8 +66,8 @@ if [[ -n "$HOME_DIR" && -n "$USER_NAME" ]] &>/dev/null; then
     sudo rm -r /tmp/*.tmp &>/dev/null
     sudo rm -r /tmp/quotes &>/dev/null
 
-    printf '%b' "[\e[92mOK\033[0m] Done.\n"
-    printf '%b' "[\e[92mOK\033[0m] Keys backup -> \e[90m$(ls -l "$HOME_DIR"/wallet.dat)\033[0m\n"
+    printf '%b' "[\e[92mOK\033[0m] :: Done.\n"
+    printf '%b' "[\e[92mOK\033[0m] :: Keys backup -> \e[90m$(ls -l "$HOME_DIR"/wallet.dat)\033[0m\n"
   fi
 fi
 
