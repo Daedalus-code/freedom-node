@@ -17,7 +17,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 # if no daemon found, if no client found
 if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] :: Daemon/Client not found!\n"
+  printf '%b' "[${Y1}!!${N0}] :: Daemon/Client not found!\n"
 
   # linux
   LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
