@@ -33,7 +33,7 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" ]] &>/dev/null; then
   # listunspent
   /usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >/tmp/listunspent.tmp 2>/dev/null
   # getnodeaddresses
-  /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers
+  /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers 2>/dev/null
   # version
   if [[ ! -f /tmp/version.tmp || ! -s /tmp/version.tmp ]] &>/dev/null; then
     /usr/local/bin/./freedomcoin-cli -version 2>/dev/null | grep -v "Error" >/tmp/version.tmp 2>/dev/null
