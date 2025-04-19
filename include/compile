@@ -42,21 +42,22 @@ printf '%b' "[${G1}OK${N0}] :: Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES
 
 ################################################################################
 
-# install dependencies
-printf '%b' "[${G1}OK${N0}] :: Please wait. Installing dependencies...\n"
+# if missing
 if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
+  # install dependencies
+  printf '%b' "[${G1}OK${N0}] :: Please wait. Installing dependencies...\n"
   echo "updated $(date | xargs)" >/tmp/upd.tmp
   sudo apt-get update
   sudo apt upgrade -y
+  sudo apt install -y \
+    build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
+    git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
+    libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
+    protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
+  sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
+    libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
+  sudo apt-get autoremove -y
 fi
-sudo apt install -y \
-  build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
-  git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
-  libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
-  protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
-sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
-  libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
-sudo apt-get autoremove -y
 
 ################################################################################
 
