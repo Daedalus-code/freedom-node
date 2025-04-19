@@ -145,12 +145,6 @@ export BDB_PREFIX="$HOME_DIR/db4"
 
 ################################################################################
 
-# prevent chiabls/relic code from being compiled
-rm -rf "$HOME_DIR/FreedomCoin-Core/src/chiabls"
-rm -rf "$HOME_DIR/FreedomCoin-Core/contrib/relic"
-
-################################################################################
-
 # build only CLI/daemon
 make -C src freedomcoind freedomcoin-cli -j"$CPU_CORES"
 
