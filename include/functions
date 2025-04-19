@@ -711,11 +711,17 @@ $IP_ADDRESS_ARP" >/etc/freedom-node/addnode
 
   # fetch random address to add, duplicates removed
   IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
+  # onetry age (seconds)
+  IP_ONETRY_AGE="$(($(date +%s) - $(stat -c '%Y' /tmp/KEK.tmp 2>/dev/null || echo 0)))"
 
-  # if any numbers
-  if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" -eq "1" ]] &>/dev/null; then
-    # add node
-    /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADDNODE" onetry 2>/dev/null | grep -v "Error"
+  # if missing, if older than n
+  if [[ ! -f /tmp/onetry || "$IP_ONETRY_AGE" -gt "60" ]] &>/dev/null; then
+    # if any numbers
+    if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" -eq "1" ]] &>/dev/null; then
+      # add node
+      /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADDNODE" onetry 2>/dev/null | grep -v "Error"
+      echo "addnode $IP_ADDRESS_ADDNODE onetry" >/tmp/onetry
+    fi
   fi
 fi
 
