@@ -650,6 +650,13 @@ if [[ "$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 
 fi
 
 ################################################################################
+# nodes list
+################################################################################
+
+# getnodeaddresses
+/usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/nodes
+
+################################################################################
 # peers list
 ################################################################################
 
@@ -689,6 +696,8 @@ if [[ -f /etc/freedom-node/peers && -f /etc/freedom-node/arp && -f "$HOME_DIR"/.
     # disregard already connected peers, create add list
     echo "$(echo "$IP_ADDRESS_ARP" | grep -v "$IP_ADDRESS_PEERS")" >/etc/freedom-node/add
   fi
+  # mix nodes and peers
+  cat /etc/freedom-node/nodes >>/etc/freedom-node/add 2>/dev/null
   # fetch random address to add, duplicates removed
   IP_ADDRESS_ADD="$(cat /etc/freedom-node/add 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
   # if any numbers
