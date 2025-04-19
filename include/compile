@@ -66,14 +66,6 @@ START="$SECONDS"
 
 ################################################################################
 
-# build and install Berkeley DB
-printf '%b' "[${GR}!!${N0}] :: Downloading Berkeley DB..\n"
-cd || exit
-wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
-bash install_db4.sh "$HOME_DIR"
-
-################################################################################
-
 # clone FreedomCoin-Core if missing
 if [[ ! -d "$HOME_DIR/FreedomCoin-Core" ]] &>/dev/null; then
   cd "$HOME_DIR" || exit
@@ -123,6 +115,14 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   sed -i 's/^typedef struct blake2b_state {/typedef struct __attribute__((aligned(64))) blake2b_state {/' "$HOME_DIR"/contrib/relic/src/md/blake2.h
   sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/contrib/catch/catch.hpp"
 fi
+
+################################################################################
+
+# build and install Berkeley DB
+printf '%b' "[${GR}!!${N0}] :: Downloading Berkeley DB..\n"
+cd || exit
+wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
+bash install_db4.sh "$HOME_DIR"
 
 ################################################################################
 
