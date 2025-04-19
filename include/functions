@@ -697,6 +697,9 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   echo "$IP_ADDRESS_NODES
 $IP_ADDRESS_ARP" >/etc/freedom-node/addnode
 
+  # fetch random address to add, duplicates removed
+  IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
+
   # if any data
   if [[ "$(echo "$IP_ADDRESS_FAILED" | egrep -c "[0-9]+|[a-z]+")" -gt "0" ]] &>/dev/null; then
     # disregard already connected peers, disregard failed peers, create add list
@@ -706,8 +709,6 @@ $IP_ADDRESS_ARP" >/etc/freedom-node/addnode
     echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_CONNECTED")" >/etc/freedom-node/addnode
   fi
 
-  # fetch random address to add, duplicates removed
-  IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
   # if any numbers
   if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" -eq "1" ]] &>/dev/null; then
     # add node
