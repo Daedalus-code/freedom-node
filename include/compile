@@ -119,6 +119,7 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   # add alignment attributes to the struct definitions
   sed -i 's/^typedef struct blake2s_state {/typedef struct __attribute__((aligned(32))) blake2s_state {/' "$HOME_DIR"/contrib/relic/src/md/blake2.h
   sed -i 's/^typedef struct blake2b_state {/typedef struct __attribute__((aligned(64))) blake2b_state {/' "$HOME_DIR"/contrib/relic/src/md/blake2.h
+  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/contrib/catch/catch.hpp"
 fi
 
 ################################################################################
