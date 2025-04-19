@@ -42,9 +42,8 @@ printf '%b' "[${G1}OK${N0}] :: Please wait. Installing dependencies...\n"
 if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
   echo "updated $(date | xargs)" >/tmp/upd.tmp
   sudo apt-get update
+  sudo apt upgrade -y
 fi
-sudo apt update
-sudo apt upgrade -y
 sudo apt install -y \
   build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
   git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
