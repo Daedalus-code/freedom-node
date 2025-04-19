@@ -31,7 +31,7 @@ if [[ -z "$CPU_FOUND" ]] &>/dev/null; then
   CPU_FOUND="$(lscpu | grep "Model name" | awk -F: '{ print $2 }' | xargs)"
 fi
 
-MHZ_FOUND="$(echo "$(lscpu | grep "MHz" | awk -F: '{ print $2 }' | grep -v "%" | head -1 | awk '{ print $1 }')/1000" | bc 2>/dev/null) GHz"
+MHZ_FOUND="$(echo "$(lscpu | grep "MHz" | awk -F: '{ print $2 }' | grep -v "%" | head -1 | awk '{ print $1 }')/1000" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }') GHz"
 
 # if zero
 if [[ -z "$MHZ_FOUND" ]] &>/dev/null; then
