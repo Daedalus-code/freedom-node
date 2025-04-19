@@ -102,13 +102,16 @@ cd "$HOME_DIR/FreedomCoin-Core" || exit
 export CFLAGS="-O2 -mno-strict-align"
 export CXXFLAGS="$CFLAGS"
 
-./autogen.sh
+# run autogen to generate configure if not present
+if [[ ! -f "./configure" ]]; then
+  ./autogen.sh || {
+    printf '%b' "[${R1}!!${N0}] :: autogen.sh failed. Exiting.\n"
+    exit 1
+  }
+fi
 
-################################################################################
 # configure with minimal flags
-################################################################################
-
-printf '%b' "[${GR}!!${N0}] :: Configure with Berkeley DB (minimal build)..\n"
+printf '%b' "[${GR}!!${N0}] :: Configuring FreedomCoin-Core...\n"
 export BDB_PREFIX="$HOME_DIR/db4"
 ./configure --prefix=$PWD/depends/$HOST \
   --enable-glibc-back-compat \
