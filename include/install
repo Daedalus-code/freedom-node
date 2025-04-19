@@ -90,6 +90,19 @@ fi
 sudo chown -R "$USER_NAME":"$USER_NAME" "$HOME_DIR"/.trumpcoin/ 2>/dev/null
 
 ################################################################################
+# old wallet keys
+################################################################################
+
+# if found
+if [[ -f "$HOME_DIR"/wallet.dat ]] &>/dev/null; then
+  printf '%b' "[${N0}!!${N0}] :: Restoring old wallet keys..\n"
+  # restore keys
+  cp "$HOME_DIR"/wallet.dat "$HOME_DIR"/.trumpcoin
+  # backup keys
+  mv "$HOME_DIR"/wallet.dat "$HOME_DIR"/wallet.dat.bkp
+fi
+
+################################################################################
 # install files & create executable
 ################################################################################
 
