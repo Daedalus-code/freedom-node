@@ -31,6 +31,13 @@ if [[ -z "$CPU_FOUND" ]] &>/dev/null; then
   CPU_FOUND="$(lscpu | grep "Model name" | awk -F: '{ print $2 }' | xargs)"
 fi
 
+MHZ_FOUND="$(echo "$(lscpu | grep "MHz" | awk -F: '{ print $2 }')/1000" | bc 2>/dev/null) GHz"
+
+# if zero
+if [[ -z "$MHZ_FOUND" ]] &>/dev/null; then
+  MHZ_FOUND=""
+fi
+
 ################################################################################
 # system info
 ################################################################################
@@ -88,7 +95,7 @@ fi
 
 # if found
 if [[ -n "$CPU_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: $CPU_FOUND $COR_FOUND Core(s)\n"
+  printf '%b' "[${G1}OK${N0}] :: $CPU_FOUND $COR_FOUND Core(s) $MHZ_FOUND\n"
 else
   printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
