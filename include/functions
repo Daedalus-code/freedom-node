@@ -97,7 +97,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
     PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
 
     # if 100.000%
-    if [[ "$PERCENT" == "100.000" ]] &>/dev/null; then
+    if [[ "$PERCENT" == "100.0000" ]] &>/dev/null; then
       PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
     fi
 
