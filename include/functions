@@ -672,6 +672,12 @@ if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
 fi
 
 ################################################################################
+# failed peers list
+################################################################################
+
+grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk -F15110 '{ print $1 }' | awk '{ print $NF }' | tr -d ':' | awk '!a[$0]++' >/etc/freedom-node/failed.peers
+
+################################################################################
 # addnode onetry
 ################################################################################
 
@@ -685,7 +691,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # ip address arp
   IP_ADDRESS_ARP="$(cat /etc/freedom-node/arp.peers 2>/dev/null)"
   # ip address failed
-  IP_ADDRESS_FAILED="$(grep "(111)" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' | awk -F: '{ print $1 }' | awk '!a[$0]++')"
+  IP_ADDRESS_FAILED="$(cat /etc/freedom-node/failed.peers 2>/dev/null)"
 
   # combine nodes and arp peers list
   echo "$IP_ADDRESS_NODES
