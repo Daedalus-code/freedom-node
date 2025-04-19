@@ -655,6 +655,7 @@ fi
 
 # getnodeaddresses
 /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/nodes
+echo "$(sort /etc/freedom-node/nodes 2>/dev/null | awk '!a[$0]++')" >/etc/freedom-node/nodes 2>/dev/null
 
 ################################################################################
 # peers list
