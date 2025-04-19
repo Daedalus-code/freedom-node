@@ -29,20 +29,10 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     # bootstrap file
     OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
     cd || exit
-    # start the download and process progress
-    wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
-      # capture the progress line with percentage, speed, and eta
-      grep --line-buffered "[0-9]% " |
-      while read -r LINE; do
-        # extract the percentage, speed, size and eta using regex
-        PERCENT=$(echo "$LINE" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
-        SPEED=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-        SIZE=$(echo "$LINE" | awk '{ print $1 }')
-        ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
-        # output progress to dialog (display the progress bar)
-        echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nSize...: ${SIZE}\nETA....: $ETA" 11 65
-        sleep 3
-      done
+    ############################################################################
+    # start/continue the download
+    wget -c --progress=dot:mega "$BOOTSTRAP_URL"
+    ############################################################################
     RESULT=$?
     # if any result
     if [ ! $RESULT -eq "0" ] &>/dev/null; then
