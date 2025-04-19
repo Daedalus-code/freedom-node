@@ -676,7 +676,7 @@ fi
 ################################################################################
 
 # if found
-if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers && -f /etc/freedom-node/arp.peers && -f "$HOME_DIR"/.trumpcoin.debug ]] &>/dev/null; then
+if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers && -f /etc/freedom-node/arp.peers && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
 
   # ip address node
   IP_ADDRESS_NODES="$(cat /etc/freedom-node/node.peers 2>/dev/null)"
