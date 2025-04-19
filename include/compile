@@ -150,34 +150,44 @@ make -C src freedomcoind freedomcoin-cli -j"$CPU_CORES"
 
 ################################################################################
 
-# strip binaries to save space
-printf '%b' "[${GR}!!${N0}] :: Strip daemon and client..\n"
-strip src/freedomcoind src/freedomcoin-cli || true
-
-################################################################################
-
-# copy binaries to home
-printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
-cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR" &>/dev/null
-cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli "$HOME_DIR" &>/dev/null
-
-################################################################################
-
-# optional: install to /usr/local/bin
-if [[ -f "$HOME_DIR/freedomcoind" && -f "$HOME_DIR/freedomcoin-cli" ]]; then
-  printf '%b' "[${G1}OK${N0}] :: Moving to /usr/local/bin..\n"
-  sudo cp "$HOME_DIR"/freedomcoind /usr/local/bin/
-  sudo cp "$HOME_DIR"/freedomcoin-cli /usr/local/bin/
+# if found
+if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
+  # strip binaries to save space
+  printf '%b' "[${GR}!!${N0}] :: Strip daemon and client..\n"
+  strip "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli || true
 fi
 
 ################################################################################
 
-# calculate build time
-DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
-TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+# if found
+if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
+  # copy binaries to home
+  printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
+  cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR" &>/dev/null
+  cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli "$HOME_DIR" &>/dev/null
+fi
 
-echo
-printf '%b' "[${G1}OK${N0}] :: Build time: ${G1}$TIMER${N0}\n"
+################################################################################
+
+# optional: install to /usr/local/bin
+if [[ -f "$HOME_DIR/freedomcoind" && -f "$HOME_DIR/freedomcoin-cli" ]] &>/dev/null; then
+
+  printf '%b' "[${G1}OK${N0}] :: Moving to /usr/local/bin..\n"
+  sudo cp "$HOME_DIR"/freedomcoind /usr/local/bin/
+  sudo cp "$HOME_DIR"/freedomcoin-cli /usr/local/bin/
+
+  ##############################################################################
+
+  # calculate build time
+  DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
+  TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+  echo
+  printf '%b' "[${G1}OK${N0}] :: Build time: ${G1}$TIMER${N0}\n"
+else
+  echo "[??] Build did not finish.."
+fi
+
 echo
 read -r -p "[Ok] :: Press Enter to continue" </dev/tty
 echo
