@@ -170,7 +170,7 @@ fi
 # if found
 if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
   # copy binaries to home
-  printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
+  printf '%b' "[${G1}OK${N0}] :: Moving to $HOME_DIR..\n"
   cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR" &>/dev/null
   cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli "$HOME_DIR" &>/dev/null
 fi
@@ -179,8 +179,7 @@ fi
 
 # optional: install to /usr/local/bin
 if [[ -f "$HOME_DIR/freedomcoind" && -f "$HOME_DIR/freedomcoin-cli" ]] &>/dev/null; then
-
-  printf '%b' "[${G1}OK${N0}] :: Moving to /usr/local/bin..\n"
+  printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
   sudo cp "$HOME_DIR"/freedomcoind /usr/local/bin/
   sudo cp "$HOME_DIR"/freedomcoin-cli /usr/local/bin/
 
