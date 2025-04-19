@@ -707,10 +707,10 @@ $IP_ADDRESS_ARP" >/etc/freedom-node/addnode
 
   # if any data
   if [[ "$(echo "$IP_ADDRESS_FAILED" | egrep -c "[0-9]+|[a-z]+")" -gt "0" ]] &>/dev/null; then
-    # disregard already connected peers, disregard failed peers, create add list
+    # disregard already connected peers, disregard failed peers, create addnode
     echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_CONNECTED" | grep -v "$IP_ADDRESS_FAILED")" >/etc/freedom-node/addnode
   else
-    # disregard already connected peers, create add list
+    # disregard already connected peers, create addnode
     echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_CONNECTED")" >/etc/freedom-node/addnode
   fi
 
@@ -723,7 +723,7 @@ $IP_ADDRESS_ARP" >/etc/freedom-node/addnode
   if [[ ! -f /tmp/onetry.tmp || "$IP_ONETRY_AGE" -gt "180" ]] &>/dev/null; then
     # if any numbers
     if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" -eq "1" ]] &>/dev/null; then
-      # add node
+      # addnode onetry
       /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADDNODE" onetry 2>/dev/null | grep -v "Error" &
       echo "addnode $IP_ADDRESS_ADDNODE onetry" >/tmp/onetry.tmp
     fi
