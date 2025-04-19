@@ -19,7 +19,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
   # if enough space
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -gt "7" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] :: Downloading bootstrap.zip!\n"
+    printf '%b' "[${G1}OK${N0}] :: Downloading bootstrap.zip - ${CY}https://freedomcoin.global/wallets/bootstrap.zip${N0}\n"
 
     # if zero
     if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
