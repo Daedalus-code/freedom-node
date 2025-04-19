@@ -682,7 +682,9 @@ fi
 ################################################################################
 
 # if found
-if [[ -f /etc/freedom-node/peers && -f /etc/freedom-node/arp && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
+if [[ -f /etc/freedom-node/nodes && -f /etc/freedom-node/peers && -f /etc/freedom-node/arp && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
+  # mix nodes and arp
+  cat /etc/freedom-node/nodes >>/etc/freedom-node/arp 2>/dev/null
   # ip address peers
   IP_ADDRESS_PEERS="$(cat /etc/freedom-node/peers 2>/dev/null)"
   # ip address addnodes
@@ -697,8 +699,6 @@ if [[ -f /etc/freedom-node/peers && -f /etc/freedom-node/arp && -f "$HOME_DIR"/.
     # disregard already connected peers, create add list
     echo "$(echo "$IP_ADDRESS_ARP" | grep -v "$IP_ADDRESS_PEERS")" >/etc/freedom-node/add
   fi
-  # mix nodes and peers
-  cat /etc/freedom-node/nodes >>/etc/freedom-node/add 2>/dev/null
   # fetch random address to add, duplicates removed
   IP_ADDRESS_ADD="$(cat /etc/freedom-node/add 2>/dev/null | awk '!a[$0]++' | sort -R | tail -1)"
   # if any numbers
