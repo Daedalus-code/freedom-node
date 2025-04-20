@@ -175,7 +175,7 @@ else
   ##############################################################################
 
   # if missing
-  if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" || ! -f "$HOME_DIR"/.trumpcoin/trumpcoin.conf ]] &>/dev/null; then
     printf '%b' "[${N0}!!${N0}] :: Setup rpcuser and rpcpassword..\n"
     # add random rpc credentials
     echo "
