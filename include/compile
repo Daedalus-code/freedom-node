@@ -187,21 +187,27 @@ if [[ -f "$HOME_DIR/freedomcoind" && -f "$HOME_DIR/freedomcoin-cli" ]] &>/dev/nu
   printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
   sudo cp "$HOME_DIR"/freedomcoind /usr/local/bin/
   sudo cp "$HOME_DIR"/freedomcoin-cli /usr/local/bin/
-
-  ##############################################################################
-
-  # calculate build time
-  DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
-  TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
-
-  echo
-  printf '%b' "[${G1}OK${N0}] :: Build time: ${G1}$TIMER${N0}\n"
 else
   echo "[??] Build did not finish.."
+  EXIT_THIS="1"
 fi
+
+################################################################################
+
+# calculate build time
+DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
+TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+echo
+printf '%b' "[${G1}OK${N0}] :: Build time: ${G1}$TIMER${N0}\n"
 
 echo
 read -r -p "[Ok] :: Press Enter to continue" </dev/tty
 echo
+
+# if exit
+if [[ "$EXIT_THIS" == "1" ]] &>/dev/null; then
+  exit
+fi
 
 # END
