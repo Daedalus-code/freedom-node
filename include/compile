@@ -111,10 +111,10 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/catch/catch.hpp"
   # add missing include <memory> to chiabls/src/threshold.cpp
   sed -i '1s/^/#include <memory>\n/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
-  # add alignment attributes to the struct definitions 32
-  sed -i 's/^typedef struct blake2s_state {/typedef struct __attribute__((aligned(32))) blake2s_state {/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-  # add alignment attributes to the struct definitions 64
-  sed -i 's/^typedef struct blake2b_state {/typedef struct __attribute__((aligned(64))) blake2b_state {/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  # add patch __blake2s_state
+  sed -i 's/ALIGNME( 64 ) typedef struct __blake2s_state/typedef struct __attribute__((aligned(32))) __blake2s_state/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  # add patch __blake2b_state
+  sed -i 's/ALIGNME( 64 ) typedef struct __blake2b_state/typedef struct __attribute__((aligned(64))) __blake2b_state/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
 fi
 
 ################################################################################
