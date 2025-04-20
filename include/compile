@@ -63,7 +63,7 @@ else
   exit 1
 fi
 
-printf '%b' "[${G1}OK${N0}] :: Detected $CPU_ARCH with $CPU_CORES cores. Using target: $HOST\n"
+printf '%b' "[${G1}OK${N0}] :: Detected ${CY}$CPU_ARCH${N0} with ${P1}$CPU_CORES${N0} cores. Using target: ${CY}$HOST${N0}\n"
 
 ################################################################################
 # install dependencies as per FreedomCoin guidelines
