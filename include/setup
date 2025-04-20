@@ -103,29 +103,6 @@ else
 fi
 
 ################################################################################
-# memory
-################################################################################
-
-# if found
-if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: $MEM_FOUND\n"
-  # if not enough memory
-  if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "4000" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] :: Not enough memory!\n" && sleep 1
-    printf '%b' "[${GR}!!${N0}] :: Creating 3G Swap..\n"
-    # create 3G swap ###########################################################
-    sudo swapoff /swapfile
-    sudo fallocate -l 3G /swapfile
-    sudo chmod 600 /swapfile
-    printf '%b' "[${GR}!!${N0}] :: $(sudo mkswap /swapfile).\n"
-    sudo swapon /swapfile
-    ############################################################################
-  fi
-else
-  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
-fi
-
-################################################################################
 # hard drive
 ################################################################################
 
