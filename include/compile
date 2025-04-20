@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ################################################################################
 
 source /etc/freedom-node/include/color
@@ -8,47 +10,45 @@ source /etc/freedom-node/include/color
 START="$SECONDS"
 
 ################################################################################
-# memory
+# memory Check
 ################################################################################
 
 MEM_FOUND="$(cat /tmp/mem.tmp 2>/dev/null)"
 
-# if found
 if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] :: $MEM_FOUND\n"
-  # if not enough memory
+  # check if enough memory
   if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "4000" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] :: Not enough memory!\n" && sleep 1
     printf '%b' "[${GR}!!${N0}] :: Creating 3G Swap..\n"
-    # create 3G swap ###########################################################
     sudo swapoff /swapfile &>/dev/null
     sudo fallocate -l 3G /swapfile
     sudo chmod 600 /swapfile
     printf '%b' "[${GR}!!${N0}] :: $(sudo mkswap /swapfile).\n"
     sudo swapon /swapfile
-    ############################################################################
   fi
 else
   printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
 fi
 
 ################################################################################
+# home directory and user setup
+################################################################################
 
-# home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
-# user
 USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
+# cpu architecture and cores
+################################################################################
 
-# CPU architecture
 CPU_ARCH="$(uname -m)"
-# CPU cores
 CPU_CORES="$(nproc)"
 
 ################################################################################
+# set Host and toolchain packages based on cpu architecture
+################################################################################
 
-# decide HOST based on CPU_ARCH
 if [[ "$CPU_ARCH" == "aarch64" ]]; then
   HOST="aarch64-linux-gnu"
   TOOLCHAIN_PKGS="gcc-aarch64-linux-gnu g++-aarch64-linux-gnu"
@@ -56,43 +56,46 @@ elif [[ "$CPU_ARCH" == "armv7l" ]]; then
   HOST="arm-linux-gnueabihf"
   TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
 elif [[ "$CPU_ARCH" == "x86_64" ]]; then
-  HOST="arm-linux-gnueabihf"
-  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
+  HOST="x86_64-linux-gnu"
+  TOOLCHAIN_PKGS="gcc g++"
 else
   printf '%b' "[${R1}!!${N0}] :: Unsupported architecture. Exiting.\n"
   exit 1
 fi
 
-printf '%b' "[${G1}OK${N0}] :: Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
+printf '%b' "[${G1}OK${N0}] :: Detected $CPU_ARCH with $CPU_CORES cores. Using target: $HOST\n"
 
 ################################################################################
+# install dependencies as per FreedomCoin guidelines
+################################################################################
 
-# if missing
+sudo apt-get install -y \
+  build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
+  git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
+  libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
+  protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev \
+  $TOOLCHAIN_PKGS g++ libsodium-dev libgmp-dev libboost-all-dev
+
 if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
-  # install dependencies
-  printf '%b' "[${G1}OK${N0}] :: Please wait. Installing dependencies...\n"
+  printf '%b' "[${G1}OK${N0}] :: Installing dependencies...\n"
   echo "updated $(date | xargs)" >/tmp/upd.tmp
   sudo apt-get update
-  sudo apt upgrade -y
-  sudo apt install -y \
-    build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
-    git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
-    libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
-    protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
-  sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
-    libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
-  sudo apt-get autoremove -y
+  sudo apt-get upgrade -y
 fi
 
+sudo apt-get autoremove -y
+
+################################################################################
+# rust and cargo installation
 ################################################################################
 
-# rust and cargo
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source "$HOME_DIR"/.cargo/env
+source "$HOME_DIR/.cargo/env"
 
 ################################################################################
+# clone FreedomCoin Core if missing
+################################################################################
 
-# clone FreedomCoin-Core if missing
 if [[ ! -d "$HOME_DIR/FreedomCoin-Core" ]] &>/dev/null; then
   cd "$HOME_DIR" || exit
   git clone "https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
@@ -102,66 +105,20 @@ fi
 sudo chown -R "${USER_NAME:?}":"${USER_NAME:?}" "$HOME_DIR/FreedomCoin-Core/"
 
 ################################################################################
-
 # build dependencies without Qt
+################################################################################
+
 cd "$HOME_DIR/FreedomCoin-Core/depends" || exit
 make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
 
 ################################################################################
+# configure the build using the recommended flags
+################################################################################
 
-# build wallet without wallet and GUI
 cd "$HOME_DIR/FreedomCoin-Core" || exit
-
-export CFLAGS="-O2 -mno-strict-align"
-export CXXFLAGS="$CFLAGS"
-
-# run autogen to generate configure if not present
-if [[ ! -f "./configure" ]]; then
-  ./autogen.sh || {
-    printf '%b' "[${R1}!!${N0}] :: autogen.sh failed. Exiting.\n"
-    exit 1
-  }
-fi
-
-################################################################################
-# patches
-################################################################################
-
-# if aarch64
-if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
-  printf '%b' "[${GR}!!${N0}] :: Applying aarch64-specific source patches..\n"
-  # add missing <deque> include
-  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME_DIR/FreedomCoin-Core/src/httpserver.cpp"
-  # add non-constexpr sysconf() usage in Catch2 test framework
-  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/catch/catch.hpp"
-  # add missing include <memory> to chiabls/src/threshold.cpp
-  sed -i '1s/^/#include <memory>\n/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
-  # add patch __blake2s_state
-  sed -i 's/ALIGNME( 64 ) typedef struct __blake2s_state/typedef struct __attribute__((aligned(32))) __blake2s_state/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-  # add patch __blake2b_state
-  sed -i 's/ALIGNME( 64 ) typedef struct __blake2b_state/typedef struct __attribute__((aligned(64))) __blake2b_state/' "$HOME_DIR/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-fi
-
-################################################################################
-
-# if missing
-if [[ ! -f "$HOME_DIR"/install_db4.sh ]] &>/dev/null; then
-  # build and install Berkeley DB
-  printf '%b' "[${GR}!!${N0}] :: Downloading Berkeley DB..\n"
-  cd || exit
-  wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
-fi
-
-# if missing
-if [[ ! -f "$HOME_DIR"/db4/db-4.8.30.NC/txn/txn_util.c ]] &>/dev/null; then
-  bash install_db4.sh "$HOME_DIR"
-fi
-
-################################################################################
-
-# configure with minimal flags
-printf '%b' "[${GR}!!${N0}] :: Configuring FreedomCoin-Core...\n"
 export BDB_PREFIX="$HOME_DIR/db4"
+
+# use configure script from the official guide
 ./configure --prefix=$PWD/depends/$HOST \
   --enable-glibc-back-compat \
   --enable-reduce-exports \
@@ -171,36 +128,38 @@ export BDB_PREFIX="$HOME_DIR/db4"
   --without-miniupnpc \
   --without-qt \
   --without-zmq \
-  LDFLAGS="-static -static-libstdc++ -static-libgcc -L${BDB_PREFIX}/lib" \
+  LDFLAGS="-L${BDB_PREFIX}/lib" \
   CPPFLAGS="-I${BDB_PREFIX}/include"
 
 ################################################################################
+# build FreedomCoin binaries (daemon and client)
+################################################################################
 
-# build only CLI/daemon
 make -C src freedomcoind freedomcoin-cli -j"$CPU_CORES"
 
 ################################################################################
+# strip binaries to save space
+################################################################################
 
-# if found
 if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
-  # strip binaries to save space
-  printf '%b' "[${GR}!!${N0}] :: Strip daemon and client..\n"
+  printf '%b' "[${GR}!!${N0}] :: Stripping daemon and client..\n"
   strip "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli || true
 fi
 
 ################################################################################
+# move binaries to home directory
+################################################################################
 
-# if found
 if [[ -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind && -f "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
-  # copy binaries to home
-  printf '%b' "[${G1}OK${N0}] :: Moving to $HOME_DIR..\n"
+  printf '%b' "[${G1}OK${N0}] :: Moving binaries to $HOME_DIR..\n"
   cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoind "$HOME_DIR" &>/dev/null
   cp "$HOME_DIR"/FreedomCoin-Core/src/freedomcoin-cli "$HOME_DIR" &>/dev/null
 fi
 
 ################################################################################
+# install to /usr/local/bin (optional)
+################################################################################
 
-# optional: install to /usr/local/bin
 if [[ -f "$HOME_DIR/freedomcoind" && -f "$HOME_DIR/freedomcoin-cli" ]] &>/dev/null; then
   printf '%b' "[${GR}!!${N0}] :: Installing daemon and client..\n"
   sudo cp "$HOME_DIR"/freedomcoind /usr/local/bin/
@@ -211,8 +170,9 @@ else
 fi
 
 ################################################################################
+# calculate and display build time
+################################################################################
 
-# calculate build time
 DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
 TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
 
@@ -223,7 +183,7 @@ echo
 read -r -p "[Ok] :: Press Enter to continue" </dev/tty
 echo
 
-# if exit
+# If exit
 if [[ "$EXIT_THIS" == "1" ]] &>/dev/null; then
   exit
 fi
