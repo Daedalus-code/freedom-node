@@ -108,8 +108,14 @@ sudo chown -R "${USER_NAME:?}":"${USER_NAME:?}" "$HOME_DIR/FreedomCoin-Core/"
 # build dependencies without Qt
 ################################################################################
 
+# of more than 1 core
+if [[ "$CPU_CORES" -gt "1" ]] &>/dev/null; then
+  # disregard 1 core
+  CPU_CORES_MAKE="$(echo "${CPU_CORES}-1" | bc 2>/dev/null)"
+fi
+
 cd "$HOME_DIR/FreedomCoin-Core/depends" || exit
-make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
+make HOST=$HOST NO_QT=1 -j"$CPU_CORES_MAKE"
 
 ################################################################################
 # configure the build using the recommended flags
@@ -135,7 +141,13 @@ export BDB_PREFIX="$HOME_DIR/db4"
 # build FreedomCoin binaries (daemon and client)
 ################################################################################
 
-make -C src freedomcoind freedomcoin-cli -j"$CPU_CORES"
+# of more than 1 core
+if [[ "$CPU_CORES" -gt "1" ]] &>/dev/null; then
+  # disregard 1 core
+  CPU_CORES_MAKE="$(echo "${CPU_CORES}-1" | bc 2>/dev/null)"
+fi
+
+make -C src freedomcoind freedomcoin-cli -j"$CPU_CORES_MAKE"
 
 ################################################################################
 # strip binaries to save space
