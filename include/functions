@@ -690,10 +690,10 @@ grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' 
 if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers && -f /etc/freedom-node/arp.peers && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
 
   # sort lists
-  echo "$(cat /etc/freedom-node/node.peers 2>/dev/null | sort)" >/etc/freedom-node/node.peers
-  echo "$(cat /etc/freedom-node/connected.peers 2>/dev/null | sort)" >/etc/freedom-node/connected.peers
-  echo "$(cat /etc/freedom-node/arp.peers 2>/dev/null | sort)" >/etc/freedom-node/arp.peers
-  echo "$(cat /etc/freedom-node/failed.peers 2>/dev/null | sort)" >/etc/freedom-node/failed.peers
+  echo "$(cat /etc/freedom-node/node.peers 2>/dev/null | sort | awk '!a[$0]++')" >/etc/freedom-node/node.peers
+  echo "$(cat /etc/freedom-node/connected.peers 2>/dev/null | sort | awk '!a[$0]++')" >/etc/freedom-node/connected.peers
+  echo "$(cat /etc/freedom-node/arp.peers 2>/dev/null | sort | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
+  echo "$(cat /etc/freedom-node/failed.peers 2>/dev/null | sort | awk '!a[$0]++')" >/etc/freedom-node/failed.peers
 
   # ip address node
   IP_ADDRESS_NODES="$(cat /etc/freedom-node/node.peers 2>/dev/null)"
@@ -706,7 +706,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
 
   # combine nodes and arp peers list, disregard duplicates
   echo "$IP_ADDRESS_NODES
-$IP_ADDRESS_ARP" | awk '!a[$0]++' >/etc/freedom-node/addnode
+$IP_ADDRESS_ARP" | awk '!a[$0]++' | sort >/etc/freedom-node/addnode
 
   # fetch address to add, disregard duplicates
   IP_ADDRESS_ADDNODE="$(cat /etc/freedom-node/addnode 2>/dev/null)"
