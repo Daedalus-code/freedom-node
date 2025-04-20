@@ -51,6 +51,8 @@ HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
 HDD_TOTAL="$(echo "$HDD_FOUND" | awk '{ print $2 }')"
 HDD_FREE="$(echo "$HDD_FOUND" | awk '{ print $4 }')"
 
+echo "$MEM_FOUND" >/tmp/mem.tmp
+
 ################################################################################
 # bogomips
 ################################################################################

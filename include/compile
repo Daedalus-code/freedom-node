@@ -11,6 +11,8 @@ START="$SECONDS"
 # memory
 ################################################################################
 
+MEM_FOUND="$(cat /tmp/mem.tmp 2>/dev/null) MB"
+
 # if found
 if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] :: $MEM_FOUND\n"
