@@ -674,7 +674,7 @@ if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
   # create arp list
   cd /tmp || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
   # fetch ip address, disregard duplicates
-  echo "$(awk '{ print $1 }' /etc/freedom-node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
+  echo "$(awk NF /etc/freedom-node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
   cd || exit
 fi
 
