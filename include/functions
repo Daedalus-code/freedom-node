@@ -711,7 +711,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
 
   # combine nodes and arp peers list, disregard duplicates
   echo "$IP_ADDRESS_NODES
-$IP_ADDRESS_ARP" | awk '!a[$0]++' | sort >/etc/freedom-node/addnode
+$IP_ADDRESS_ARP" | awk '!a[$0]++' | sort | awk NF >/etc/freedom-node/addnode
 
   # fetch address to add, disregard duplicates
   IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null)"
