@@ -124,7 +124,7 @@ fi
 WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
 echo "$WALLET_SYNC" >/tmp/progress.tmp
 
-WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
+WALLET_SYNC="$(awk NF /tmp/progress.tmp 2>/dev/null)"
 # if synced
 if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
   WALLET_SYNC="${G1}OK${N0}"
@@ -301,7 +301,7 @@ SYSTEM_LOAD="$(awk '{ print $1,$2,$3 }' /proc/loadavg 2>/dev/null)"
 ################################################################################
 
 # read raw temp in millidegrees
-CPU_CTEMP_RAW=$(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
+CPU_CTEMP_RAW=$(awk NF /sys/devices/virtual/thermal/thermal_zone0/temp)
 # integer celsius
 CPU_CTEMP_C=$((CPU_CTEMP_RAW / 1000))
 # integer fahrenheit (using integer math)
@@ -408,12 +408,12 @@ RANDOM_PUBLIC_IP=$((((RANDOM % 2) + 1)))
 
 # onion ip address
 if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
-  PUBLIC_IP="$(cat /etc/freedom-node/hostname.onion 2>/dev/null)"
+  PUBLIC_IP="$(awk NF /etc/freedom-node/hostname.onion 2>/dev/null)"
   PUBLIC_IP="${P1}${PUBLIC_IP:0:9}...onion${N0:?}"
 fi
 # wan ip address
 if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
-  PUBLIC_IP="${CY}$(cat /tmp/wanip.tmp 2>/dev/null):15110${N0}"
+  PUBLIC_IP="${CY}$(awk NF /tmp/wanip.tmp 2>/dev/null):15110${N0}"
 fi
 # if zero
 if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
@@ -584,7 +584,7 @@ echo "$(tail -777 /tmp/quotes 2>/dev/null | awk 'length($0)<188' | awk '!a[$0]++
 # if found
 if [[ -f /tmp/quotes.banned ]] &>/dev/null; then
   # banned quotes by authors
-  echo "$(sort /tmp/quotes | grep -v "$(cat /tmp/quotes.banned)")" >/tmp/quotes
+  echo "$(sort /tmp/quotes | grep -v "$(awk NF /tmp/quotes.banned)")" >/tmp/quotes
 fi
 
 # if enough quotes
