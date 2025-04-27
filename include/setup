@@ -221,12 +221,50 @@ RestartSec=60
 
 [Install]
 WantedBy=multi-user.target" >/tmp/service.tmp
-
     # install service
     sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
     printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin service..\n"
     sudo systemctl enable freedomcoind
+  fi
+
+  ##############################################################################
+  # freedomcoin display service
+  ##############################################################################
+
+  if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
+
+    echo "[Unit]
+Description=Freedom Node Dashboard
+After=multi-user.target
+ConditionPathExists=/usr/local/bin/dash
+
+[Service]
+ExecStart=/usr/bin/agetty --autologin $USER_NAME --noclear tty1 linux
+StandardInput=tty
+StandardOutput=tty
+TTYPath=/dev/tty1
+Restart=no
+User=$USER_NAME
+
+[Install]
+WantedBy=multi-user.target" >/tmp/freedom-display.service.tmp
+    # install service
+    sudo mv /tmp/freedom-display.service.tmp /etc/systemd/system/freedom-display.service &>/dev/null
+    # enable service
+    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin display service..\n"
+    sudo systemctl enable freedom-display
+
+    if [[ "$(grep -c "/usr/local/bin/dash" "$HOME_DIR"/.bashrc 2>/dev/null)" -eq "0" ]] &>/dev/null; then
+      # update bashrc
+      echo "
+if [ -z $SSH_CONNECTION ]; then
+  /usr/local/bin/dash
+fi" >>"$HOME_DIR"/.bashrc
+      # update bashrc
+      printf '%b' "[${G1}OK${N0}] :: Updating bashrc..\n"
+    fi
+    printf '%b' "[${GR}!!${N0}] :: Please reboot..\n"
   fi
 
   ##############################################################################
