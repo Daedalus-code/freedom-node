@@ -241,9 +241,11 @@ After=multi-user.target
 ConditionPathExists=/usr/local/bin/dash
 
 [Service]
-ExecStart=/bin/bash -l -c 'source /home/freed/.bashrc && /usr/local/bin/dash'
+ExecStartPre=/usr/bin/kmscon --rotate=right --tty=/dev/tty1
+ExecStart=/bin/bash -l -c '/usr/local/bin/dash'
+StandardOutput=file:/var/log/freedom-display.log
+StandardError=file:/var/log/freedom-display.error.log
 StandardInput=tty
-StandardOutput=tty
 TTYPath=/dev/tty1
 Restart=no
 User=$USER_NAME
