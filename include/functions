@@ -588,7 +588,7 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &
 fi
 
 # if still zero
-if [[ -z "$WALLET_TXLAST" || "$WALLET_POS_REWARDS_AGE" -lt "2777" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXLAST" && -f /tmp/getbestblockhash.tmp || "$WALLET_POS_REWARDS_AGE" -lt "2777" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
