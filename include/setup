@@ -257,12 +257,12 @@ EOF
 
     # install service
     sudo mv /tmp/freedom-display.service.tmp /etc/systemd/system/freedom-display.service &>/dev/null
-    # enable service
-    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin display service..\n"
-    sudo systemctl enable freedom-display
     # reexec & reload
     sudo systemctl daemon-reexec
     sudo systemctl daemon-reload
+    # enable service
+    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin display service..\n"
+    sudo systemctl enable freedom-display
     printf '%b' "[${GR}!!${N0}] :: Please reboot..\n"
   fi
 
