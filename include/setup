@@ -229,44 +229,6 @@ WantedBy=multi-user.target" >/tmp/service.tmp
   fi
 
   ##############################################################################
-  # freedomcoin display service
-  ##############################################################################
-
-  if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
-
-    cat <<EOF >/tmp/freedom-display.service.tmp
-[Unit]
-Description=Freedom Node Dashboard
-After=multi-user.target
-ConditionPathExists=/usr/local/bin/dash
-
-[Service]
-ExecStart=/bin/bash -l -c '/usr/local/bin/dash'
-StandardOutput=file:/var/log/freedom-display.log
-StandardError=file:/var/log/freedom-display.error.log
-StandardInput=tty
-TTYPath=/dev/tty1
-Restart=no
-User=$USER_NAME
-WorkingDirectory=$HOME_DIR
-Environment=TERM=linux
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-    # install service
-    sudo mv /tmp/freedom-display.service.tmp /etc/systemd/system/freedom-display.service &>/dev/null
-    # reexec & reload
-    sudo systemctl daemon-reexec
-    sudo systemctl daemon-reload
-    # enable service
-    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin display service..\n"
-    sudo systemctl enable freedom-display
-    printf '%b' "[${GR}!!${N0}] :: Please reboot..\n"
-  fi
-
-  ##############################################################################
   # freedomcoin start
   ##############################################################################
 
