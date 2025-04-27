@@ -567,9 +567,12 @@ fi
 # wallet tx last
 ################################################################################
 
+# default
+WALLET_TXLAST="       ${GR}Loading${N0}"
+
 # if loading block index
 if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
-  WALLET_TXLAST="       ${GR}Loading${N0}"
+  WALLET_TXLAST="       ${CY}Loading${N0}"
 fi
 
 # if syncing
@@ -591,8 +594,6 @@ fi
 if [[ -z "$WALLET_TXLAST" && -f /tmp/getbestblockhash.tmp || "$WALLET_POS_REWARDS_AGE" -lt "2777" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
-else
-  WALLET_TXLAST="       ${GR}Loading${N0}"
 fi
 
 ################################################################################
