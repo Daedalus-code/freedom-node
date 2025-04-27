@@ -241,7 +241,7 @@ After=multi-user.target
 ConditionPathExists=/usr/local/bin/dash
 
 [Service]
-ExecStart=/bin/bash -l -c '/usr/local/bin/dash'
+ExecStart=/bin/bash -l -c 'source /home/freed/.bashrc && /usr/local/bin/dash'
 StandardInput=tty
 StandardOutput=tty
 TTYPath=/dev/tty1
