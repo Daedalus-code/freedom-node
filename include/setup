@@ -114,7 +114,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   # if not enough memory
   if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "2000" ]] &>/dev/null; then
     printf '%b' "[  ${GR}!!${N0}  ] Not enough memory!\n" && sleep 1
-    if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -lt "7" ]] &>/dev/null; then
+    if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -gt "7" ]] &>/dev/null; then
       printf '%b' "[  ${G1}OK${N0}  ] Creating 2G Swap..\n"
       # create 2G swap #########################################################
       sudo fallocate -l 2G /swapfile
@@ -267,7 +267,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # check if display is connected
   if [[ "$(cat /sys/class/drm/card0-DPI-1/status 2>/dev/null)" == "connected" ]] &>/dev/null; then
-    printf '%b' "[  ${G1}OK${N0}  ] Display detected. $(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null | tr ',' 'x')\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Display detected. ${CY}$(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null | tr ',' 'x')${N0}\n"
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
 
