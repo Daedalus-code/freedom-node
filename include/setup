@@ -206,8 +206,37 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] :: Creating FreedomCoin service..\n"
 
-    # stop old service
-    sudo service freedom-display stop &>/dev/null
+    echo "[Unit]
+  Description=freedomcoind service
+  After=network-online.target
+
+  [Service]
+  Type=simple
+  User=$USER_NAME
+  Group=$USER_NAME
+  ExecStart=/etc/freedom-node/include/start
+  ExecReload=/etc/freedom-node/include/restart
+  ExecStop=/usr/local/bin/freedomcoin-cli stop
+  Restart=always
+  RestartSec=60
+
+  [Install]
+  WantedBy=multi-user.target" >/tmp/service.tmp
+
+    # install service
+    sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
+    # enable service
+    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin service..\n"
+    sudo systemctl enable freedomcoind
+  fi
+
+  ##############################################################################
+  # freedomcoin display service
+  ##############################################################################
+
+  # if missing
+  if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
+    printf '%b' "[${GR}!!${N0}] :: Creating display service..\n"
 
     echo "[Unit]
 Description=Freedom Node Dashboard
@@ -232,11 +261,10 @@ Environment=TERM=linux
 WantedBy=multi-user.target" >/tmp/service.tmp
 
     # install service
-    sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
+    sudo mv /tmp/service.tmp /etc/systemd/system/freedom-display.service &>/dev/null
     # enable service
-    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin service..\n"
-    sudo systemctl daemon-reload
-    sudo systemctl enable freedomcoind
+    printf '%b' "[${G1}OK${N0}] :: Enabling display service..\n"
+    sudo systemctl enable freedom-display
   fi
 
   ##############################################################################
