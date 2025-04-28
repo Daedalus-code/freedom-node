@@ -312,7 +312,10 @@ EOF
   if [[ ! -f /etc/rc.local || "$(grep -c "$USER_NAME" /etc/rc.local)" -eq "0" ]] &>/dev/null; then
     # rc.local
     echo "#!/bin/bash
-sleep 10 && sudo -u $USER_NAME bash /usr/local/bin/dash &
+sleep 5
+systemctl stop getty@tty1.service
+chvt 1
+sudo -u $USER_NAME bash /usr/local/bin/dash < /dev/tty1 > /dev/tty1 2>&1 &
 exit 0" >/tmp/rc.local.tmp
     # install rc.local
     sudo mv /tmp/rc.local.tmp /etc/rc.local
