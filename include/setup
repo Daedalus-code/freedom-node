@@ -236,7 +236,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # check if display is connected
   if [[ "$(cat /sys/class/drm/card0-DPI-1/status 2>/dev/null)" == "connected" ]] &>/dev/null; then
-    printf '%b' "[  ${GR}OK${N0}  ] Display detected!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Display detected!\n"
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
 
