@@ -236,7 +236,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # check if display is connected
   if [[ "$(cat /sys/class/drm/card0-DPI-1/status 2>/dev/null)" == "connected" ]] &>/dev/null; then
-    printf '%b' "[  ${G1}OK${N0}  ] Display detected!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Display detected. $(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null | tr ',' 'x')\n"
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
 
@@ -270,9 +270,24 @@ EOF
       # apply service + disable getty on tty1
       sudo systemctl daemon-reload
       sudo systemctl enable freedom-display
-      sudo systemctl stop getty@tty1.service
-      sudo systemctl disable getty@tty1.service
     fi
+  fi
+
+  ##############################################################################
+  # rc.local
+  ##############################################################################
+
+  # if missing
+  if [[ ! -f /etc/rc.local ]] &>/dev/null; then
+    # rc.local
+    echo "#!/bin/bash
+sleep 10 && sudo -u pi bash /usr/local/bin/dash &
+exit 0" >/tmp/rc.local.tmp
+    # install rc.local
+    sudo mv /tmp/rc.local.tmp /etc/rc.local
+    printf '%b' "[  ${G1}OK${N0}  ] Installing rc.local..\n"
+    # make executable
+    sudo chmod +x /etc/rc.local
   fi
 
   ##############################################################################
