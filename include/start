@@ -19,7 +19,7 @@ for (( ; ; )); do # loop dashbord
     # reset old debug.log
     truncate -s 0 "$HOME"/.trumpcoin/debug.log &>/dev/null
     # output daemon
-    printf '%b' "[${G1}OK${N0}] :: Daemon  : "
+    printf '%b' "[  ${G1}OK${N0}  ] Daemon  : "
     # start daemon
     /usr/local/bin/./freedomcoind -datadir="$HOME_DIR/.trumpcoin" -debuglogfile="$HOME_DIR/.trumpcoin/debug.log" -conf="$HOME_DIR/.trumpcoin/trumpcoin.conf" -debug="tor" -proxy="127.0.0.1:9050" -daemon
   fi

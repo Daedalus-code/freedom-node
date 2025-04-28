@@ -46,8 +46,8 @@ Installing Freedom node! ${GR}Version 1${N0}
 ################################################################################
 
 # any updates
-printf '%b' "[${N0}!!${N0}] :: Updating freedom-node repository..\n"
-printf '%b' "[${G1}OK${N0}] :: $(cd || exit && cd freedom-node && git pull)\n"
+printf '%b' "[  ${N0}!!${N0}  ] Updating freedom-node repository..\n"
+printf '%b' "[  ${G1}OK${N0}  ] $(cd || exit && cd freedom-node && git pull)\n"
 
 ################################################################################
 # freedom-node directory & user
@@ -55,7 +55,7 @@ printf '%b' "[${G1}OK${N0}] :: $(cd || exit && cd freedom-node && git pull)\n"
 
 # if missing
 if [[ ! -d /etc/freedom-node ]] &>/dev/null; then
-  printf '%b' "[${N0}!!${N0}] :: Creating freedom-node directory..\n"
+  printf '%b' "[  ${N0}!!${N0}  ] Creating freedom-node directory..\n"
 fi
 
 # create install directory
@@ -67,13 +67,13 @@ sudo chown -R "$(whoami)":"$(whoami)" /etc/freedom-node/ 2>/dev/null
 echo "$(whoami)" >/etc/freedom-node/user
 # user name
 USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
-printf '%b' "[${G1}OK${N0}] :: USER_NAME=${G1}$USER_NAME${N0}\n" && sleep 1
+printf '%b' "[  ${G1}OK${N0}  ] USER_NAME=${G1}$USER_NAME${N0}\n" && sleep 1
 
 # fetch home directory
 echo "$HOME" >/etc/freedom-node/homedir
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
-printf '%b' "[${G1}OK${N0}] :: HOME_DIR=${G1}$HOME_DIR${N0}\n" && sleep 1
+printf '%b' "[  ${G1}OK${N0}  ] HOME_DIR=${G1}$HOME_DIR${N0}\n" && sleep 1
 
 ################################################################################
 # .trumpcoin directory
@@ -81,7 +81,7 @@ printf '%b' "[${G1}OK${N0}] :: HOME_DIR=${G1}$HOME_DIR${N0}\n" && sleep 1
 
 # if missing
 if [[ ! -d "$HOME"/.trumpcoin ]] &>/dev/null; then
-  printf '%b' "[${N0}!!${N0}] :: Creating .trumpcoin directory..\n"
+  printf '%b' "[  ${N0}!!${N0}  ] Creating .trumpcoin directory..\n"
   # create wallet directory
   mkdir "$HOME"/.trumpcoin &>/dev/null
 fi
@@ -95,7 +95,7 @@ sudo chown -R "$USER_NAME":"$USER_NAME" "$HOME_DIR"/.trumpcoin/ 2>/dev/null
 
 # if found
 if [[ -f "$HOME_DIR"/wallet.dat ]] &>/dev/null; then
-  printf '%b' "[${N0}!!${N0}] :: Restoring old wallet keys..\n"
+  printf '%b' "[  ${N0}!!${N0}  ] Restoring old wallet keys..\n"
   # restore keys
   cp "$HOME_DIR"/wallet.dat "$HOME_DIR"/.trumpcoin
   # backup keys
@@ -117,55 +117,55 @@ chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/start 2>/dev/null
 
 # not installed
 if ! [ -x "$(command -v ifconfig)" ]; then
-  printf '%b' "[${GR}!!${N0}] :: Installing net-tools!\n"
+  printf '%b' "[  ${GR}!!${N0}  ] Installing net-tools!\n"
   sudo apt-get install net-tools -y
   if [ $? -eq 0 ]; then
-    printf '%b' "[${G1}OK${N0}] :: net-tools installed!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] net-tools installed!\n"
   fi
 fi
 
 # not installed
 if [[ ! "$(curl --version)" ]] &>/dev/null; then
-  printf '%b' "[${GR}!!${N0}] :: Installing curl!\n"
+  printf '%b' "[  ${GR}!!${N0}  ] Installing curl!\n"
   sudo apt-get install curl -y
   if [ $? -eq 0 ]; then
-    printf '%b' "[${G1}OK${N0}] :: curl installed!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] curl installed!\n"
   fi
 fi
 
 # not installed
 if ! [ -x "$(command -v tor)" ]; then
-  printf '%b' "[${GR}!!${N0}] :: Installing tor!\n"
+  printf '%b' "[  ${GR}!!${N0}  ] Installing tor!\n"
   sudo apt-get install tor -y
   if [ $? -eq 0 ]; then
-    printf '%b' "[${G1}OK${N0}] :: tor installed!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] tor installed!\n"
   fi
 fi
 
 # not installed
 if ! [ -x "$(command -v html2text)" ]; then
-  printf '%b' "[${GR}!!${N0}] :: Installing html2text!\n"
+  printf '%b' "[  ${GR}!!${N0}  ] Installing html2text!\n"
   sudo apt-get install html2text -y
   if [ $? -eq 0 ]; then
-    printf '%b' "[${G1}OK${N0}] :: html2text installed!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] html2text installed!\n"
   fi
 fi
 
 # not installed
 if ! [ -x "$(command -v dialog)" ]; then
-  printf '%b' "[${GR}!!${N0}] :: Installing dialog!\n"
+  printf '%b' "[  ${GR}!!${N0}  ] Installing dialog!\n"
   sudo apt-get install dialog -y
   if [ $? -eq 0 ]; then
-    printf '%b' "[${G1}OK${N0}] :: dialog installed!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] dialog installed!\n"
   fi
 fi
 
 # not installed
 if [[ ! "$(arp-scan --version)" ]] &>/dev/null; then
-  printf '%b' "[${GR}!!${N0}] :: Installing arp-scan!\n"
+  printf '%b' "[  ${GR}!!${N0}  ] Installing arp-scan!\n"
   sudo apt-get install arp-scan -y
   if [ $? -eq 0 ]; then
-    printf '%b' "[${G1}OK${N0}] :: arp-scan installed!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] arp-scan installed!\n"
   fi
 fi
 

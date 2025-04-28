@@ -59,9 +59,9 @@ echo "$MEM_FOUND" >/tmp/mem.tmp
 
 # if found
 if [[ -n "$BOG_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: BogoMIPS: ${CY}$BOG_FOUND${N0}\n"
+  printf '%b' "[  ${G1}OK${N0}  ] BogoMIPS: ${CY}$BOG_FOUND${N0}\n"
 else
-  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
+  printf '%b' "[  ${GR}!!${N0}  ] Error\n" && exit
 fi
 
 ################################################################################
@@ -70,16 +70,16 @@ fi
 
 # if found
 if [[ -n "$VER_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: $VER_FOUND\n"
+  printf '%b' "[  ${G1}OK${N0}  ] $VER_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
+  printf '%b' "[  ${GR}!!${N0}  ] Error\n" && exit
 fi
 
 # if found
 if [[ -n "$REL_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: $REL_FOUND\n"
+  printf '%b' "[  ${G1}OK${N0}  ] $REL_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
+  printf '%b' "[  ${GR}!!${N0}  ] Error\n" && exit
 fi
 
 ################################################################################
@@ -88,9 +88,9 @@ fi
 
 # if found
 if [[ -n "$MOD_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: $MOD_FOUND\n"
+  printf '%b' "[  ${G1}OK${N0}  ] $MOD_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] :: ${GR}Not found${N0}\n"
+  printf '%b' "[  ${GR}!!${N0}  ] ${GR}Not found${N0}\n"
 fi
 
 ################################################################################
@@ -99,9 +99,9 @@ fi
 
 # if found
 if [[ -n "$CPU_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: $CPU_FOUND $COR_FOUND Core(s) $MHZ_FOUND\n"
+  printf '%b' "[  ${G1}OK${N0}  ] $CPU_FOUND $COR_FOUND Core(s) $MHZ_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
+  printf '%b' "[  ${GR}!!${N0}  ] Error\n" && exit
 fi
 
 ################################################################################
@@ -110,17 +110,17 @@ fi
 
 # if found
 if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] :: Total $HDD_TOTAL Free $HDD_FREE\n"
+  printf '%b' "[  ${G1}OK${N0}  ] Total $HDD_TOTAL Free $HDD_FREE\n"
   # if not enough space
   if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -lt "7" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] :: Not enough space..\n" && exit
+    printf '%b' "[  ${GR}!!${N0}  ] Not enough space..\n" && exit
   fi
   # if tiny sd card found
   if [[ "$(echo "$HDD_TOTAL" | tr -d 'G')" -lt "32" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] :: 32GB SD card recommended.\n" && exit
+    printf '%b' "[  ${GR}!!${N0}  ] 32GB SD card recommended.\n" && exit
   fi
 else
-  printf '%b' "[${GR}!!${N0}] :: Error\n" && exit
+  printf '%b' "[  ${GR}!!${N0}  ] Error\n" && exit
 fi
 
 ################################################################################
@@ -129,7 +129,7 @@ fi
 
 # if VPS already, skip this
 if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
-  echo "[!!] :: This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
+  echo "[  !!  ] This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
   # remove obsolete dash for vps server
   sudo rm /usr/local/bin/dash &>/dev/null
 
@@ -144,7 +144,7 @@ else
 
   # if missing
   if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" || ! -f "$HOME_DIR"/.trumpcoin/trumpcoin.conf ]] &>/dev/null; then
-    printf '%b' "[${N0}!!${N0}] :: Setup rpcuser and rpcpassword..\n"
+    printf '%b' "[  ${N0}!!${N0}  ] Setup rpcuser and rpcpassword..\n"
     # add random rpc credentials
     echo "
 # RPC credentials
@@ -170,11 +170,11 @@ rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
   # if missing
   if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
     # update tor configuration
-    printf '%b' "[${GR}!!${N0}] :: Updating configuration!\n"
+    printf '%b' "[  ${GR}!!${N0}  ] Updating configuration!\n"
     echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # update tor configuration
-    printf '%b' "[${GR}!!${N0}] :: Restarting tor!\n"
+    printf '%b' "[  ${GR}!!${N0}  ] Restarting tor!\n"
     sudo service tor@default restart
   fi
 
@@ -184,13 +184,13 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # fetch lan from ifconfig
   ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }' >/tmp/lanip.tmp
-  printf '%b' "[${G1}OK${N0}] :: ${N0}$(cat /tmp/lanip.tmp 2>/dev/null)${N0}\n"
+  printf '%b' "[  ${G1}OK${N0}  ] ${N0}$(cat /tmp/lanip.tmp 2>/dev/null)${N0}\n"
   # fetch wan from whatismyip
   curl -s http://whatismyip.akamai.com/ >/tmp/wanip.tmp
-  printf '%b' "[${G1}OK${N0}] :: ${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}\n"
+  printf '%b' "[  ${G1}OK${N0}  ] ${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}\n"
   # fetch onion from hidden service
   sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/freedom-node/hostname.onion
-  printf '%b' "[${G1}OK${N0}] :: ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
+  printf '%b' "[  ${G1}OK${N0}  ] ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
 
   ##############################################################################
   # bootstrap
@@ -204,7 +204,6 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # if missing
   if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] :: Creating FreedomCoin service..\n"
 
     echo "[Unit]
   Description=freedomcoind service
@@ -226,7 +225,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # install service
     sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
-    printf '%b' "[${G1}OK${N0}] :: Enabling FreedomCoin service..\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Enabling FreedomCoin service..\n"
     sudo systemctl daemon-reload
     sudo systemctl enable freedomcoind
   fi
@@ -237,10 +236,9 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # check if display is connected
   if [[ "$(cat /sys/class/drm/card0-DPI-1/status 2>/dev/null)" == "connected" ]] &>/dev/null; then
-    printf '%b' "[${GR}!!${N0}] :: Display detected!\n"
+    printf '%b' "[  ${CY}!!${N0}  ] Display detected!\n"
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
-      printf '%b' "[${GR}!!${N0}] :: Creating display service..\n"
 
       cat <<EOF >/tmp/service.tmp
 [Unit]
@@ -268,7 +266,7 @@ EOF
 
       # install service
       sudo mv /tmp/service.tmp /etc/systemd/system/freedom-display.service
-      printf '%b' "[${G1}OK${N0}] :: Enabling display service..\n"
+      printf '%b' "[  ${G1}OK${N0}  ] Enabling display service..\n"
       # apply service + disable getty on tty1
       sudo systemctl daemon-reload
       sudo systemctl enable freedom-display
@@ -283,8 +281,8 @@ EOF
 
   # daemon running
   if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] :: Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
-    printf '%b' "[${G1}OK${N0}] :: Run ${CY}dash${N0} and monitor!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Run ${CY}dash${N0} and monitor!\n"
   else
     # start service
     sudo service freedomcoind restart
