@@ -128,11 +128,11 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
         echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
       fi
     else
-      printf '%b' "[  ${GR}!!${N0}  ] Not enough space for swap! ${R1}$HDD_FREE${N0}\n" && sleep 1
+      printf '%b' "[  ${GR}!!${N0}  ] Not enough space for Swap! ${R1}$HDD_FREE${N0}\n" && sleep 1
     fi
   fi
 else
-  printf '%b' "[  ${GR}!!${N0}  ] SWAP Error\n" && exit
+  printf '%b' "[  ${GR}!!${N0}  ] Swap Error\n" && exit
 fi
 
 ################################################################################
