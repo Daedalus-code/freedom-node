@@ -105,6 +105,37 @@ else
 fi
 
 ################################################################################
+# memory
+################################################################################
+
+# if found
+if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
+  printf '%b' "[  ${G1}OK${N0}  ] $MEM_FOUND\n"
+  # if not enough memory
+  if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "2000" ]] &>/dev/null; then
+    printf '%b' "[  ${GR}!!${N0}  ] Not enough memory!\n" && sleep 1
+    if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -lt "7" ]] &>/dev/null; then
+      printf '%b' "[  ${G1}OK${N0}  ] Creating 2G Swap..\n"
+      # create 2G swap #########################################################
+      sudo fallocate -l 2G /swapfile
+      sudo chmod 600 /swapfile
+      sudo mkswap /swapfile
+      sudo swapon /swapfile
+      ##########################################################################
+      # if swapfile is not already in /etc/fstab, append it
+      if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
+        printf '%b' "[  ${G1}OK${N0}  ] Updating fstab..\n"
+        echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
+      fi
+    else
+      printf '%b' "[  ${GR}!!${N0}  ] Not enough space for swap! ${R1}$HDD_FREE${N0}\n" && sleep 1
+    fi
+  fi
+else
+  printf '%b' "[  ${GR}!!${N0}  ] SWAP Error\n" && exit
+fi
+
+################################################################################
 # hard drive
 ################################################################################
 
