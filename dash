@@ -1,17 +1,15 @@
 #!/bin/bash
 
-################################################################################
-
-for (( ; ; )); do # loop dashbord
+while true; do
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
 
-  ##############################################################################
+  # Get terminal width and height
+  WIDTH=$(tput cols)
+  HEIGHT=$(tput lines)
 
-  clear
-  # dashbord
-  printf '%b' "
+  DASH="
 ${GR:?}                       ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}        ##   ##        ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}        ##.  ##        ${GR:?} -----------------------------------------${N0:?}
@@ -30,6 +28,10 @@ ${TX:?} ${WALLET_TXLAST:?}
 ${LAST_LOG:?}
 "
 
+  # clear the screen, adjust output dynamically based on terminal size
+  clear
+  echo "$DASH" | fold -w $WIDTH | head -n $HEIGHT
+  # wait for n second before updating
   sleep "${TIME:?}"
 done
 
