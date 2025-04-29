@@ -44,10 +44,10 @@ fi
 ################################################################################
 
 # if missing
-if [[ ! -d /tmp/freedom-node/ ]] &>/dev/null; then
+if [[ ! -d /home/"$USER_NAME"/node/ ]] &>/dev/null; then
   # create directory
-  sudo mkdir /tmp/freedom-node/ &>/dev/null
-  chmod 755 /tmp/freedom-node/
+  sudo mkdir /home/"$USER_NAME"/node/ &>/dev/null
+  chmod 755 /home/"$USER_NAME"/node/
 fi
 
 ################################################################################
@@ -61,7 +61,7 @@ HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
 HDD_TOTAL="$(echo "$HDD_FOUND" | awk '{ print $2 }')"
 HDD_FREE="$(echo "$HDD_FOUND" | awk '{ print $4 }')"
 
-echo "$MEM_FOUND" >/tmp/freedom-node/mem.tmp
+echo "$MEM_FOUND" >/home/"$USER_NAME"/node/mem.tmp
 
 ################################################################################
 # bogomips
@@ -215,11 +215,11 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   ##############################################################################
 
   # fetch lan from ifconfig
-  ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }' >/tmp/freedom-node/lanip.tmp
-  printf '%b' "[  ${G1}OK${N0}  ] ${N0}$(cat /tmp/freedom-node/lanip.tmp 2>/dev/null)${N0}\n"
+  ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }' >/home/"$USER_NAME"/node/lanip.tmp
+  printf '%b' "[  ${G1}OK${N0}  ] ${N0}$(cat /home/"$USER_NAME"/node/lanip.tmp 2>/dev/null)${N0}\n"
   # fetch wan from whatismyip
-  curl -s http://whatismyip.akamai.com/ >/tmp/freedom-node/wanip.tmp
-  printf '%b' "[  ${G1}OK${N0}  ] ${CY}$(cat /tmp/freedom-node/wanip.tmp 2>/dev/null)${N0}\n"
+  curl -s http://whatismyip.akamai.com/ >/home/"$USER_NAME"/node/wanip.tmp
+  printf '%b' "[  ${G1}OK${N0}  ] ${CY}$(cat /home/"$USER_NAME"/node/wanip.tmp 2>/dev/null)${N0}\n"
   # fetch onion from hidden service
   sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/freedom-node/hostname.onion
   printf '%b' "[  ${G1}OK${N0}  ] ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
@@ -252,10 +252,10 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   RestartSec=60
 
   [Install]
-  WantedBy=multi-user.target" >/tmp/freedom-node/service.tmp
+  WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
     # install service
-    sudo mv /tmp/freedom-node/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
+    sudo mv /home/"$USER_NAME"/node/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
     printf '%b' "[  ${G1}OK${N0}  ] Enabling FreedomCoin service..\n"
     sudo systemctl daemon-reload
@@ -294,7 +294,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedomnode.service ]] &>/dev/null; then
 
-      cat <<EOF >/tmp/freedom-node/service.tmp
+      cat <<EOF >/home/"$USER_NAME"/node/service.tmp
 [Unit]
 Description=FreedomNode Startup Script
 After=network.target
@@ -313,7 +313,7 @@ WantedBy=multi-user.target
 EOF
 
       # install service
-      sudo mv /tmp/freedom-node/service.tmp /etc/systemd/system/freedomnode.service
+      sudo mv /home/"$USER_NAME"/node/service.tmp /etc/systemd/system/freedomnode.service
       printf '%b' "[  ${G1}OK${N0}  ] Enabling display service..\n"
       # apply service + disable getty on tty1
       sudo systemctl daemon-reexec

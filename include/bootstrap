@@ -49,13 +49,13 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
 
     # backup wallet.dat
     printf '%b' "[  ${G1}OK${N0}  ] Creating wallet.dat backup..\n"
-    cp "$HOME_DIR"/.trumpcoin/wallet.dat /tmp/freedom-node/ &>/dev/null
+    cp "$HOME_DIR"/.trumpcoin/wallet.dat /home/"$USER_NAME"/node/ &>/dev/null
     # remove old blockchain files and folders
     printf '%b' "[  ${G1}OK${N0}  ] Removing old blockchain..\n"
     rm -rf "$HOME_DIR"/.trumpcoin/* &>/dev/null
     # restore wallet.dat backup
     printf '%b' "[  ${G1}OK${N0}  ] Restoring wallet.dat backup..\n"
-    mv /tmp/freedom-node/wallet.dat "$HOME_DIR"/.trumpcoin 2>/dev/null
+    mv /home/"$USER_NAME"/node/wallet.dat "$HOME_DIR"/.trumpcoin 2>/dev/null
 
     ############################################################################
 
