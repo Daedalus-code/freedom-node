@@ -275,7 +275,6 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   # touchscreen?
   if [ ! -z "$(dmesg | grep 'touchscreen')" ]; then
     printf '%b' "[  ${G1}OK${N0}  ] Touchscreen detected! (high probability to be a TFT/LCD screen)\n"
-    # display detected
     DISPLAY_DETECTED="1"
   fi
 
@@ -288,7 +287,15 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # check if display is connected
   if [[ "$DISPLAY_DETECTED" == "1" ]] &>/dev/null; then
-    printf '%b' "[  ${G1}OK${N0}  ] Display detected. ${CY}$(cat /sys/class/graphics/fb1/virtual_size 2>/dev/null | tr ',' 'x')${N0}\n"
+    # display detected
+    DISPLAY_RESOLUTION="$(cat /sys/class/graphics/fb1/virtual_size 2>/dev/null | tr ',' 'x')"
+
+    # if zero
+    if [[ -z "$DISPLAY_RESOLUTION" ]] &>/dev/null; then
+      DISPLAY_RESOLUTION="Not found.."
+    fi
+
+    printf '%b' "[  ${G1}OK${N0}  ] Display resolution: ${CY}${DISPLAY_RESOLUTION}${N0}\n"
 
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedomnode.service ]] &>/dev/null; then
