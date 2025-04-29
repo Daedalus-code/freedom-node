@@ -1,36 +1,38 @@
 #!/bin/bash
 
-# touchscreen device
-DEVICE="/dev/input/event0"
-
-# grab the latest touch coordinates from evtest output
-read x y < <(evtest "$DEVICE" 2>/dev/null | awk '
-  /ABS_MT_POSITION_X/ { x=$NF }
-  /ABS_MT_POSITION_Y/ { y=$NF; print x, y; exit }
-')
-
+# define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Peers:180:40:300:60"
-  "Balance:180:80:300:100"
+  "Peers:1200:2000:1600:2200"
+  "Balance:1600:2550:1750:2700"
 )
 
-for ZONE in "${ZONES[@]}"; do
-  IFS=":" read LABEL x1 y1 x2 y2 <<<"$ZONE"
-  if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
-    handle_zone "$LABEL"
-  fi
-done
+# get last touch coordinates from tmp file (evtest listener should write here)
+read -r x y </tmp/touchcoords || exit 0
 
-# define what happens per label
+# debug log (optional)
+# echo "Touch at $x $y" >> /tmp/touchlog
+
 handle_zone() {
   case "$1" in
   Peers)
-    dialog --title "Peer List" --msgbox "$WALLET_PEERS_DETAILS" 15 40
+    dialog --msgbox "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 10 50
     ;;
   Balance)
-    dialog --title "Balance" --msgbox "$WALLET_BALANCES" 10 40
+    dialog --msgbox "Balance Info:\n${WALLET_BALANCES}" 10 50
+    ;;
+  *)
+    echo "No action for zone: $1"
     ;;
   esac
 }
+
+# check if the touch falls inside a zone
+for ZONE in "${ZONES[@]}"; do
+  IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
+  if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
+    handle_zone "$LABEL"
+    break
+  fi
+done
 
 # END

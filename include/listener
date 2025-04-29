@@ -1,0 +1,15 @@
+#!/bin/bash
+
+DEVICE="/dev/input/event0" # Use the real event device!
+
+evtest "$DEVICE" | while read -r LINE; do
+  if [[ "$LINE" == *"ABS_X"* ]]; then
+    x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+  elif [[ "$LINE" == *"ABS_Y"* ]]; then
+    y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    echo "$x $y" >/tmp/touchcoords
+    bash /etc/freedom-node/include/touch
+  fi
+done
+
+# END
