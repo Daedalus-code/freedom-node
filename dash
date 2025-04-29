@@ -8,7 +8,7 @@ for (( ; ; )); do # loop dashbord
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
-  bash /etc/freedom-node/include/touch
+  bash /etc/freedom-node/include/touch &
 
   # clear the screen, adjust output dynamically based on terminal size
   clear
