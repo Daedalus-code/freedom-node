@@ -281,14 +281,14 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # second framebuffer?
   if [ -d "/sys/class/graphics/fb1" ]; then
-    printf '%b' "[  ${G1}OK${N0}  ] Secondary framebuffer found! (TFT/LCD screen would be fb1, unless more than one monitor)\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Secondary framebuffer found! (TFT/LCD screen would be fb1, unless more than one monitor.)\n"
     # display detected
     DISPLAY_DETECTED="1"
   fi
 
   # check if display is connected
   if [[ "$DISPLAY_DETECTED" == "1" ]] &>/dev/null; then
-    printf '%b' "[  ${G1}OK${N0}  ] Display detected. ${CY}$(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null | tr ',' 'x')${N0}\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Display detected. ${CY}$(cat /sys/class/graphics/fb1/virtual_size 2>/dev/null | tr ',' 'x')${N0}\n"
 
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedomnode.service ]] &>/dev/null; then
