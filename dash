@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TERM=linux
+
 while true; do
 
   source /etc/freedom-node/include/functions
