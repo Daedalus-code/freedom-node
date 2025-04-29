@@ -1,17 +1,16 @@
 #!/bin/bash
 
 export TERM=linux
+sudo setfont /usr/share/consolefonts/Uni2-Terminus12x6.psf.gz
 
 while true; do
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
 
-  # Get terminal width and height
-  WIDTH=$(tput cols)
-  HEIGHT=$(tput lines)
-
-  DASH="
+  # clear the screen, adjust output dynamically based on terminal size
+  clear
+  printf '%b' "
 ${GR:?}                       ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}        ##   ##        ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}        ##.  ##        ${GR:?} -----------------------------------------${N0:?}
@@ -28,11 +27,8 @@ ${CB:?}        ##   ##        ${N0:?} ${TIMELINE:?}
 ${TX:?} ${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
-"
+\n"
 
-  # clear the screen, adjust output dynamically based on terminal size
-  clear
-  printf '%b' "$DASH\n" | fold -w $WIDTH | head -n $HEIGHT
   # wait for n second before updating
   sleep "${TIME:?}"
 done
