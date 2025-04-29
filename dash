@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export TERM=linux
 sudo setfont /usr/share/consolefonts/Uni2-Terminus12x6.psf.gz
 
 for (( ; ; )); do # loop dashbord
