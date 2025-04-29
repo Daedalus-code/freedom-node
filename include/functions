@@ -339,7 +339,7 @@ WALLET_VERSION="$(tail -1 /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
 
 # if zero
 if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
-  WALLET_VERSION="0.0.0.?"
+  WALLET_VERSION="${R1}Missing!${N0}"
 fi
 
 ################################################################################
