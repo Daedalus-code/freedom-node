@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo setfont /usr/share/consolefonts/Uni2-Terminus12x6.psf.gz
-
 for (( ; ; )); do # loop dashbord
 
   ##############################################################################
