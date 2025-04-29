@@ -45,9 +45,6 @@ handle_zone() {
     echo "No action for zone: $1"
     ;;
   esac
-
-  # refresh dash
-  kill -SIGUSR1 "$(pgrep -f /etc/freedom-node/dash)"
 }
 
 # check if the touch falls inside a zone
