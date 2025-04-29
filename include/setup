@@ -335,9 +335,17 @@ EOF
       sudo systemctl enable freedomnode
       sudo systemctl disable getty@tty1.service
       sudo systemctl mask getty@tty1.service
+
+      # cmdline.txt
+      CMDLINE_FILE="/boot/cmdline.txt"
       # if missing
-      if [[ "$(grep -c "disable_splash=1" /boot/firmware/config.txt)" -eq "0" ]] &>/dev/null; then
-        echo "disable_splash=1" | sudo tee -a /boot/firmware/config.txt >/dev/null
+      if [[ "$(cat "$CMDLINE_FILE" | grep -c "PARTUUID")" -eq "0" ]] &>/dev/null; then
+        CMDLINE_FILE="/boot/firmware/cmdline.txt"
+      fi
+      # check if logo.nologo is already there
+      if ! grep -q "logo.nologo" "$CMDLINE_FILE"; then
+        sudo sed -i 's/$/ logo.nologo/' "$CMDLINE_FILE"
+        printf '%b' "[  ${G1}OK${N0}  ] Added 'logo.nologo' to cmdline.txt..\n"
       fi
       printf '%b' "[  ${N0}!!${N0}  ] Please reboot..\n"
     fi
