@@ -265,63 +265,61 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   # freedomcoin display service
   ##############################################################################
 
+  # touchscreen?
+  if [ ! -z "$(dmesg | grep 'touchscreen')" ]; then
+    printf '%b' "[  ${G1}OK${N0}  ] Touchscreen detected! (high probability to be a TFT/LCD screen)\n"
+    # display detected
+    DISPLAY_DETECTED="1"
+  fi
+
+  # second framebuffer?
+  if [ -d "/sys/class/graphics/fb1" ]; then
+    printf '%b' "[  ${G1}OK${N0}  ] Secondary framebuffer found! (TFT/LCD screen would be fb1, unless more than one monitor)\n"
+    # display detected
+    DISPLAY_DETECTED="1"
+  fi
+
+  # HDMI?
+  if [ ! -z "$(tvservice -s 2>/dev/null | grep 'HDMI')" ]; then
+    printf '%b' "[  ${G1}OK${N0}  ] HDMI connection detected\n"
+    # display detected
+    DISPLAY_DETECTED="1"
+  else
+    printf '%b' "[  ${GR}!!${N0}  ] no HDMI connection found\n"
+  fi
+
   # check if display is connected
-  if [[ "$(cat /sys/class/drm/card0-DPI-1/status 2>/dev/null)" == "connected" ]] &>/dev/null; then
+  if [[ "$DISPLAY_DETECTED" == "1" ]] &>/dev/null; then
     printf '%b' "[  ${G1}OK${N0}  ] Display detected. ${CY}$(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null | tr ',' 'x')${N0}\n"
+
     # if service doesn't exist, create it
-    if [[ ! -f /etc/systemd/system/freedom-display.service ]] &>/dev/null; then
+    if [[ ! -f /etc/systemd/system/freedomnode.service ]] &>/dev/null; then
 
       cat <<EOF >/tmp/service.tmp
 [Unit]
-Description=Freedom Node Dashboard
-After=multi-user.target
-ConditionPathExists=/usr/local/bin/dash
+Description=FreedomNode Startup Script
+After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/dash
-StandardInput=tty
-StandardOutput=tty
-StandardError=tty
-TTYPath=/dev/tty1
-TTYReset=yes
-TTYVHangup=yes
-TTYVTDisallocate=yes
-Restart=always
+Type=simple
 User=$USER_NAME
-WorkingDirectory=$HOME_DIR
-Environment=TERM=linux
+WorkingDirectory=/home/freedom/freedom-node
+ExecStart=/bin/bash /home/freedom/freedom-node/dash.sh
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
       # install service
-      sudo mv /tmp/service.tmp /etc/systemd/system/freedom-display.service
+      sudo mv /tmp/service.tmp /etc/systemd/system/freedomnode.service
       printf '%b' "[  ${G1}OK${N0}  ] Enabling display service..\n"
       # apply service + disable getty on tty1
       sudo systemctl daemon-reload
-      sudo systemctl enable freedom-display
+      sudo systemctl enable freedomnode
     fi
-  fi
-
-  ##############################################################################
-  # rc.local
-  ##############################################################################
-
-  # if missing
-  if [[ ! -f /etc/rc.local || "$(grep -c "$USER_NAME" /etc/rc.local)" -eq "0" ]] &>/dev/null; then
-    # rc.local
-    echo "#!/bin/bash
-sleep 5
-systemctl stop getty@tty1.service
-chvt 1
-sudo -u $USER_NAME bash /usr/local/bin/dash < /dev/tty1 > /dev/tty1 2>&1 &
-exit 0" >/tmp/rc.local.tmp
-    # install rc.local
-    sudo mv /tmp/rc.local.tmp /etc/rc.local
-    printf '%b' "[  ${G1}OK${N0}  ] Installing rc.local..\n"
-    # make executable
-    sudo chmod +x /etc/rc.local
   fi
 
   ##############################################################################
