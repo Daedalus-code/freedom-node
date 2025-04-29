@@ -57,8 +57,8 @@ if [[ -n "$HOME_DIR" && -n "$USER_NAME" ]] &>/dev/null; then
       sudo rm -r /etc/freedom-node &>/dev/null
     fi
 
-    sudo rm -r /tmp/*.tmp &>/dev/null
-    sudo rm -r /tmp/quotes &>/dev/null
+    sudo rm -r /tmp/freedomnode/*.tmp &>/dev/null
+    sudo rm -r /tmp/freedomnode/quotes &>/dev/null
 
     printf '%b' "[  \e[92mOK\033[0m  ] Done.\n"
   fi
