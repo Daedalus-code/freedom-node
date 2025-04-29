@@ -166,6 +166,13 @@ if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
 
 else
 
+  # wallet exist
+  if [[ -f "$HOME"/freedomcoind && -f "$HOME"/freedomcoin-cli ]] &>/dev/null; then
+    # install wallet
+    sudo cp "$HOME"/freedomcoin* /usr/local/bin
+    sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/freedomcoin*
+  fi
+
   # download wallet
   bash /etc/freedom-node/include/download
 
