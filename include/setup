@@ -264,8 +264,10 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
     printf '%b' "[  ${G1}OK${N0}  ] Enabling FreedomCoin service..\n"
+    sudo systemctl daemon-reexec
     sudo systemctl daemon-reload
-    sudo systemctl enable freedomcoind
+    sudo systemctl enable freedomnode.service
+    sudo systemctl start freedomnode.service
   fi
 
   ##############################################################################
