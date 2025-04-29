@@ -354,7 +354,7 @@ WALLET_VERSION="$(tail -1 /home/"$USER_NAME"/node/version.tmp 2>/dev/null | awk 
 
 # if zero
 if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
-  WALLET_VERSION="${R1}Missing!${N0}"
+  WALLET_VERSION="${GR}Missing!${N0}"
 fi
 
 ################################################################################

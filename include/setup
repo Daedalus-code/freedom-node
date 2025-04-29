@@ -195,6 +195,9 @@ else
   sudo chmod +x "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
   sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
 
+  sudo chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/touch 2>/dev/null
+  sudo chown "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/touch 2>/dev/null
+
   ##############################################################################
   # proxy (tor) configuration
   ##############################################################################

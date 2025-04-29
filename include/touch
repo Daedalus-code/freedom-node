@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# touchscreen device
+DEVICE="/dev/input/event0"
+
+# grab the latest touch coordinates from evtest output
+read x y < <(evtest "$DEVICE" 2>/dev/null | awk '
+  /ABS_MT_POSITION_X/ { x=$NF }
+  /ABS_MT_POSITION_Y/ { y=$NF; print x, y; exit }
+')
+
+ZONES=(
+  "Peers:180:40:300:60"
+  "Balance:180:80:300:100"
+)
+
+for ZONE in "${ZONES[@]}"; do
+  IFS=":" read LABEL x1 y1 x2 y2 <<<"$ZONE"
+  if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
+    handle_zone "$LABEL"
+  fi
+done
+
+# define what happens per label
+handle_zone() {
+  case "$1" in
+  Peers)
+    dialog --title "Peer List" --msgbox "$WALLET_PEERS_DETAILS" 15 40
+    ;;
+  Balance)
+    dialog --title "Balance" --msgbox "$WALLET_BALANCES" 10 40
+    ;;
+  esac
+}
+
+# END
