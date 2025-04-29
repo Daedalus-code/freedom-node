@@ -177,9 +177,9 @@ if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
 else
 
   # wallet exist
-  if [[ -f "$HOME"/freedomcoind && -f "$HOME"/freedomcoin-cli ]] &>/dev/null; then
+  if [[ -f "$HOME_DIR"/freedomcoind && -f "$HOME_DIR"/freedomcoin-cli ]] &>/dev/null; then
     # install wallet
-    sudo cp "$HOME"/freedomcoin* /usr/local/bin
+    sudo cp "$HOME_DIR"/freedomcoin* /usr/local/bin
     sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/freedomcoin*
   fi
 
@@ -281,6 +281,20 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # check if display is connected
   if [[ "$DISPLAY_DETECTED" == "1" ]] &>/dev/null; then
+
+    # if missing
+    if [[ ! -d "$HOME_DIR"/LCD-show ]] &>/dev/null; then
+      # install necessary packages
+      sudo apt install raspberrypi-kernel-headers -y
+      # clone and install the driver
+      cd || exit
+      git clone https://github.com/goodtft/LCD-show.git
+      cd LCD-show/ || exit
+      # for a common 3.5" screen (change this depending on your model)
+      chmod +x LCD35-show
+      sudo ./LCD35-show
+    fi
+
     # display detected
     DISPLAY_RESOLUTION="$(cat /sys/class/graphics/fb1/virtual_size 2>/dev/null | tr ',' 'x')"
 
@@ -321,6 +335,10 @@ EOF
       sudo systemctl enable freedomnode
       sudo systemctl disable getty@tty1.service
       sudo systemctl mask getty@tty1.service
+      # if missing
+      if [[ "$(grep -c "disable_splash=1" /boot/firmware/config.txt)" -eq "0" ]] &>/dev/null; then
+        echo "disable_splash=1" | sudo tee -a /boot/firmware/config.txt >/dev/null
+      fi
       printf '%b' "[  ${N0}!!${N0}  ] Please reboot..\n"
     fi
   fi
