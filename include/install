@@ -116,6 +116,15 @@ chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/start 2>/dev/null
 ################################################################################
 
 # not installed
+if ! [ -x "$(command -v bc)" ]; then
+  printf '%b' "[  ${GR}!!${N0}  ] Installing bc!\n"
+  sudo apt-get install bc -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[  ${G1}OK${N0}  ] bc installed!\n"
+  fi
+fi
+
+# not installed
 if ! [ -x "$(command -v ifconfig)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing net-tools!\n"
   sudo apt-get install net-tools -y
