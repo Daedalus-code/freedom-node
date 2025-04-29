@@ -308,8 +308,8 @@ EOF
       # apply service + disable getty on tty1
       sudo systemctl daemon-reexec
       sudo systemctl daemon-reload
-      sudo systemctl enable freedomnode.service
-      sudo systemctl start freedomnode.service
+      sudo systemctl enable freedomnode
+      sudo systemctl start freedomnode
     fi
   fi
 
