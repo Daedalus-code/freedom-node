@@ -3,7 +3,9 @@
 export TERM=linux
 sudo setfont /usr/share/consolefonts/Uni2-Terminus12x6.psf.gz
 
-while true; do
+for (( ; ; )); do # loop dashbord
+
+  ##############################################################################
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
