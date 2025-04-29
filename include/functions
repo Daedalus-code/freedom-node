@@ -17,7 +17,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 # if missing
 if [[ ! -d /home/"$USER_NAME"/node/ ]] &>/dev/null; then
   # create directory
-  sudo mkdir /home/"$USER_NAME"/node/ &>/dev/null
+  mkdir /home/"$USER_NAME"/node/ &>/dev/null
   chmod 755 /home/"$USER_NAME"/node/
 fi
 
