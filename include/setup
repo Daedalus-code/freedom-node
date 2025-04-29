@@ -286,15 +286,6 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     DISPLAY_DETECTED="1"
   fi
 
-  # HDMI?
-  if [ ! -z "$(tvservice -s 2>/dev/null | grep 'HDMI')" ]; then
-    printf '%b' "[  ${G1}OK${N0}  ] HDMI connection detected\n"
-    # display detected
-    DISPLAY_DETECTED="1"
-  else
-    printf '%b' "[  ${GR}!!${N0}  ] no HDMI connection found\n"
-  fi
-
   # check if display is connected
   if [[ "$DISPLAY_DETECTED" == "1" ]] &>/dev/null; then
     printf '%b' "[  ${G1}OK${N0}  ] Display detected. ${CY}$(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null | tr ',' 'x')${N0}\n"
