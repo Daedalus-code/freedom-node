@@ -4,13 +4,16 @@
 ZONES=(
   "Peers:1200:2000:1600:2200"
   "Balance:1600:2550:1750:2700"
+  "TxCount:1600:2750:1700:2850"
+  "Mempool:1700:2750:1800:2850"
+  "Block:1800:2750:2000:2850"
+  "Sync:1600:2300:1750:2400"
+  "Network:1600:2450:1800:2550"
+  "System:1600:2100:1750:2200"
 )
 
 # get last touch coordinates from tmp file (evtest listener should write here)
 read -r x y </tmp/touchcoords || exit 0
-
-# debug log (optional)
-# echo "Touch at $x $y" >> /tmp/touchlog
 
 handle_zone() {
   case "$1" in
@@ -20,10 +23,31 @@ handle_zone() {
   Balance)
     dialog --msgbox "Balance Info:\n${WALLET_BALANCES}" 10 50
     ;;
+  TxCount)
+    dialog --msgbox "Transactions:\nTxCount: ${WALLET_TXCOUNT}" 8 50
+    ;;
+  Mempool)
+    dialog --msgbox "Mempool:\n${WALLET_MEMPOOL}" 8 50
+    ;;
+  Block)
+    dialog --msgbox "Block Height:\n${WALLET_HEADS}" 8 50
+    ;;
+  Sync)
+    dialog --msgbox "Wallet Sync:\n${WALLET_SYNC}" 8 50
+    ;;
+  Network)
+    dialog --msgbox "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 10 50
+    ;;
+  System)
+    dialog --msgbox "System Info:\nLoad: ${SYSTEM_LOAD}\nTemp: ${CPU_CTEMP_C}°C / ${CPU_FTEMP}" 10 50
+    ;;
   *)
     echo "No action for zone: $1"
     ;;
   esac
+
+  # refresh dash
+  kill -SIGUSR1 "$(pgrep -f /etc/freedom-node/dash)"
 }
 
 # check if the touch falls inside a zone

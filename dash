@@ -5,6 +5,11 @@ export TERM=linux
 bash /etc/freedom-node/include/touch &
 bash /etc/freedom-node/include/listener &
 
+################################################################################
+
+# set trap to interrupt sleep when signal is received
+trap 'continue' SIGUSR1
+
 for (( ; ; )); do # loop dashbord
 
   ##############################################################################
