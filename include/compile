@@ -102,6 +102,11 @@ make HOST=$HOST NO_QT=1 -j"$CPU_CORES_MAKE"
 cd "$HOME_DIR/FreedomCoin-Core" || exit
 export BDB_PREFIX="$HOME_DIR/db4"
 
+./autogen.sh || {
+  echo "autogen failed"
+  exit 1
+}
+
 # use configure script from the official guide
 ./configure --prefix=$PWD/depends/$HOST \
   --enable-glibc-back-compat \
