@@ -103,6 +103,24 @@ if [[ -f "$HOME_DIR"/wallet.dat ]] &>/dev/null; then
 fi
 
 ################################################################################
+# wallet configuration
+################################################################################
+
+# if missing
+if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" || ! -f "$HOME_DIR"/.trumpcoin/trumpcoin.conf ]] &>/dev/null; then
+  # create configuration
+  touch "$HOME_DIR"/.trumpcoin/trumpcoin.conf &>/dev/null
+  printf '%b' "[  ${N0}!!${N0}  ] Setup rpcuser and rpcpassword..\n"
+  # add random rpc credentials
+  echo "
+# RPC credentials
+rpcuser=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+rpcpassword=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+rpcallowip=127.0.0.1
+rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
+fi
+
+################################################################################
 # install files & create executable
 ################################################################################
 
