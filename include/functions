@@ -562,7 +562,7 @@ if [[ ! -f /home/"$USER_NAME"/node/rq.tmp || "$RANDOM_QUOTE_AGE" -gt "$(echo "18
   curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss >/home/"$USER_NAME"/node/rq.tmp
 fi
 
-RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp | awk -F. '{ print $1 }' | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | tr -d '\n')"
+RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | paste -sd' ')"
 RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "authors" | tr '/' ' ' | awk -Fauthors '{ print $2 }' | xargs)"
 
 # create quotes

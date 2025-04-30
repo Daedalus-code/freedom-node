@@ -371,7 +371,7 @@ EOF
   # daemon running
   if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
     printf '%b' "[  ${G1}OK${N0}  ] Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
-    printf '%b' "[  ${G1}OK${N0}  ] Run ${CY}dash${N0} and monitor!\n"
+    printf '%b' "[  ${G1}OK${N0}  ] Run ${CY}dash${N0} to monitor!\n"
   else
     # start service
     sudo service freedomcoind restart
