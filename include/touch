@@ -44,8 +44,11 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   for ZONE in "${ZONES[@]}"; do
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
+      # kill dash
+      kill "$(ps -fp $(pidof bash 2>/dev/null) | grep "dash" | awk '{ print $2 }' | xargs)"
       handle_zone "$LABEL"
-      break
+      # start dash
+      cd || exit && dash
     fi
   done
 fi
