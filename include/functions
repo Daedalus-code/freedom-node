@@ -70,7 +70,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
   draw_progress_bar() {
     PROGRESS="$1"
     local PERCENT
-    BAR_WIDTH=50
+    BAR_WIDTH=45
     local FILLED
     local EMPTY
 
@@ -622,7 +622,7 @@ if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log)" -gt "0" ]] &>/de
 fi
 
 # if zero
-if [[ -z "$WALLET_TXLAST" ]]; then
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="    ${GR}Loading${N0}"
   CB="${GR}"
 fi
