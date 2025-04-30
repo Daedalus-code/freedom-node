@@ -137,9 +137,9 @@ REPO_VERSION="${N0}v$(wc -l /etc/freedom-node/*/* 2>/dev/null | grep "total" | e
 # date
 ################################################################################
 
-DATE="$(date '+%D %H:%M:%S' 2>/dev/null)"
-SYSTEM_DATE="${GR}$(echo "$DATE" | awk '{ print $1 }')${N0}"
-SYSTEM_CLOCK="$(echo "$DATE" | awk '{ print $2 }')"
+DATE_CLOCK="$(date '+%D %H:%M:%S' 2>/dev/null)"
+SYSTEM_DATE="${GR}$(echo "$DATE_CLOCK" | awk '{ print $1 }')${N0}"
+SYSTEM_CLOCK="$(echo "$DATE_CLOCK" | awk '{ print $2 }')"
 
 ################################################################################
 # logo, tx colors
