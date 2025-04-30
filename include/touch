@@ -54,10 +54,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       handle_zone "$LABEL"
 
       # resume dash
-      if [[ -n "$DASH_PID" ]] &>/dev/null; then
-        kill -CONT "$DASH_PID"
-      fi
-
+      bash /usr/local/bin/dash
       break
     fi
   done
