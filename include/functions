@@ -67,6 +67,14 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" ]] &>/dev/null; then
 fi
 
 ################################################################################
+# logo, tx colors
+################################################################################
+
+# default color (idle)
+CB="${GR}"
+TX="${GR}"
+
+################################################################################
 # wallet sync w progress bar
 ################################################################################
 
@@ -103,7 +111,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
   # if zero
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-    SYNC_PROGRESS_BAR="${CY}    Loading${N0}"
+    SYNC_PROGRESS_BAR="    ${CY}Loading${N0}"
   fi
 fi
 
@@ -140,14 +148,6 @@ REPO_VERSION="${N0}v$(wc -l /etc/freedom-node/*/* 2>/dev/null | grep "total" | e
 DATE_CLOCK="$(date '+%D %H:%M:%S' 2>/dev/null)"
 SYSTEM_DATE="${GR}$(echo "$DATE_CLOCK" | awk '{ print $1 }')${N0}"
 SYSTEM_CLOCK="$(echo "$DATE_CLOCK" | awk '{ print $2 }')"
-
-################################################################################
-# logo, tx colors
-################################################################################
-
-# default color (idle)
-CB="${GR}"
-TX="${GR}"
 
 ################################################################################
 # wallet movements
@@ -329,7 +329,7 @@ IP_ADDRESS="$(ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '
 
 # if zero
 if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
-  IP_ADDRESS="No network"
+  IP_ADDRESS="Disconnected"
 fi
 
 ################################################################################
