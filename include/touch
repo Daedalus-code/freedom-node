@@ -2,14 +2,7 @@
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Peers:1200:2000:1600:2200"
-  "Balance:1600:2550:1750:2700"
-  "TxCount:1600:2750:1700:2850"
-  "Mempool:1700:2750:1800:2850"
-  "Block:1800:2750:2000:2850"
-  "Sync:1600:2300:1750:2400"
-  "Network:1600:2450:1800:2550"
-  "System:1600:2100:1750:2200"
+  "Balance:1850:2600:1950:2650"
 )
 
 # if any data
