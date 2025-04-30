@@ -14,10 +14,10 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 ################################################################################
 
 # if missing
-if [[ ! -f "$HOME_DIR"/node/setfont ]] &>/dev/null; then
+if [[ ! -f /tmp/setfont ]] &>/dev/null; then
   # set console display font
   sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz
-  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >"$HOME_DIR"/node/setfont
+  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >/tmp/setfont
 fi
 
 ################################################################################
