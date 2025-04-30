@@ -254,8 +254,6 @@ Group=$USER_NAME
 ExecStart=/etc/freedom-node/include/start
 ExecReload=/etc/freedom-node/include/restart
 ExecStop=/usr/local/bin/freedomcoin-cli stop
-StandardOutput=null
-StandardError=null
 Restart=always
 RestartSec=60
 
@@ -350,11 +348,19 @@ EOF
       if [[ "$(cat "$CMDLINE_FILE" | grep -c "PARTUUID")" -eq "0" ]] &>/dev/null; then
         CMDLINE_FILE="/boot/firmware/cmdline.txt"
       fi
+      ##########################################################################
       # check if logo.nologo is already there
       if ! grep -q "logo.nologo" "$CMDLINE_FILE"; then
         sudo sed -i 's/$/ logo.nologo/' "$CMDLINE_FILE"
         printf '%b' "[  ${G1}OK${N0}  ] Added 'logo.nologo' to cmdline.txt..\n"
       fi
+      ##########################################################################
+      # check if quiet loglevel=0 is already there
+      if ! grep -q "quiet loglevel=0" "$CMDLINE_FILE"; then
+        sudo sed -i 's/$/ quiet loglevel=0/' "$CMDLINE_FILE"
+        printf '%b' "[  ${G1}OK${N0}  ] Added 'quiet loglevel=0' to cmdline.txt..\n"
+      fi
+      ##########################################################################
       printf '%b' "[  ${N0}!!${N0}  ] Please reboot..\n"
     fi
   fi
