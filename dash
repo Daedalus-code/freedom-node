@@ -17,18 +17,18 @@ for (( ; ; )); do # loop dashbord
   # clear the screen, adjust output dynamically based on terminal size
   clear
   printf '%b' "
-${GR:?}                       ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
-${CB:?}        ##   ##        ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
-${CB:?}        ##.  ##        ${GR:?} -----------------------------------------${N0:?}
-${CB:?}    ##############     ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
-${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})
-${CB:?}      ###.    ,###     ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
-${CB:?}      ###########      ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
-${CB:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_IP4:?} ${WALLET_PEERS_IP6:?}
-${CB:?}      ###.     ,###    ${N0:?}
-${CB:?}    ##############     ${N0:?} Balance ${WALLET_BALANCES:?} ${WALLET_POS_REWARDS:?} ${WALLET_INPUTS_NODES:?}
-${CB:?}        ##   ##        ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
-${CB:?}        ##   ##        ${N0:?} ${TIMELINE:?}
+${GR:?}                  ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
+${CB:?}     ##   ##      ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
+${CB:?}     ##.  ##      ${GR:?} -----------------------------------------${N0:?}
+${CB:?} ##############   ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
+${CB:?}   ###      ####  ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})
+${CB:?}   ###.    ,###   ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
+${CB:?}   ###########    ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
+${CB:?}   ###       ###  ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_IP4:?} ${WALLET_PEERS_IP6:?}
+${CB:?}   ###.     ,###  ${N0:?}
+${CB:?} ##############   ${N0:?} Balance ${WALLET_BALANCES:?} ${WALLET_POS_REWARDS:?} ${WALLET_INPUTS_NODES:?}
+${CB:?}     ##   ##      ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
+${CB:?}     ##   ##      ${N0:?} ${TIMELINE:?}
 
 ${TX:?} ${WALLET_TXLAST:?}
 
