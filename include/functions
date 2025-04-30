@@ -613,19 +613,43 @@ if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading bl
   CB="${CY}"
 fi
 
+################################################################################
+# sync progress
+################################################################################
+
+# sync progress
+SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' .trumpcoin/debug.log | tail -1 | tr -d '.')"
+
 # if any data
 if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log)" -gt "0" ]] &>/dev/null; then
   # if syncing
   if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+    # sync progress bar color based on percentage
     WALLET_TXLAST="  ${G1}${SYNC_PROGRESS_BAR}${N0}"
+    # if less than 10%
+    if [[ "$SYNC_PROGRESS" -lt "100000" ]] &>/dev/null; then
+      WALLET_TXLAST="  ${R1}${SYNC_PROGRESS_BAR}${N0}"
+    fi
+    # if greater than 10%
+    if [[ "$SYNC_PROGRESS" -gt "100000" ]] &>/dev/null; then
+      WALLET_TXLAST="  ${Y1}${SYNC_PROGRESS_BAR}${N0}"
+    fi
+    # if greater than 50%
+    if [[ "$SYNC_PROGRESS" -gt "500000" ]] &>/dev/null; then
+      WALLET_TXLAST="  ${G1}${SYNC_PROGRESS_BAR}${N0}"
+    fi
   fi
 fi
+
+################################################################################
 
 # if zero
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="    ${GR}Loading${N0}"
   CB="${GR}"
 fi
+
+WALLET_TXLAST="${WALLET_TXLAST:0:58}"
 
 ################################################################################
 # last log
