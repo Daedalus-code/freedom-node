@@ -16,7 +16,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       dialog --msgbox "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 0 0
       ;;
     Balance)
-      dialog --msgbox "Balance Info:\n${WALLET_BALANCES}" 0 0
+      dialog --msgbox "$(cat node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0
       ;;
     Block)
       dialog --msgbox "Block Height:\n${WALLET_HEADS}" 0 0
