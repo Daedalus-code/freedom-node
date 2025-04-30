@@ -80,7 +80,7 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
       rm -r "$HOME_DIR"/"$WALLET_DOWNLOAD"
     else
       printf '%b' "[  ${Y1}!!${N0}  ] Download failed! Running compile script instead!\n"
-      if dialog --stdout --title "Installing wakeonlan!" \
+      if dialog --stdout --title "Building from source!" \
         --backtitle "Try to build wallet from source?" \
         --yesno "Yes: Build! No: Go Back!" 5 30; then
         bash /etc/freedom-node/include/compile
