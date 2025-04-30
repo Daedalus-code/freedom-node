@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# home directory
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
   "Peers:2350:2820:2580:2980"
@@ -14,10 +17,10 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Peers)
-      dialog --infobox "$(cat node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)" 0 0
+      dialog --infobox "$(cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)" 0 0
       ;;
     Balance)
-      dialog --infobox "$(cat node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0
+      dialog --infobox "$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0
       ;;
     Block)
       dialog --infobox "Block Height:\n${WALLET_HEADS}" 0 0
