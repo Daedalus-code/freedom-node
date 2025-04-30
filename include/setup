@@ -254,8 +254,8 @@ Group=$USER_NAME
 ExecStart=/etc/freedom-node/include/start
 ExecReload=/etc/freedom-node/include/restart
 ExecStop=/usr/local/bin/freedomcoin-cli stop
-StandardOutput=tty
-StandardError=tty
+StandardOutput=null
+StandardError=null
 Restart=always
 RestartSec=60
 
