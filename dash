@@ -8,9 +8,9 @@ export TERM=linux
 
 # if any data
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  bash /etc/freedom-node/include/touch &
   pkill -f /etc/freedom-node/include/listener
   bash /etc/freedom-node/include/listener &
+  bash /etc/freedom-node/include/touch &
 fi
 
 ################################################################################
