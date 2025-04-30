@@ -568,7 +568,7 @@ RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "au
 # create quotes
 echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
 # disregard duplicates, sort randomly, disregard lines less than n, html loc, errors
-echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<222' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524")" >/home/"$USER_NAME"/node/quotes
+echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<333' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524")" >/home/"$USER_NAME"/node/quotes
 
 # if found
 if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
@@ -661,11 +661,11 @@ LAST_LOG="$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)"
 if [[ "$LAST_LOG_QUOTE" == "1" ]] &>/dev/null; then
   # output random quotes
   LAST_LOG="$(sort -R /home/"$USER_NAME"/node/quotes 2>/dev/null | tail -1)"
-  LAST_LOG="${N0}${LAST_LOG:0:222}${N0}"
+  LAST_LOG="${N0}${LAST_LOG:0:333}${N0}"
 else
   # output normal node log w size
   LOG_SIZE=$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }')
-  LAST_LOG="${N0}${LAST_LOG:0:222} log=${LOG_SIZE}${N0}"
+  LAST_LOG="${N0}${LAST_LOG:0:333} log=${LOG_SIZE}${N0}"
 fi
 
 # if zero
