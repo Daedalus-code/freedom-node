@@ -591,14 +591,6 @@ fi
 # wallet tx last
 ################################################################################
 
-# if any data
-if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log)" -gt "0" ]] &>/dev/null; then
-  # if syncing
-  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-    WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
-  fi
-fi
-
 # if any wallet movements
 if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 /home/"$USER_NAME"/node/movements.tmp 2>/dev/null)${N0}"
@@ -619,6 +611,14 @@ fi
 if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_TXLAST="    ${CY}Loading${N0}"
   CB="${CY}"
+fi
+
+# if any data
+if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log)" -gt "0" ]] &>/dev/null; then
+  # if syncing
+  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+    WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
+  fi
 fi
 
 # if zero
