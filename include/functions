@@ -70,7 +70,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
   draw_progress_bar() {
     PROGRESS="$1"
     local PERCENT
-    BAR_WIDTH=45
+    BAR_WIDTH="45"
     local FILLED
     local EMPTY
 
@@ -617,7 +617,7 @@ fi
 if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log)" -gt "0" ]] &>/dev/null; then
   # if syncing
   if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-    WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
+    WALLET_TXLAST="  ${G1}${SYNC_PROGRESS_BAR}${N0}"
   fi
 fi
 
