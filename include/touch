@@ -45,11 +45,11 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # stop the service (this kills dash without systemd auto-restarting)
-      systemctl stop freedomcoind.service
+      sudo systemctl stop freedomcoind.service &>/dev/null
       # handle zone label (display dialog)
       handle_zone "$LABEL"
       # restart the service (which starts dash again)
-      systemctl start freedomcoind.service
+      sudo systemctl start freedomcoind.service &>/dev/null
       # exit the loop after the first match
       break
     fi
