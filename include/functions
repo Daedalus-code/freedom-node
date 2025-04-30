@@ -97,7 +97,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
   # if zero
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-    SYNC_PROGRESS_BAR="${CY}       Loading${N0}"
+    SYNC_PROGRESS_BAR="${CY}    Loading${N0}"
   fi
 fi
 
@@ -613,12 +613,12 @@ fi
 
 # if loading block index
 if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
-  WALLET_TXLAST="       ${CY}Loading${N0}"
+  WALLET_TXLAST="    ${CY}Loading${N0}"
 fi
 
 # if zero
 if [[ -z "$WALLET_TXLAST" ]]; then
-  WALLET_TXLAST="       ${GR}Loading${N0}"
+  WALLET_TXLAST="    ${GR}Loading${N0}"
 fi
 
 ################################################################################
