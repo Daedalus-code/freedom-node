@@ -106,15 +106,16 @@ echo "$WALLET_SYNC" >/home/"$USER_NAME"/node/progress.tmp
 
 WALLET_SYNC="$(awk NF /home/"$USER_NAME"/node/progress.tmp 2>/dev/null)"
 
-# if zero
-if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
-  WALLET_SYNC="0"
-fi
-
 # if synced
 if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
   WALLET_SYNC="${G1}OK${N0}"
 else
+
+  # if zero
+  if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
+    WALLET_SYNC="0"
+  fi
+
   WALLET_SYNC="${G1}$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')%${N0}"
 fi
 
