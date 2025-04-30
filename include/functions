@@ -13,8 +13,12 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 
-# set console display font
-sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz
+# if missing
+if [[ ! -f "$HOME_DIR"/node/setfont ]] &>/dev/null; then
+  # set console display font
+  sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz
+  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >"$HOME_DIR"/node/setfont
+fi
 
 ################################################################################
 ################################################################################
@@ -30,8 +34,10 @@ fi
 # client commands
 ################################################################################
 
+DATE="$(date '+%s')"
+
 # client updated data age (seconds)
-CLIENT_UPDATED_DATA="$(($(date +%s) - $(stat -c '%Y' /home/"$USER_NAME"/node/KEK.tmp 2>/dev/null || echo 0)))"
+CLIENT_UPDATED_DATA="$(($(echo "$DATE") - $(stat -c '%Y' /home/"$USER_NAME"/node/KEK.tmp 2>/dev/null || echo 0)))"
 
 # if older than n, if missing
 if [[ "$CLIENT_UPDATED_DATA" -gt "55" ]] &>/dev/null; then
@@ -159,7 +165,7 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
 fi
 
 WALLET_MOVEMENT="$(wc -l /home/"$USER_NAME"/node/movements.tmp 2>/dev/null | awk '{ print $1 }')"
-WALLET_MOVEMENT_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+WALLET_MOVEMENT_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 # if any movements
 if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   CB="${Y1}"
@@ -189,7 +195,7 @@ WALLET_POS_REWARDS="$(wc -l /home/"$USER_NAME"/node/stakes.tmp 2>/dev/null | awk
 if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
   WALLET_POS_REWARDS="0"
 fi
-WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
 # if any rewards and less than n age
 if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &>/dev/null; then
@@ -554,7 +560,7 @@ fi
 ################################################################################
 
 # random quote age (seconds)
-RANDOM_QUOTE_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+RANDOM_QUOTE_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
 # if missing, if older than n, less than n
 if [[ ! -f /home/"$USER_NAME"/node/rq.tmp || "$RANDOM_QUOTE_AGE" -gt "$(echo "180+$(wc -l /home/"$USER_NAME"/node/quotes 2>/dev/null | awk '{ print $1 }')" | bc 2>/dev/null)" || "$(wc -l /home/"$USER_NAME"/node/rq.tmp | awk '{ print $1 }')" -lt "2" ]] &>/dev/null; then
@@ -751,7 +757,7 @@ $IP_ADDRESS_ARP" | awk '!a[$0]++' | sort | awk NF >/etc/freedom-node/addnode
   # fetch random address to add, disregard uplicates
   IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null | sort -R | tail -1)"
   # onetry age (seconds)
-  IP_ONETRY_AGE="$(($(date +%s) - $(stat -c '%Y'/home/"$USER_NAME"/node/onetry.tmp 2>/dev/null || echo 0)))"
+  IP_ONETRY_AGE="$(($(echo "$DATE") - $(stat -c '%Y'/home/"$USER_NAME"/node/onetry.tmp 2>/dev/null || echo 0)))"
 
   # if missing, if older than n
   if [[ ! -f /home/"$USER_NAME"/node/onetry.tmp || "$IP_ONETRY_AGE" -gt "180" ]] &>/dev/null; then
@@ -773,7 +779,7 @@ TIME="60" # loop every n second
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # after the fact (script), remove leading zero
-TIME_SECONDS=$(LC_ALL=de_US.utf8 date +"%S" | sed 's/^0*//g; s/\.0*/./g' 2>/dev/null)
+TIME_SECONDS="$(echo "$DATE" | sed 's/^0*//g; s/\.0*/./g' 2>/dev/null)"
 if [ -z "$TIME_SECONDS" ] &>/dev/null; then
   # too many zeros, create fiction
   TIME_SECONDS="1"

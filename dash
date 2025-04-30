@@ -37,7 +37,7 @@ ${LAST_LOG:?}
 \n"
 
   # wait for n second before updating
-  sleep "${TIME:?}"
+  sleep 1
 done
 
 # END
