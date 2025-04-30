@@ -44,11 +44,20 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   for ZONE in "${ZONES[@]}"; do
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
-      # kill dash
-      pkill -f "/usr/local/bin/dash"
+
+      # get dash PID
+      DASH_PID=$(pgrep -f "/usr/local/bin/dash")
+      if [[ -n "$DASH_PID" ]] &>/dev/null; then
+        kill -STOP "$DASH_PID"
+      fi
+
       handle_zone "$LABEL"
-      # start dash
-      /usr/local/bin/dash &
+
+      # resume dash
+      if [[ -n "$DASH_PID" ]] &>/dev/null; then
+        kill -CONT "$DASH_PID"
+      fi
+
       break
     fi
   done
