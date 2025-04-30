@@ -12,48 +12,51 @@ ZONES=(
   "System:1600:2100:1750:2200"
 )
 
-# get last touch coordinates from tmp file (evtest listener should write here)
-read -r x y </tmp/touchcoords || exit 0
+# if any data
+if [[ -f /tmp/touchcoords ]] &>/dev/null; then
+  # get last touch coordinates from tmp file (evtest listener should write here)
+  read -r x y </tmp/touchcoords || exit 0
 
-handle_zone() {
-  case "$1" in
-  Peers)
-    dialog --msgbox "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 10 50
-    ;;
-  Balance)
-    dialog --msgbox "Balance Info:\n${WALLET_BALANCES}" 10 50
-    ;;
-  TxCount)
-    dialog --msgbox "Transactions:\nTxCount: ${WALLET_TXCOUNT}" 8 50
-    ;;
-  Mempool)
-    dialog --msgbox "Mempool:\n${WALLET_MEMPOOL}" 8 50
-    ;;
-  Block)
-    dialog --msgbox "Block Height:\n${WALLET_HEADS}" 8 50
-    ;;
-  Sync)
-    dialog --msgbox "Wallet Sync:\n${WALLET_SYNC}" 8 50
-    ;;
-  Network)
-    dialog --msgbox "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 10 50
-    ;;
-  System)
-    dialog --msgbox "System Info:\nLoad: ${SYSTEM_LOAD}\nTemp: ${CPU_CTEMP_C}°C / ${CPU_FTEMP}" 10 50
-    ;;
-  *)
-    echo "No action for zone: $1"
-    ;;
-  esac
-}
+  handle_zone() {
+    case "$1" in
+    Peers)
+      dialog --msgbox "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 10 50
+      ;;
+    Balance)
+      dialog --msgbox "Balance Info:\n${WALLET_BALANCES}" 10 50
+      ;;
+    TxCount)
+      dialog --msgbox "Transactions:\nTxCount: ${WALLET_TXCOUNT}" 8 50
+      ;;
+    Mempool)
+      dialog --msgbox "Mempool:\n${WALLET_MEMPOOL}" 8 50
+      ;;
+    Block)
+      dialog --msgbox "Block Height:\n${WALLET_HEADS}" 8 50
+      ;;
+    Sync)
+      dialog --msgbox "Wallet Sync:\n${WALLET_SYNC}" 8 50
+      ;;
+    Network)
+      dialog --msgbox "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 10 50
+      ;;
+    System)
+      dialog --msgbox "System Info:\nLoad: ${SYSTEM_LOAD}\nTemp: ${CPU_CTEMP_C}°C / ${CPU_FTEMP}" 10 50
+      ;;
+    *)
+      echo "No action for zone: $1"
+      ;;
+    esac
+  }
 
-# check if the touch falls inside a zone
-for ZONE in "${ZONES[@]}"; do
-  IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
-  if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
-    handle_zone "$LABEL"
-    break
-  fi
-done
+  # check if the touch falls inside a zone
+  for ZONE in "${ZONES[@]}"; do
+    IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
+    if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
+      handle_zone "$LABEL"
+      break
+    fi
+  done
+fi
 
 # END
