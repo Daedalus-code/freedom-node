@@ -587,9 +587,12 @@ fi
 # wallet tx last
 ################################################################################
 
-# if syncing
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-  WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
+# if any data
+if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log)" -gt "0" ]] &>/dev/null; then
+  # if syncing
+  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+    WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
+  fi
 fi
 
 # if any wallet movements
