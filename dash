@@ -3,6 +3,7 @@
 export TERM=linux
 
 bash /etc/freedom-node/include/touch &
+pkill -f /etc/freedom-node/include/listener
 bash /etc/freedom-node/include/listener &
 
 ################################################################################
