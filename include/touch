@@ -2,6 +2,7 @@
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
+  "Peers:2350:2820:2580:2980"
   "Balance:2150:1520:2230:1550"
 )
 
@@ -13,7 +14,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Peers)
-      dialog --infobox "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 0 0
+      dialog --infobox "$(cat node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)" 0 0
       ;;
     Balance)
       dialog --infobox "$(cat node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0
