@@ -176,11 +176,14 @@ if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
 
 else
 
-  # wallet exist
-  if [[ -f "$HOME_DIR"/freedomcoind && -f "$HOME_DIR"/freedomcoin-cli ]] &>/dev/null; then
-    # install wallet
-    sudo cp "$HOME_DIR"/freedomcoin* /usr/local/bin
-    sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/freedomcoin*
+  # if no daemon running
+  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -eq "0" ]] &>/dev/null; then
+    # wallet exist
+    if [[ -f "$HOME_DIR"/freedomcoind && -f "$HOME_DIR"/freedomcoin-cli ]] &>/dev/null; then
+      # install wallet
+      sudo cp "$HOME_DIR"/freedomcoin* /usr/local/bin
+      sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/freedomcoin*
+    fi
   fi
 
   # download wallet
@@ -274,19 +277,15 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
   # touchscreen?
   if [ ! -z "$(dmesg | grep 'touchscreen')" ]; then
-    printf '%b' "[  ${G1}OK${N0}  ] Touchscreen detected! (high probability to be a TFT/LCD screen)\n"
-    DISPLAY_DETECTED="1"
-  fi
-
-  # second framebuffer?
-  if [ -d "/sys/class/graphics/fb1" ]; then
-    printf '%b' "[  ${G1}OK${N0}  ] Secondary framebuffer found! (TFT/LCD screen would be fb1, unless more than one monitor.)\n"
-    # display detected
     DISPLAY_DETECTED="1"
   fi
 
   # check if display is connected
   if [[ "$DISPLAY_DETECTED" == "1" ]] &>/dev/null; then
+    printf '%b' "[  ${G1}OK${N0}  ] Touchscreen detected! (high probability to be a TFT/LCD screen)\n"
+    if [ -d "/sys/class/graphics/fb1" ]; then
+      printf '%b' "[  ${G1}OK${N0}  ] Secondary framebuffer found! (TFT/LCD screen would be fb1, unless more than one monitor.)\n"
+    fi
 
     # if missing
     if [[ ! -d "$HOME_DIR"/LCD-show ]] &>/dev/null; then
