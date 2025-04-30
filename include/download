@@ -84,6 +84,8 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
         --backtitle "Try to build wallet from source?" \
         --yesno "Yes: Build! No: Go Back!" 5 30; then
         bash /etc/freedom-node/include/compile
+      else
+        clear
       fi
     fi
   fi
