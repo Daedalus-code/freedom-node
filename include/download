@@ -85,8 +85,8 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
         --yesno "Yes: Build! No: Go Back!" 5 30; then
         bash /etc/freedom-node/include/compile
       else
-        echo "[  ?!  ] No wallet was built..
-"
+        echo "
+[  ?!  ] No wallet was built.."
       fi
     fi
   fi
