@@ -2,7 +2,7 @@
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Balance:1850:2600:1950:2650"
+  "Balance:2150:1520:2230:1550"
 )
 
 # if any data
