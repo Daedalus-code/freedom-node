@@ -779,7 +779,7 @@ TIME="60" # loop every n second
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # after the fact (script), remove leading zero
-TIME_SECONDS="$(echo "$DATE" | sed 's/^0*//g; s/\.0*/./g' 2>/dev/null)"
+TIME_SECONDS="$(echo "$DATE_CLOCK" | sed 's/^0*//g; s/\.0*/./g' 2>/dev/null)"
 if [ -z "$TIME_SECONDS" ] &>/dev/null; then
   # too many zeros, create fiction
   TIME_SECONDS="1"
