@@ -244,21 +244,23 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
 
     echo "[Unit]
-  Description=freedomcoind service
-  After=network-online.target
+Description=freedomcoind service
+After=network-online.target
 
-  [Service]
-  Type=simple
-  User=$USER_NAME
-  Group=$USER_NAME
-  ExecStart=/etc/freedom-node/include/start
-  ExecReload=/etc/freedom-node/include/restart
-  ExecStop=/usr/local/bin/freedomcoin-cli stop
-  Restart=always
-  RestartSec=60
+[Service]
+Type=simple
+User=$USER_NAME
+Group=$USER_NAME
+ExecStart=/etc/freedom-node/include/start
+ExecReload=/etc/freedom-node/include/restart
+ExecStop=/usr/local/bin/freedomcoin-cli stop
+StandardOutput=tty
+StandardError=tty
+Restart=always
+RestartSec=60
 
-  [Install]
-  WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
+[Install]
+WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
     # install service
     sudo mv /home/"$USER_NAME"/node/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
