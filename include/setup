@@ -275,8 +275,11 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
   # freedomcoin display service
   ##############################################################################
 
+  TOUCHSCREEN="$(dmesg | grep 'touchscreen')"
+
   # touchscreen?
-  if [ ! -z "$(dmesg | grep 'touchscreen')" ]; then
+  if [ ! -z "$TOUCHSCREEN" ]; then
+    echo "$TOUCHSCREEN" >"$HOME_DIR"/node/display
     DISPLAY_DETECTED="1"
   fi
 
