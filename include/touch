@@ -13,26 +13,26 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Peers)
-      dialog --pause "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 0 0 10
+      dialog --infobox "Peers Info:\nIPv4: ${WALLET_PEERS_IP4}\nIPv6: ${WALLET_PEERS_IP6}" 0 0
       ;;
     Balance)
-      dialog --pause "$(cat node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0 10
+      dialog --infobox "$(cat node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0
       ;;
     Block)
-      dialog --pause "Block Height:\n${WALLET_HEADS}" 0 0 10
+      dialog --infobox "Block Height:\n${WALLET_HEADS}" 0 0
       ;;
     Sync)
-      dialog --pause "Wallet Sync:\n${WALLET_SYNC}" 0 0 10
+      dialog --infobox "Wallet Sync:\n${WALLET_SYNC}" 0 0
       ;;
     Network)
-      dialog --pause "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 0 0 10
+      dialog --infobox "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 0 0
       ;;
     System)
       # if missing
       if [[ ! -f "$HOME_DIR"/node/hostnamectl ]] &>/dev/null; then
         echo "$(hostnamectl)" >"$HOME_DIR"/node/hostnamectl
       fi
-      dialog --pause "$(cat "$HOME_DIR"/node/hostnamectl 2>/dev/null)" 0 0 10
+      dialog --infobox "$(cat "$HOME_DIR"/node/hostnamectl 2>/dev/null)" 0 0
       ;;
     *)
       echo "No action for zone: $1"
