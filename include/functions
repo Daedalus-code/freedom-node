@@ -14,7 +14,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 ################################################################################
 
 # set console display font
-sudo setfont /usr/share/consolefonts/Uni2-Terminus12x6.psf.gz
+sudo setfont /usr/share/consolefonts/Uni2-Terminus14.psf.gz
 
 ################################################################################
 ################################################################################
