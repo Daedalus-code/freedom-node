@@ -48,7 +48,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       pkill -f "/usr/local/bin/dash"
       handle_zone "$LABEL"
       # start dash
-      nohup /usr/local/bin/dash >/dev/tty1 2>&1 &
+      bash /usr/local/bin/dash
     fi
   done
 fi
