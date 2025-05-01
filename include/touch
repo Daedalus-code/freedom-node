@@ -24,8 +24,6 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   read -r x y </tmp/touchcoords || exit 0
 
   handle_zone() {
-    # stop display service
-    sudo service freedomnode stop &>/dev/null
     clear
     case "$1" in
     Peers)
@@ -33,9 +31,9 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       # if zero
       if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
         WALLET_PEERS_INFO="No peers.."
-        dialog --msgbox "$WALLET_PEERS_INFO" 4 16
+        dialog --infobox "$WALLET_PEERS_INFO" 4 16
       else
-        dialog --msgbox "$WALLET_PEERS_INFO" 0 0
+        dialog --infobox "$WALLET_PEERS_INFO" 0 0
       fi
       ;;
     Balance)
@@ -43,9 +41,9 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       # if zero
       if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
         WALLET_BALANCES_INFO="No balances"
-        dialog --msgbox "$WALLET_BALANCES_INFO" 4 16
+        dialog --infobox "$WALLET_BALANCES_INFO" 4 16
       else
-        dialog --no-collapse --msgbox "$WALLET_BALANCES_INFO" 0 0
+        dialog --no-collapse --infobox "$WALLET_BALANCES_INFO" 0 0
       fi
       ;;
     Internet)
@@ -56,9 +54,9 @@ Proxy : ${WALLET_ONION_IP:0:21}...onion"
       # if zero
       if [[ -z "$WALLET_INTERNET_INFO" ]] &>/dev/null; then
         WALLET_INTERNET_INFO="No network.."
-        dialog --msgbox "$WALLET_INTERNET_INFO" 4 16
+        dialog --infobox "$WALLET_INTERNET_INFO" 4 16
       else
-        dialog --no-collapse --msgbox "$(echo "$WALLET_INTERNET_INFO" | column -t)" 0 0
+        dialog --no-collapse --infobox "$(echo "$WALLET_INTERNET_INFO" | column -t)" 0 0
       fi
       ;;
     Network)
@@ -66,19 +64,19 @@ Proxy : ${WALLET_ONION_IP:0:21}...onion"
       WALLET_NETWORK_INFO="Address : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
 Netmask : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
 Broadcast : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
-      dialog --no-collapse --msgbox "$(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
+      dialog --no-collapse --infobox "$(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
       ;;
     M)
-      dialog --msgbox "Masternode information" 0 0
+      dialog --infobox "Masternode information" 0 0
       ;;
     D)
-      dialog --msgbox "Dark theme enabled." 0 0
+      dialog --infobox "Dark theme enabled." 0 0
       ;;
     Staking)
-      dialog --msgbox "Staking status" 0 0
+      dialog --infobox "Staking status" 0 0
       ;;
     Proxy)
-      dialog --msgbox "Proxy status" 0 0
+      dialog --infobox "Proxy status" 0 0
       ;;
     System)
       # if missing
@@ -89,19 +87,18 @@ Broadcast : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep 
       # if zero
       if [[ -z "$WALLET_SYSTEM_INFO" ]] &>/dev/null; then
         WALLET_SYSTEM_INFO="No system info"
-        dialog --msgbox "$WALLET_SYSTEM_INFO" 4 19
+        dialog --infobox "$WALLET_SYSTEM_INFO" 4 19
       fi
-      dialog --msgbox "$WALLET_SYSTEM_INFO" 0 0
+      dialog --infobox "$WALLET_SYSTEM_INFO" 0 0
       ;;
     FreeMem)
-      dialog --no-collapse --msgbox "$(echo "$(free -tm | awk '{ print $1,$2,$3,$4 }')" | column -t)" 0 0
+      dialog --no-collapse --infobox "$(echo "$(free -tm | awk '{ print $1,$2,$3,$4 }')" | column -t)" 0 0
       ;;
     HDDuse)
-      dialog --msgbox "$(df -h)" 0 0
+      dialog --infobox "$(df -h)" 0 0
       ;;
     esac
-    # start display service
-    sudo service freedomnode start &>/dev/null
+    kill -9 "$(ps -fp $(pidof bash) 2>/dev/null | grep "/etc/freedom-node/include/touch" | awk '{ print $2 }' | xargs)" &>/dev/null
   }
 
   # check if the touch falls inside a zone
