@@ -94,8 +94,8 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       # handle zone label (display dialog)
       handle_zone "$LABEL"
     fi
+    clear
   done
-  clear
 fi
 
 # END
