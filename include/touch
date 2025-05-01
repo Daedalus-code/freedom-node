@@ -5,17 +5,9 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Peers:2200:2700:2700:3100"    # Wallet connections
-  "Balance:2000:1300:2400:1700"  # Wallet balances
-  "System:3100:1300:3300:1700"   # System information
-  "Internet:2000:1750:2700:1850" # New zone for WAN line
-  "Network:3350:950:3700:1100"   # Top-right, near eth0
-  "M:2200:950:2300:1100"         # Around "M"
-  "D:2350:950:2450:1100"         # Around "D"
-  "Staking:2500:950:2600:1100"   # Staking
-  "Proxy:2650:950:2750:1100"     # Proxy
-  "FreeMem:2000:1500:2500:1600"  # “Free Mem”
-  "HDDuse:2600:1500:3200:1600"   # “HDDuse”
+  "Peers:2200:2700:2700:3100"   # Wallet connections
+  "Balance:2000:1300:2400:1700" # Wallet balances
+  "System:3100:1300:3300:1700"  # System information
 )
 
 # if any data
@@ -85,9 +77,6 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
         dialog --infobox "$WALLET_SYSTEM_INFO" 4 19
       fi
       dialog --infobox "$WALLET_SYSTEM_INFO" 0 0
-      ;;
-    *)
-      break
       ;;
     FreeMem)
       dialog --infobox "$(ifconfig | grep -v "127" | grep -A7 "inet " | grep -v "flags" | egrep "inet |netmask|broadcast" | xargs | tr ' ' '\n')" 0 0
