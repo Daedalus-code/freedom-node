@@ -20,7 +20,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       WALLET_PEERS_INFO="$(cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)"
       # if zero
       if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
-        WALLET_PEERS_INFO="No peers"
+        WALLET_PEERS_INFO="No peers.."
       fi
       dialog --infobox "$WALLET_PEERS_INFO" 0 0
       ;;
