@@ -89,7 +89,7 @@ Broadcast : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep 
         WALLET_SYSTEM_INFO="No system info"
         dialog --infobox "$WALLET_SYSTEM_INFO" 4 19
       fi
-      dialog --infobox "$WALLET_SYSTEM_INFO" 0 0
+      dialog --no-collapse --infobox "$WALLET_SYSTEM_INFO" 0 0
       ;;
     FreeMem)
       dialog --no-collapse --infobox "$(echo "$(free -tm | awk '{ print $1,$2,$3,$4 }')" | column -t)" 0 0
