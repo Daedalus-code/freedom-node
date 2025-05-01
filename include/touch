@@ -96,5 +96,6 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
     fi
   done
 fi
+clear
 
 # END
