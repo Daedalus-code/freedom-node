@@ -1,6 +1,8 @@
 #!/bin/bash
 
 exec 2>/dev/null
+# restore terminal to sane state
+trap 'reset; stty sane; clear; tput rmcup' EXIT
 
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
