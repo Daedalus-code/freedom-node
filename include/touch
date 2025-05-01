@@ -1,7 +1,5 @@
 #!/bin/bash
 
-break
-
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
@@ -61,6 +59,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # handle zone label (display dialog)
+      break
       handle_zone "$LABEL"
       break
     fi
