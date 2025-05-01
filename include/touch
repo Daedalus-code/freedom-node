@@ -67,8 +67,8 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       sleep 0.5
       handle_zone "$LABEL"
     fi
-    clear && break
   done
+  break
 fi
 
 # END
