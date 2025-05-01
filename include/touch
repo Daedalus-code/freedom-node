@@ -92,13 +92,9 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # handle zone label (display dialog)
-      handle_zone "$LABEL" | tr '' '\n'
+      handle_zone "$LABEL"
     fi
   done
 fi
-
-# reset terminal state (optional, safe)
-tput sgr0
-exit 0
 
 # END
