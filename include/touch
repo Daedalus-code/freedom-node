@@ -85,7 +85,6 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       dialog --infobox "$(df -h)" 0 0
       ;;
     esac
-    clear
   }
 
   # check if the touch falls inside a zone
