@@ -95,7 +95,7 @@ Broadcast : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep 
       dialog --no-collapse --infobox "$(echo "$(free -tm | awk '{ print $1,$2,$3,$4 }')" | column -t)" 0 0
       ;;
     HDDuse)
-      dialog --infobox "$(df -h)" 0 0
+      dialog --no-collapse --infobox "$(df -h)" 0 0
       ;;
     esac
     exit
