@@ -230,8 +230,8 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   curl -s http://whatismyip.akamai.com/ >/home/"$USER_NAME"/node/wanip.tmp
   printf '%b' "[  ${G1}OK${N0}  ] ${CY}$(cat /home/"$USER_NAME"/node/wanip.tmp 2>/dev/null)${N0}\n"
   # fetch onion from hidden service
-  sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/freedom-node/hostname.onion
-  printf '%b' "[  ${G1}OK${N0}  ] ${P1}$(cat /etc/freedom-node/hostname.onion 2>/dev/null)${N0}\n"
+  sudo cat /var/lib/tor/FreedomCoin-service/hostname >"$HOME_DIR"/node/onionip
+  printf '%b' "[  ${G1}OK${N0}  ] ${P1}$(cat "$HOME_DIR"/node/onionip 2>/dev/null)${N0}\n"
 
   ##############################################################################
   # bootstrap
