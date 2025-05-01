@@ -97,4 +97,9 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
   done
 fi
 
+# reset terminal state (optional, safe)
+tput sgr0
+echo ""
+exit 0
+
 # END
