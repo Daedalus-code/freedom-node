@@ -66,8 +66,8 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       kill "$(ps -fp $(pidof bash) | grep "dash" | awk '{ print $2 }' | xargs)" &>/dev/null
       sleep 0.5
       handle_zone "$LABEL"
-      clear && break
     fi
+    clear && break
   done
 fi
 
