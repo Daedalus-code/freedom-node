@@ -691,7 +691,7 @@ if [[ -z "$LAST_LOG" ]] &>/dev/null; then
 fi
 
 # if more than n megabytes
-if [[ "$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
+if [[ "$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "1" ]] &>/dev/null; then
   # trim debug.log
   echo "$(tail -1001 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" >"$HOME_DIR"/.trumpcoin/debug.log
 fi
@@ -745,7 +745,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # ip address connected
   IP_ADDRESS_CONNECTED="$(awk NF /etc/freedom-node/connected.peers 2>/dev/null)"
   # ip address arp
-  IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null)"
+  IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+")"
   # ip address failed
   IP_ADDRESS_FAILED="$(awk NF /etc/freedom-node/failed.peers 2>/dev/null)"
 
