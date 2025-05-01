@@ -249,6 +249,9 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     echo "[Unit]
 Description=freedomcoind service
 After=network-online.target
+Wants=network-online.target
+DefaultDependencies=no
+Before=shutdown.target reboot.target halt.target
 
 [Service]
 Type=simple
@@ -257,8 +260,10 @@ Group=$USER_NAME
 ExecStart=/etc/freedom-node/include/start
 ExecReload=/etc/freedom-node/include/restart
 ExecStop=/usr/local/bin/freedomcoin-cli stop
-Restart=always
-RestartSec=60
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
