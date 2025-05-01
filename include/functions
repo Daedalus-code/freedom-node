@@ -404,7 +404,7 @@ RANDOM_PUBLIC_IP=$((((RANDOM % 2) + 1)))
 
 # onion ip address
 if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
-  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/onionip 2>/dev/null)"
+  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
   PUBLIC_IP="${P1}${PUBLIC_IP:0:9}...onion${N0:?}"
 fi
 # wan ip address
