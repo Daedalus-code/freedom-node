@@ -7,7 +7,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 ZONES=(
   "Peers:2350:2820:2580:2980"
   "Balance:2150:1520:2230:1550"
-  "System:3148:1456:3110:1458"
+  "System:3110:1456:3148:1458"
 )
 
 # if any data
