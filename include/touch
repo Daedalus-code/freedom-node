@@ -22,7 +22,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
         WALLET_PEERS_INFO="No peers.."
       fi
-      dialog --infobox "$WALLET_PEERS_INFO" 0 0
+      dialog --infobox "$WALLET_PEERS_INFO" 20 50
       ;;
     Balance)
       WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')"
@@ -30,23 +30,23 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
         WALLET_BALANCES_INFO="No balances"
       fi
-      dialog --infobox "$WALLET_BALANCES_INFO" 0 0
+      dialog --infobox "$WALLET_BALANCES_INFO" 20 50
       ;;
     Block)
-      dialog --infobox "Block Height:\n${WALLET_HEADS}" 0 0
+      dialog --infobox "Block Height:\n${WALLET_HEADS}" 20 50
       ;;
     Sync)
-      dialog --infobox "Wallet Sync:\n${WALLET_SYNC}" 0 0
+      dialog --infobox "Wallet Sync:\n${WALLET_SYNC}" 20 50
       ;;
     Network)
-      dialog --infobox "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 0 0
+      dialog --infobox "Network:\nIP: ${IP_ADDRESS}\nWAN: ${PUBLIC_IP}" 20 50
       ;;
     System)
       # if missing
       if [[ ! -f "$HOME_DIR"/node/hostnamectl ]] &>/dev/null; then
         echo "$(hostnamectl)" >"$HOME_DIR"/node/hostnamectl
       fi
-      dialog --infobox "$(cat "$HOME_DIR"/node/hostnamectl 2>/dev/null)" 0 0
+      dialog --infobox "$(cat "$HOME_DIR"/node/hostnamectl 2>/dev/null)" 20 50
       ;;
     *)
       break
