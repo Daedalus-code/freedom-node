@@ -61,7 +61,7 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       WALLET_NETWORK_INFO="Address: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
 Netmask: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
 Broadcast: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
-      dialog --no-collapse --infobox "IP: $(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
+      dialog --no-collapse --infobox "$(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
       ;;
     M)
       dialog --infobox "Masternode information" 0 0
