@@ -17,10 +17,20 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Peers)
-      dialog --infobox "$(cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)" 0 0
+      WALLET_PEERS_INFO="$(cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)"
+      # if zero
+      if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
+        WALLET_PEERS_INFO="No connections"
+      fi
+      dialog --infobox "$WALLET_PEERS_INFO" 0 0
       ;;
     Balance)
-      dialog --infobox "$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')" 0 0
+      WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')"
+      # if zero
+      if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
+        WALLET_BALANCES_INFO="No balances"
+      fi
+      dialog --infobox "$WALLET_BALANCES_INFO" 0 0
       ;;
     Block)
       dialog --infobox "Block Height:\n${WALLET_HEADS}" 0 0
