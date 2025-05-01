@@ -21,16 +21,20 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       # if zero
       if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
         WALLET_PEERS_INFO="No peers.."
+        dialog --infobox "$WALLET_PEERS_INFO" 5 15
+      else
+        dialog --infobox "$WALLET_PEERS_INFO" 0 0
       fi
-      dialog --infobox "$WALLET_PEERS_INFO" 0 0
       ;;
     Balance)
       WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')"
       # if zero
       if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
         WALLET_BALANCES_INFO="No balances"
+        dialog --infobox "$WALLET_BALANCES_INFO" 5 15
+      else
+        dialog --infobox "$WALLET_BALANCES_INFO" 0 0
       fi
-      dialog --infobox "$WALLET_BALANCES_INFO" 0 0
       ;;
     Block)
       dialog --infobox "Block Height:\n${WALLET_HEADS}" 0 0
@@ -59,7 +63,6 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # handle zone label (display dialog)
-      break
       handle_zone "$LABEL"
       break
     fi
