@@ -95,7 +95,7 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       handle_zone "$LABEL"
     fi
   done
+  clear
 fi
-clear
 
 # END
