@@ -24,7 +24,6 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   read -r x y </tmp/touchcoords || exit 0
 
   handle_zone() {
-    clear
     case "$1" in
     Peers)
       WALLET_PEERS_INFO="$(cat /etc/freedom-node/connected.peers 2>/dev/null)"
