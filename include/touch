@@ -85,6 +85,7 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       dialog --infobox "$(df -h)" 0 0
       ;;
     esac
+    clear
   }
 
   # check if the touch falls inside a zone
@@ -94,7 +95,6 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       # handle zone label (display dialog)
       handle_zone "$LABEL"
     fi
-    clear
   done
 fi
 
