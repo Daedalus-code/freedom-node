@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pkill -f /usr/local/bin/dash
+break
 
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
