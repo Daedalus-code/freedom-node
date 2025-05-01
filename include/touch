@@ -21,7 +21,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       # if zero
       if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
         WALLET_PEERS_INFO="No peers.."
-        dialog --infobox "$WALLET_PEERS_INFO" 5 15
+        dialog --infobox "$WALLET_PEERS_INFO" 4 16
       else
         dialog --infobox "$WALLET_PEERS_INFO" 0 0
       fi
@@ -31,7 +31,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       # if zero
       if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
         WALLET_BALANCES_INFO="No balances"
-        dialog --infobox "$WALLET_BALANCES_INFO" 5 15
+        dialog --infobox "$WALLET_BALANCES_INFO" 4 16
       else
         dialog --infobox "$WALLET_BALANCES_INFO" 0 0
       fi
