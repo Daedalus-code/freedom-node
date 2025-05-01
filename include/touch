@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pkill -f /usr/local/bin/dash
+
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
@@ -17,7 +19,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Peers)
-      WALLET_PEERS_INFO="$(cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort | tr ' ' '\n')"
+      WALLET_PEERS_INFO="$(cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | grep "addr:" | grep -v "get" | awk '{ print $2 }' | sort)"
       # if zero
       if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
         WALLET_PEERS_INFO="No peers.."
@@ -25,7 +27,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       dialog --infobox "$WALLET_PEERS_INFO" 0 0
       ;;
     Balance)
-      WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ' | tr ' ' '\n')"
+      WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')"
       # if zero
       if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
         WALLET_BALANCES_INFO="No balances"
