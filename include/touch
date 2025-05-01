@@ -50,7 +50,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # handle zone label (display dialog)
       handle_zone "$LABEL"
-      break
+      clear
     fi
   done
 fi
