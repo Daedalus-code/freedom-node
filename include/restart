@@ -14,7 +14,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # stop daemon with client
 /usr/local/bin/./freedomcoin-cli stop
-sleep 0.5
+sleep 1
 # start daemon
 bash /etc/freedom-node/include/start
 

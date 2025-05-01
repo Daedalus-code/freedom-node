@@ -167,6 +167,7 @@ fi
 
 WALLET_MOVEMENT="$(wc -l /home/"$USER_NAME"/node/movements.tmp 2>/dev/null | awk '{ print $1 }')"
 WALLET_MOVEMENT_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
+
 # if any movements
 if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   CB="${Y1}"
@@ -192,10 +193,13 @@ fi
 
 # default
 WALLET_POS_REWARDS="$(wc -l /home/"$USER_NAME"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
+
 # if zero
 if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
   WALLET_POS_REWARDS="0"
 fi
+
+# wallet pos rewards age (seconds)
 WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
 # if any rewards and less than n age
@@ -218,22 +222,22 @@ fi
 # patriotnode status (masternode)
 ################################################################################
 
-MASTER_STATUS=""
+MASTER_STATUS="${GR}M${N0}"
 
 # if zero
 if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
-  MASTER_STATUS="${GR}M${N0}"
+  MASTER_STATUS="0"
 fi
 
 ################################################################################
 # dash theme
 ################################################################################
 
-THEME_STATUS=""
+THEME_STATUS="D"
 
 # if zero
 if [[ -z "$THEME_STATUS" ]] &>/dev/null; then
-  THEME_STATUS="${GR}D${N0}"
+  THEME_STATUS="${GR}0${N0}"
 fi
 
 ################################################################################
@@ -256,11 +260,13 @@ fi
 # tor status (tor)
 ################################################################################
 
+TOR_STATUS="${GR}P${N0}"
+
 TOR_STATUS="$(grep "proxy" /home/"$USER_NAME"/node/getinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
 
 # if zero
 if [[ "$TOR_STATUS" == "0" || -z "$TOR_STATUS" ]] &>/dev/null; then
-  TOR_STATUS="${GR}S${N0}"
+  TOR_STATUS="${GR}0${N0}"
 fi
 
 # if active
@@ -272,7 +278,9 @@ fi
 # lan status (network interface)
 ################################################################################
 
-LAN_STATUS="$(ifconfig | head -1 | awk '{ print $1 }' | tr -d ':')"
+echo "$(ifconfig 2>/dev/null)" >/tmp/ifconfig
+
+LAN_STATUS="$(cat /tmp/ifconfig 2>/dev/null | head -1 | awk '{ print $1 }' | tr -d ':')"
 
 # if zero
 if [[ -z "$LAN_STATUS" ]] &>/dev/null; then
@@ -292,9 +300,9 @@ SYSTEM_LOAD="$(awk '{ print $1,$2,$3 }' /proc/loadavg 2>/dev/null)"
 ################################################################################
 
 # read raw temp in millidegrees
-CPU_CTEMP_RAW=$(awk NF /sys/devices/virtual/thermal/thermal_zone0/temp)
+CPU_CTEMP_RAW="$(awk NF /sys/devices/virtual/thermal/thermal_zone0/temp)"
 # integer celsius
-CPU_CTEMP_C=$((CPU_CTEMP_RAW / 1000))
+CPU_CTEMP_C="$((CPU_CTEMP_RAW / 1000))"
 # integer fahrenheit (using integer math)
 CPU_FTEMP=$(((CPU_CTEMP_C * 9 / 5) + 32))
 # with symbol
@@ -312,9 +320,11 @@ FREE_MEM="${G1}$(echo "$(grep "MemFree" /proc/meminfo 2>/dev/null | awk '{ print
 # hard drive
 ################################################################################
 
-TOTAL_HDD="${G0}$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $2 }')${N0}"
-USED_HDD="${G1}$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $3 }')${N0}"
-USED_HDD_P="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $5 }' | tr -d 'G')"
+DF_TOTAL="$(df -h --total 2>/dev/null)"
+
+TOTAL_HDD="${G0}$(echo "$DF_TOTAL" | tail -1 | xargs | tr -d '-' | awk '{ print $2 }')${N0}"
+USED_HDD="${G1}$(echo "$DF_TOTAL" | tail -1 | xargs | tr -d '-' | awk '{ print $3 }')${N0}"
+USED_HDD_P="$(echo "$DF_TOTAL" | tail -1 | xargs | tr -d '-' | awk '{ print $5 }' | tr -d 'G')"
 
 ################################################################################
 # system user
@@ -326,7 +336,7 @@ SYSTEM_USER="$USER_NAME"
 # ip address
 ################################################################################
 
-IP_ADDRESS="$(ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
+IP_ADDRESS="$(cat /tmp/ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
 
 # if zero
 if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
@@ -338,7 +348,7 @@ fi
 ################################################################################
 
 # get all RX byte counts from ifconfig
-DOWNLOAD_TOTAL=$(ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+DOWNLOAD_TOTAL=$(cat /tmp/ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
 DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
 
@@ -347,7 +357,7 @@ DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/n
 ################################################################################
 
 # get all TX byte counts from ifconfig
-UPLOAD_TOTAL_BYTES=$(ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+UPLOAD_TOTAL_BYTES=$(cat /tmp/ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
 UPLOAD="$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
 
@@ -566,16 +576,16 @@ RANDOM_QUOTE_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | wh
 # if missing, if older than n, less than n
 if [[ ! -f /home/"$USER_NAME"/node/rq.tmp || "$RANDOM_QUOTE_AGE" -gt "$(echo "180+$(wc -l /home/"$USER_NAME"/node/quotes 2>/dev/null | awk '{ print $1 }')" | bc 2>/dev/null)" || "$(wc -l /home/"$USER_NAME"/node/rq.tmp | awk '{ print $1 }')" -lt "2" ]] &>/dev/null; then
   # fetch quotes with proxy from quotedb
-  curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss >/home/"$USER_NAME"/node/rq.tmp
+  curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss >/home/"$USER_NAME"/node/rq.tmp 2>/dev/null
 fi
 
-RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | paste -sd' ')"
+RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | paste -sd' ')"
 RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "authors" | tr '/' ' ' | awk -Fauthors '{ print $2 }' | xargs)"
 
 # create quotes
 echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
 # disregard duplicates, sort randomly, disregard lines less than n, html loc, errors
-echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<181' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524")" >/home/"$USER_NAME"/node/quotes
+echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<181' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524|error code: 504")" >/home/"$USER_NAME"/node/quotes
 
 # if found
 if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
