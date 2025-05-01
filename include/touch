@@ -51,7 +51,7 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       fi
       ;;
     Network)
-      dialog --infobox "$(ifconfig | grep -v "127" | grep -A7 "inet " | grep -v "flags" | egrep "inet |netmask|broadcast" | xargs | tr ' ' '\n')" 0 0
+      dialog --infobox "$(ifconfig | grep -v "127" | grep -A7 "inet " | grep -v "flags" | egrep "inet |netmask|broadcast" | xargs)" 0 0
       ;;
     M)
       dialog --infobox "Masternode information" 0 0
@@ -79,7 +79,7 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
       dialog --infobox "$WALLET_SYSTEM_INFO" 0 0
       ;;
     FreeMem)
-      dialog --infobox "$(ifconfig | grep -v "127" | grep -A7 "inet " | grep -v "flags" | egrep "inet |netmask|broadcast" | xargs | tr ' ' '\n')" 0 0
+      dialog --infobox "$(ifconfig | grep -v "127" | grep -A7 "inet " | grep -v "flags" | egrep "inet |netmask|broadcast" | xargs)" 0 0
       ;;
     HDDuse)
       dialog --infobox "$(df -h)" 0 0

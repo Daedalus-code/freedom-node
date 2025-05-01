@@ -46,7 +46,7 @@ ${CB:?}     ##   ##     ${N0:?} ${TIMELINE:?}
 ${TX:?} ${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
-\n"
+"
 
   # wait for n second before updating
   sleep "${TIME:?}"
