@@ -63,7 +63,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # handle zone label (display dialog)
-      kill "$(ps -fp $(pidof bash) | grep "dash" | awk '{ print $2 }' | xargs)"
+      kill "$(ps -fp $(pidof bash) | grep "dash" | awk '{ print $2 }' | xargs)" &>/dev/null
       handle_zone "$LABEL"
       break
     fi
