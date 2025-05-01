@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec 2>/dev/null
+
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
