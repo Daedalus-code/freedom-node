@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /etc/freedom-node/include/time_fix
+
 exec 2>/dev/null
 # restore terminal to sane state
 trap 'reset; stty sane; clear; tput rmcup' EXIT
@@ -97,6 +99,8 @@ Onion : $(cat "$HOME_DIR"/node/onionip 2>/dev/null)"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
       # handle zone label (display dialog)
       handle_zone "$LABEL"
+      # wait for n second before updating
+      sleep "${TIME:?}"
     fi
   done
 fi
