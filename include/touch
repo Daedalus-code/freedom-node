@@ -98,7 +98,7 @@ Broadcast : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep 
       dialog --infobox "$(df -h)" 0 0
       ;;
     esac
-    kill -9 "$(ps -fp $(pidof bash) 2>/dev/null | grep "/etc/freedom-node/include/touch" | awk '{ print $2 }' | xargs)" &>/dev/null
+    exit
   }
 
   # check if the touch falls inside a zone
