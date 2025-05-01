@@ -48,7 +48,7 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
     Internet)
       WALLET_INTERNET_INFO="LAN: $(cat "$HOME_DIR"/node/lanip.tmp 2>/dev/null)
 WAN: $(cat "$HOME_DIR"/node/wanip.tmp 2>/dev/null)
-Onion: "
+Onion: $(cat "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
       # if zero
       if [[ -z "$WALLET_INTERNET_INFO" ]] &>/dev/null; then
         WALLET_INTERNET_INFO="No network.."
