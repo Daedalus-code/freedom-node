@@ -10,7 +10,9 @@ evtest "$DEVICE" | while read -r LINE; do
   elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     echo "$x $y" >/tmp/touchcoords
-    bash /etc/freedom-node/include/touch &
+    if [[ "$(ps -fp $(pidof bash) | grep -c "/etc/freedom-node/include/touch")" -eq "0" ]] &>/dev/null; then
+      bash /etc/freedom-node/include/touch &
+    fi
   fi
 done
 
