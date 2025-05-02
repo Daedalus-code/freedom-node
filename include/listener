@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# real event device
+# Real event device
 DEVICE="/dev/input/event0"
-# home directory
-HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+HOME_DIR="/home/yourusername" # set this to the correct home directory path
+
+# ensure the directory exists
+mkdir -p "$HOME_DIR"/node
 
 # evtest device
 evtest "$DEVICE" | while read -r LINE; do
@@ -13,14 +15,20 @@ evtest "$DEVICE" | while read -r LINE; do
   # capture ABS_Y (Y coordinate)
   elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    # write the coordinates
+    # write the coordinates (appending to touchcoords.tmp)
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
     # capture ABS_PRESSURE (pressure value)
     pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
   # capture BTN_TOUCH (touch down or up)
   elif [[ "$LINE" == *"BTN_TOUCH"* ]] &>/dev/null; then
     touch_status=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    # get config (format: Touch:x:y:pressure:touch_status)
+
+    # ensure that pressure is correctly assigned
+    if [ -z "$pressure" ]; then
+      pressure=0 # default to 0 if no pressure value is found
+    fi
+
+    # get (format: Touch:x:y:pressure:touch_status)
     echo "Touch:$x:$y:$pressure:$touch_status" >"$HOME_DIR"/node/touchconfig.tmp
     # restart the touch process
     pkill -f /etc/freedom-node/include/touch
