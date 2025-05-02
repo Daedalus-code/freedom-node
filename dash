@@ -29,20 +29,21 @@ for (( ; ; )); do # loop dashbord
   # if any display
   if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
     # dash menu options
-    HEADER_MENU="[${GR}Menu${N0}] [${GR}Network${N0}] [${GR}PoS${N0}] [${GR}Patriotnode${N0}] [${GR}Peers${N0}] [${GR}Temps${N0}] [${GR}links${N0}]"
-    FOOTER_MENU="[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]"
+    HEADER_MENU="[${GR}Menu${N0}] [${GR}Network${N0}] [${GR}PoS${N0}] [${GR}Patriotnode${N0}] [${GR}Peers${N0}] [${GR}Temps${N0}] [${GR}links${N0}]
+"
+    FOOTER_MENU="
+[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]"
   fi
 
   ##############################################################################
 
   clear
   printf '%b' "${HEADER_MENU:0}
-
 ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
-${CB:?}  | ###______/   ${GR:?} -----------------------------------------${N0:?}
+${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
 ${CB:?}   | ##          ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
-${CB:?}  | #######      ${N0:?} FreeMem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})
+${CB:?}   | ######      ${N0:?} FreeMem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})
 ${CB:?}   | ##___/      ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 ${CB:?}   | ##          ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
 ${CB:?}   | ##          ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_IP4:?} ${WALLET_PEERS_IP6:?}
@@ -54,7 +55,6 @@ ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 ${TX:?}${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
-
 
 ${FOOTER_MENU:0}"
 
