@@ -477,7 +477,7 @@ fi
 if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
 else
-  WALLET_BALANCES="${G1}$WALLET_BALANCES${N0}"
+  WALLET_BALANCES="$WALLET_BALANCES"
 fi
 
 ################################################################################
@@ -490,7 +490,7 @@ WALLET_INPUTS_NODES="$(grep -c "amount" /home/"$USER_NAME"/node/listunspent.tmp 
 if [[ -z "$WALLET_INPUTS_NODES" || "$WALLET_INPUTS_NODES" == "0" ]] &>/dev/null; then
   WALLET_INPUTS_NODES="Inputs ${GR}0${N0}"
 else
-  WALLET_INPUTS_NODES="Inputs ${G1}$WALLET_INPUTS_NODES${N0}"
+  WALLET_INPUTS_NODES="Inputs $WALLET_INPUTS_NODES"
 fi
 
 ################################################################################
@@ -514,7 +514,7 @@ WALLET_MEMPOOL="$(grep "size" /home/"$USER_NAME"/node/getmempoolinfo.tmp 2>/dev/
 if [[ -z "$WALLET_MEMPOOL" || "$WALLET_MEMPOOL" == "0" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}0${N0}"
 else
-  WALLET_MEMPOOL="${G1}$WALLET_MEMPOOL${N0}"
+  WALLET_MEMPOOL="$WALLET_MEMPOOL"
 fi
 
 ################################################################################
