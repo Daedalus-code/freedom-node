@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # dash menu options
-MENU_OPTIONS="[${GR}Recieve${N0}]  [${GR}Start${N0}]  [${GR}Stop${N0}]  [${GR}Reboot${N0}]  [${GR}Update${N0}]  [${GR}Information${N0}]
+MENU_OPTIONS="[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Information${N0}]
 "
 
 # END
