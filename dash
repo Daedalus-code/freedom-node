@@ -31,8 +31,7 @@ for (( ; ; )); do # loop dashbord
     # dash menu options
     HEADER_MENU="[${GR}Menu${N0}] [${GR}Network${N0}] [${GR}PoS${N0}] [${GR}Patriotnode${N0}] [${GR}Peers${N0}] [${GR}Temps${N0}] [${GR}links${N0}]
 "
-    FOOTER_MENU="
-[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]"
+    FOOTER_MENU="[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]"
   fi
 
   ##############################################################################
