@@ -583,7 +583,7 @@ RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "au
 # create quotes
 echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
 # disregard duplicates, sort randomly, disregard lines less than n, disregard lines greater than n, html loc, errors
-echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk 'length($0)>121' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524|error code: 504")" >/home/"$USER_NAME"/node/quotes
+echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<88' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524|error code: 504")" >/home/"$USER_NAME"/node/quotes
 
 # if found
 if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
