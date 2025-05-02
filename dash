@@ -29,11 +29,12 @@ for (( ; ; )); do # loop dashbord
   if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
     source /etc/freedom-node/include/menu
   else
-    MENU_OPTIONS=""
+    MENU_OPTIONS="\n"
   fi
 
   clear
-  printf '%b' "
+  printf '%b' "${MENU_OPTIONS:?}
+
 ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
@@ -50,8 +51,7 @@ ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 ${TX:?}${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
-
-${MENU_OPTIONS:?}"
+"
 
   # wait for n second before updating
   sleep "${TIME:?}"
