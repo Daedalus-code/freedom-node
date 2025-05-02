@@ -15,6 +15,10 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   pkill -f /etc/freedom-node/include/listener
   bash /etc/freedom-node/include/listener &
+  # dash menu options
+  HEADER_MENU="[${GR}Menu${N0}] [${GR}Network${N0}] [${GR}PoS${N0}] [${GR}Patriotnode${N0}] [${GR}Peers${N0}] [${GR}Temps${N0}] [${GR}links${N0}]
+"
+  FOOTER_MENU="[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]"
 fi
 
 ################################################################################
@@ -25,13 +29,11 @@ for (( ; ; )); do # loop dashbord
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
-  # if any display
-  if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-    source /etc/freedom-node/include/menu
-  fi
+
+  ##############################################################################
 
   clear
-  printf '%b' "${MENU_OPTIONS:0}
+  printf '%b' "${HEADER_MENU:0}
 ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
@@ -48,7 +50,8 @@ ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 ${TX:?}${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
-"
+
+${FOOTER_MENU:0}"
 
   # wait for n second before updating
   sleep "${TIME:?}"
