@@ -533,7 +533,7 @@ fi
 ################################################################################
 
 # random quote start
-RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
+RANDOM_QUOTES=$((((RANDOM % 11) + 1)))
 # quotes - art of the deal
 if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
   TIMELINE="${GR}Think big${N0:?}"
@@ -555,6 +555,8 @@ elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
   TIMELINE="${GR}Contain the costs${N0:?}"
 elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
   TIMELINE="${GR}Have fun${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "11" ] &>/dev/null; then
+  TIMELINE="${GR}Fight! Fight! Fight!${N0:?}"
 fi
 
 # if zero
