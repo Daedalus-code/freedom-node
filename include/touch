@@ -20,10 +20,10 @@ ZONES=(
   "Upgrade:3189:2892:3771:3235"     # system upgrade
   "info:3603:3612:3813:3788"        # information
   # dash
-  "WAN:2309:1344:2422:1447"   # internet
-  "LAN:3220:3637:3363:3782"   # intranet
-  "Peers:2293:2881:2430:3003" # connections
-  "Load:2921:1395:3057:1504"  # load - computer
+  "Internet:2309:1344:2422:1447" # internet
+  "Intranet:3220:3637:3363:3782" # intranet
+  "Peers:2293:2881:2430:3003"    # connections
+  "System:2921:1395:3057:1504"   # load - computer
 )
 
 # if any data
@@ -66,7 +66,7 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
         dialog --no-collapse --infobox "$(echo "$WALLET_INTERNET_INFO" | column -t)" 0 0
       fi
       ;;
-    Network)
+    Intranet)
       echo "$(ifconfig 2>/dev/null)" >/tmp/ifconfig
       WALLET_NETWORK_INFO="Address: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
 Netmask: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
