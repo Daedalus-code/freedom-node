@@ -28,8 +28,6 @@ for (( ; ; )); do # loop dashbord
   # if any display
   if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
     source /etc/freedom-node/include/menu
-  else
-    MENU_OPTIONS="\n"
   fi
 
   clear
