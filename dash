@@ -26,7 +26,6 @@ for (( ; ; )); do # loop dashbord
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
 
-  # clear the screen, adjust output dynamically based on terminal size
   clear
   printf '%b' "
 ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
