@@ -31,7 +31,7 @@ for (( ; ; )); do # loop dashbord
   fi
 
   clear
-  printf '%b' "${MENU_OPTIONS:?}
+  printf '%b' "${MENU_OPTIONS:0}
 ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
