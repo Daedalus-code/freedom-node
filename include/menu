@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# dash menu options
+MENU_OPTIONS="[Recieve] [Start] [Stop] [Restart]"
+
+# END

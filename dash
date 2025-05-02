@@ -25,6 +25,7 @@ for (( ; ; )); do # loop dashbord
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
+  source /etc/freedom-node/include/menu
 
   clear
   printf '%b' "
@@ -44,6 +45,8 @@ ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 ${TX:?}${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
+
+${MENU_OPTIONS:?}
 "
 
   # wait for n second before updating
