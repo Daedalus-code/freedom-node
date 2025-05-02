@@ -12,17 +12,17 @@ mkdir -p "$HOME_DIR"/node
 evtest "$DEVICE" | while read -r LINE; do
   # capture ABS_X (X coordinate)
   if [[ "$LINE" == *"ABS_X"* ]] &>/dev/null; then
-    x=$(echo "$LINE" | grep -v "value 0" | grep -oP 'value \K[0-9]+')
+    x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
   # capture ABS_Y (Y coordinate)
   elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
-    y=$(echo "$LINE" | grep -v "value 0" | grep -oP 'value \K[0-9]+')
+    y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     # write the coordinates (appending to touchcoords.tmp)
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
     # capture ABS_PRESSURE (pressure value)
-    pressure=$(echo "$LINE" | grep -v "value 0" | grep -oP 'value \K[0-9]+')
+    pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
   # capture BTN_TOUCH (touch down or up)
   elif [[ "$LINE" == *"BTN_TOUCH"* ]] &>/dev/null; then
-    touch_status=$(echo "$LINE" | grep -v "value 0" | grep -oP 'value \K[0-9]+')
+    touch_status=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
 
     # ensure that pressure is correctly assigned
     if [ -z "$pressure" ]; then
