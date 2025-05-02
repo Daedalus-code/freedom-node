@@ -30,13 +30,13 @@ for (( ; ; )); do # loop dashbord
   # if any display
   if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
     # dash menu options
-    HEADER_MENU="[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]"
-    echo ""
+    printf '%b' "[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]\n"
+    echo
   fi
 
   ##############################################################################
 
-  printf '%b' "${HEADER_MENU:0}
+  printf '%b' "
 ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox       ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
