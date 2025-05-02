@@ -19,7 +19,7 @@ evtest "$DEVICE" | while read -r LINE; do
     # write the coordinates
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
     # append (format: Touch:x:y:pressure:touch_status)
-    echo "Touch:$x:$y:$pressure:$touch_status" >>"$HOME_DIR"/node/touchconfig.tmp
+    echo "Touch:$x:$y:$pressure:$touch_status" >"$HOME_DIR"/node/touchconfig.tmp
     # restart the touch process
     pkill -f /etc/freedom-node/include/touch
     bash /etc/freedom-node/include/touch &
