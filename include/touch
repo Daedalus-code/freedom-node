@@ -47,9 +47,9 @@ if [[ -f /tmp/touchcoords ]] &>/dev/null; then
       ;;
     Internet)
       WALLET_ONION_IP="$(cat "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
-      WALLET_INTERNET_INFO="LAN : $(cat "$HOME_DIR"/node/lanip.tmp 2>/dev/null)
-WAN : $(cat "$HOME_DIR"/node/wanip.tmp 2>/dev/null)
-Proxy : ${WALLET_ONION_IP:0:21}...onion"
+      WALLET_INTERNET_INFO="LAN: $(cat "$HOME_DIR"/node/lanip.tmp 2>/dev/null)
+WAN: $(cat "$HOME_DIR"/node/wanip.tmp 2>/dev/null)
+Proxy: ${WALLET_ONION_IP:0:24}...onion"
       # if zero
       if [[ -z "$WALLET_INTERNET_INFO" ]] &>/dev/null; then
         WALLET_INTERNET_INFO="No network.."
@@ -60,9 +60,9 @@ Proxy : ${WALLET_ONION_IP:0:21}...onion"
       ;;
     Network)
       echo "$(ifconfig 2>/dev/null)" >/tmp/ifconfig
-      WALLET_NETWORK_INFO="Address : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
-Netmask : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
-Broadcast : $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
+      WALLET_NETWORK_INFO="Address: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
+Netmask: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
+Broadcast: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
       dialog --no-collapse --infobox "$(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
       ;;
     M)
