@@ -30,7 +30,7 @@ for (( ; ; )); do # loop dashbord
   # if any display
   if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
     # dash menu options
-    printf '%b' "[${GR}Recieve${N0}] [${GR}Start${N0}] [${GR}Stop${N0}] [${GR}Reboot${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]\n"
+    printf '%b' "[${GR}Menu${N0}] [${GR}Stats${N0}] [${GR}PoS${N0}] [${GR}Patriotnode${N0}] [${GR}Update${N0}] [${GR}Upgrade${N0}] [${GR}info${N0}]\n"
   fi
 
   ##############################################################################
