@@ -42,7 +42,7 @@ ${CB:?}   |__/          ${N0:?} Balance ${WALLET_BALANCES:?} ${WALLET_POS_REWARD
 ${CB:?}                 ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
 ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 
-${TX:?} ${WALLET_TXLAST:?}
+${TX:?}${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
 "
