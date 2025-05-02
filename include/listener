@@ -2,6 +2,8 @@
 
 # real event device
 DEVICE="/dev/input/event0"
+# home directory
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # evtest device
 evtest "$DEVICE" | while read -r LINE; do
@@ -18,7 +20,7 @@ evtest "$DEVICE" | while read -r LINE; do
   # capture BTN_TOUCH (touch down or up)
   elif [[ "$LINE" == *"BTN_TOUCH"* ]] &>/dev/null; then
     touch_status=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    # append (format: Touch:x:y:pressure:touch_status)
+    # get config (format: Touch:x:y:pressure:touch_status)
     echo "Touch:$x:$y:$pressure:$touch_status" >"$HOME_DIR"/node/touchconfig.tmp
     # restart the touch process
     pkill -f /etc/freedom-node/include/touch
