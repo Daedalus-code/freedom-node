@@ -15,9 +15,9 @@ ZONES=(
 )
 
 # if any data
-if [[ -f /tmp/touchcoords ]] &>/dev/null; then
+if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
   # get last touch coordinates from tmp file (evtest listener should write here)
-  read -r x y </tmp/touchcoords || exit 0
+  read -r x y <"$HOME_DIR"/node/touchcoords.tmp || exit 0
 
   handle_zone() {
     case "$1" in
