@@ -11,13 +11,13 @@ evtest "$DEVICE" | while read -r LINE; do
   # capture ABS_Y (Y coordinate)
   elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    # write the coordinates
+    echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
     # capture ABS_PRESSURE (pressure value)
     pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
   # capture BTN_TOUCH (touch down or up)
   elif [[ "$LINE" == *"BTN_TOUCH"* ]] &>/dev/null; then
     touch_status=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    # write the coordinates
-    echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
     # append (format: Touch:x:y:pressure:touch_status)
     echo "Touch:$x:$y:$pressure:$touch_status" >"$HOME_DIR"/node/touchconfig.tmp
     # restart the touch process
