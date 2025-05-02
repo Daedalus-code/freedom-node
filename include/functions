@@ -110,10 +110,6 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev
   PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1)"
   # draw the progress bar
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
-  # if zero
-  if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-    SYNC_PROGRESS_BAR="   ${CY}Loading${N0}"
-  fi
 fi
 
 WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
@@ -648,11 +644,15 @@ if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt 
       WALLET_TXLAST="  ${R1}${SYNC_PROGRESS_BAR}${N0}"
     fi
     # if greater than 10%
-    if [[ "$SYNC_PROGRESS" -gt "100000" ]] &>/dev/null; then
+    if [[ "$SYNC_PROGRESS" -ge "100000" ]] &>/dev/null; then
       WALLET_TXLAST="  ${Y1}${SYNC_PROGRESS_BAR}${N0}"
     fi
+    # if greater than 25%
+    if [[ "$SYNC_PROGRESS" -ge "250000" ]] &>/dev/null; then
+      WALLET_TXLAST="  ${G0}${SYNC_PROGRESS_BAR}${N0}"
+    fi
     # if greater than 50%
-    if [[ "$SYNC_PROGRESS" -gt "500000" ]] &>/dev/null; then
+    if [[ "$SYNC_PROGRESS" -ge "500000" ]] &>/dev/null; then
       WALLET_TXLAST="  ${G1}${SYNC_PROGRESS_BAR}${N0}"
     fi
   fi
