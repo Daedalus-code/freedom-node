@@ -11,7 +11,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  # TBA
+  "Internet:2344:1395:1395:0"
 )
 
 # if any data
