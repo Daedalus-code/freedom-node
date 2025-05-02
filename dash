@@ -11,7 +11,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # sourc touchscreen
 ################################################################################
 
-# if any data
+# if any display
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   pkill -f /etc/freedom-node/include/listener
   bash /etc/freedom-node/include/listener &
@@ -25,7 +25,12 @@ for (( ; ; )); do # loop dashbord
 
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
-  source /etc/freedom-node/include/menu
+  # if any display
+  if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+    source /etc/freedom-node/include/menu
+  else
+    MENU_OPTIONS=""
+  fi
 
   clear
   printf '%b' "
@@ -46,8 +51,7 @@ ${TX:?}${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
 
-${MENU_OPTIONS:?}
-"
+${MENU_OPTIONS:?}"
 
   # wait for n second before updating
   sleep "${TIME:?}"
