@@ -30,7 +30,7 @@ for (( ; ; )); do # loop dashbord
   # if any display
   if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
     # dash menu options
-    printf '%b' "[${GR}Recieve${N0}] [${GR}Update${N0}] [${GR}Reboot${N0}] Price: $FREED_PRICE Valued: $FREED_VALUED\n"
+    printf '%b' "[${GR}Receive${N0}] [${GR}Update${N0}] [${GR}Reboot${N0}] Price: $FREED_PRICE Valued: $FREED_VALUED\n"
   fi
 
   ##############################################################################
