@@ -33,11 +33,12 @@ elif [ "$RANDOM_INFO" -eq "4" ] &>/dev/null; then
   LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
   TIMELINE="Lowest input: $LOWEST_INPUT FREED"
 elif [ "$RANDOM_INFO" -eq "5" ] &>/dev/null; then
+  HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
   TIMELINE="Highest input: $HIGHEST_INPUT FREED"
 fi
 
 # if zero
-if [[ "$(grep -c "true" /etc/freedom-node/mnsync_status.tmp)" -eq "0" ]] &>/dev/null; then
+if [[ "$(grep "IsBlockchainSynced" /etc/freedom-node/mnsync_status.tmp | grep -c "true")" -eq "0" ]] &>/dev/null; then
   # still syncing, just quote
   RANDOM_INFO_QUOTE="2"
 fi
