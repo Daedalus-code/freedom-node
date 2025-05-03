@@ -21,7 +21,7 @@ ZONES=(
   "Balances:1800:1500:2100:1700"    # balances
   "Internet:2309:1344:2422:1447"    # internet
   "Intranet:3220:3637:3363:3782"    # intranet
-  "Peers:2293:2881:2430:3003"       # connections
+  "Peers:2334:2813:2348:2844"       # connections
   "System:2921:1395:3057:1504"      # load - computer
 )
 
