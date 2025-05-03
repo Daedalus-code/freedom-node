@@ -23,6 +23,7 @@ evtest "$DEVICE" | while read -r LINE; do
       point[x2]=$x
       point[y2]=$y
       echo "\"$LABEL:${point[x1]}:${point[y1]}:${point[x2]}:${point[y2]}\"" >"$HOME_DIR"/node/touchconfig.tmp
+      truncate -s 0 "$HOME_DIR"/node/touchcoords.tmp &>/dev/null
       pkill -f /etc/freedom-node/include/touch
       bash /etc/freedom-node/include/touch &
       step=0
