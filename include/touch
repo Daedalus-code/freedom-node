@@ -59,6 +59,13 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
       WALLET_NETWORK_INFO="Address: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
     Netmask: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
     Broadcast: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
+      # if zero
+      if [[ -z "$WALLET_NETWORK_INFO" ]] &>/dev/null; then
+        WALLET_NETWORK_INFO="No network.."
+        dialog --infobox "$WALLET_NETWORK_INFO" 4 16
+      else
+        dialog --no-collapse --infobox "$(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
+      fi
       ;;
       ##########################################################################
     Internet)
