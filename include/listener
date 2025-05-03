@@ -2,9 +2,8 @@
 
 DEVICE="/dev/input/event0"
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
-mkdir -p "$HOME_DIR"/node
 
-declare -A coords
+mkdir -p "$HOME_DIR"/node
 
 evtest "$DEVICE" | while read -r LINE; do
   if [[ "$LINE" == *"ABS_X"* ]]; then
@@ -12,21 +11,11 @@ evtest "$DEVICE" | while read -r LINE; do
   elif [[ "$LINE" == *"ABS_Y"* ]]; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
-  elif [[ "$LINE" == *"BTN_TOUCH"* && "$LINE" == *"value 0"* ]]; then
-    if [[ -z "${coords[x1]}" ]]; then
-      coords[x1]=$x
-      coords[y1]=$y
-      echo "First point recorded: ${coords[x1]}, ${coords[y1]}"
-    else
-      coords[x2]=$x
-      coords[y2]=$y
-      echo "Second point recorded: ${coords[x2]}, ${coords[y2]}"
-      echo "\"Touch:${coords[x1]}:${coords[y1]}:${coords[x2]}:${coords[y2]}\"" >>"$HOME_DIR"/node/touchzones.conf
-      echo "Zone saved."
-      # clear for next round
-      unset coords
-      declare -A coords
-    fi
+  elif [[ "$LINE" == *"ABS_PRESSURE"* ]]; then
+    pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    echo "$LABEL:$x:$pressure:$y:$pressure" >"$HOME_DIR"/node/touchconfig.tmp
+    pkill -f /etc/freedom-node/include/touch
+    bash /etc/freedom-node/include/touch &
   fi
 done
 
