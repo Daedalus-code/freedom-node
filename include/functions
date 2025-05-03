@@ -541,7 +541,7 @@ elif [ "$RANDOM_QUOTES" -eq "11" ] &>/dev/null; then
   TIMELINE="${GR}Fight! Fight! Fight!${N0:?}"
   # information - system - wallet
 elif [ "$RANDOM_QUOTES" -eq "12" ] &>/dev/null; then
-  TIMELINE="Value: $WALLET_VALUED USD ($FREED_PRICE USD)"
+  TIMELINE="Value: $WALLET_VALUED USD ($FREED_PRICE)"
 fi
 
 # if zero
