@@ -19,7 +19,7 @@ ZONES=(
   "Patriotnode:3693:1813:3838:1922" # patriotnode
   "Update:3442:2479:3784:2655"      # repo update
   "Upgrade:3189:2892:3771:3235"     # system upgrade
-  "System:3748:345:2262:630"        # system information
+  "System:3743:368:3741:363"        # system information
   "Balances:2028:1497:2039:1510"    # balances
   "Internet:2309:1344:2422:1447"    # internet
   "Intranet:3287:3721:2547:3198"    # intranet
