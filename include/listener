@@ -8,20 +8,30 @@ LABEL="Touch"
 declare -A point
 step=0
 
+# screen resolution
+screen_width="480"
+screen_height="320"
+max_x_value="4095"
+max_y_value="4095"
+
 evtest "$DEVICE" | while read -r LINE; do
   if [[ "$LINE" == *"ABS_X"* ]]; then
     x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    # scale the X coordinate to the screen width
+    scaled_x=$((x * screen_width / max_x_value))
   elif [[ "$LINE" == *"ABS_Y"* ]]; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
+    # scale the Y coordinate to the screen height
+    scaled_y=$((y * screen_height / max_y_value))
+    echo "$scaled_x $scaled_y" >"$HOME_DIR"/node/touchcoords.tmp
   elif [[ "$LINE" == *"BTN_TOUCH"* && "$LINE" == *"value 0"* ]]; then
     if [[ $step -eq 0 ]]; then
-      point[x1]=$x
-      point[y1]=$y
+      point[x1]=$scaled_x
+      point[y1]=$scaled_y
       ((step++))
     else
-      point[x2]=$x
-      point[y2]=$y
+      point[x2]=$scaled_x
+      point[y2]=$scaled_y
       echo "\"$LABEL:${point[x1]}:${point[y1]}:${point[x2]}:${point[y2]}\"" >"$HOME_DIR"/node/touchconfig.tmp
       pkill -f /etc/freedom-node/include/touch
       bash /etc/freedom-node/include/touch &
