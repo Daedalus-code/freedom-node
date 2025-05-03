@@ -37,6 +37,7 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Menu)
+      break
       HEIGHT="0"
       WIDTH="0"
       CHOICE_HEIGHT="3"
