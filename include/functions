@@ -568,7 +568,7 @@ fi
 # quotes
 ################################################################################
 
-source /etc/freedom-node/include/info
+bash /etc/freedom-node/include/info
 
 # if enough quotes
 if [[ "$(wc -l /home/"$USER_NAME"/node/quotes 2>/dev/null | awk '{ print $1 }')" -gt "10" ]] &>/dev/null; then
