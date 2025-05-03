@@ -19,12 +19,6 @@ RANDOM_INFO_QUOTE=$((((RANDOM % 2) + 1)))
 # random info and quotes
 ################################################################################
 
-FREED_PRICE="$(cat "$HOME_DIR"/node/price.tmp 2>/dev/null)"
-WALLET_BALANCES="$(grep "balance" /home/"$USER_NAME"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
-WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
-
-################################################################################
-
 if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 5) + 1)))
@@ -37,35 +31,9 @@ elif [ "$RANDOM_INFO" -eq "3" ] &>/dev/null; then
   TIMELINE="Nodes: $(grep "total" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv4: $(grep "ipv4" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv6: $(grep "ipv6" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }')"
 elif [ "$RANDOM_INFO" -eq "4" ] &>/dev/null; then
   LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
-  # if any data
-  if [[ -n "$HIGHEST_INPUT" ]] &>/dev/null; then
-    HIGHEST_INPUT_VALUE="$(echo "${HIGHEST_INPUT}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
-    LOWEST_INPUT_VALUE="$(echo "${LOWEST_INPUT}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
-    # if zero
-    if [[ -z "$LOWEST_INPUT_VALUE" ]] &>/dev/null; then
-      LOWEST_INPUT_VALUE="0"
-    else
-      LOWEST_INPUT_VALUE="${G1}$LOWEST_INPUT_VALUE${N0}"
-    fi
-    TIMELINE="Lowest input: $LOWEST_INPUT Value: $LOWEST_INPUT_VALUE USD"
-  else
-    TIMELINE="Lowest input: ${GR}No coins..${N0}"
-  fi
+  TIMELINE="Lowest input: $LOWEST_INPUT FREED"
 elif [ "$RANDOM_INFO" -eq "5" ] &>/dev/null; then
-  HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
-  # if any data
-  if [[ -n "$HIGHEST_INPUT" ]] &>/dev/null; then
-    HIGHEST_INPUT_VALUE="$(echo "${HIGHEST_INPUT}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
-    # if zero
-    if [[ -z "$HIGHEST_INPUT_VALUE" ]] &>/dev/null; then
-      HIGHEST_INPUT_VALUE="0"
-    else
-      HIGHEST_INPUT_VALUE="${G1}$HIGHEST_INPUT_VALUE${N0}"
-    fi
-    TIMELINE="Highest input: $HIGHEST_INPUT Value: $HIGHEST_INPUT_VALUE USD"
-  else
-    TIMELINE="Highest input: ${GR}No coins..${N0}"
-  fi
+  TIMELINE="Highest input: $HIGHEST_INPUT FREED"
 fi
 
 # if zero
