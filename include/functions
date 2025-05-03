@@ -41,6 +41,8 @@ WC="${GR}"
 # freedomcoin price
 ################################################################################
 
+DATE="$(date '+%s')"
+
 # check last price age
 PRICE_FILE="$HOME_DIR/node/price.tmp"
 # if found
@@ -69,8 +71,6 @@ fi
 ################################################################################
 # client commands
 ################################################################################
-
-DATE="$(date '+%s')"
 
 # client updated data age (seconds)
 CLIENT_UPDATED_DATA="$(($(echo "$DATE") - $(stat -c '%Y' /home/"$USER_NAME"/node/KEK.tmp 2>/dev/null || echo 0)))"
