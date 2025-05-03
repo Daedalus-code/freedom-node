@@ -150,12 +150,18 @@ fi
 # proof-of-stake count
 ################################################################################
 
-# if new signed block
-if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)" == "$(tail -1 "$HOME_DIR"/node/stakes.tmp)" ]] &>/dev/null; then
-  # fetch signed proof-of-stake block
-  grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
-  # remove duplicates
-  echo "$(awk '!a[$0]++' "$HOME_DIR"/node/stakes.tmp 2>/dev/null)" >"$HOME_DIR"/node/stakes.tmp
+BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
+PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp)"
+
+# if any data
+if [[ -n "$BLOCK_WAS_SIGNED" && -n "$PROOF_OF_STAKE" ]] &>/dev/null; then
+  # if new signed block
+  if [[ ! "$BLOCK_WAS_SIGNED" == "$PROOF_OF_STAKE" ]] &>/dev/null; then
+    # fetch signed proof-of-stake block
+    grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
+    # remove duplicates
+    echo "$(awk '!a[$0]++' "$HOME_DIR"/node/stakes.tmp 2>/dev/null)" >"$HOME_DIR"/node/stakes.tmp
+  fi
 fi
 
 # reset after midnight
