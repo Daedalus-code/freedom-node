@@ -8,6 +8,8 @@ source /etc/freedom-node/include/color
 
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 
