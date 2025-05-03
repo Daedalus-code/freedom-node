@@ -68,7 +68,7 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
         echo "You chose Option 3"
         ;;
       esac
-      sudo service freedomnode stop
+      sudo service freedomnode start
       ;;
     ############################################################################
     Peers)
