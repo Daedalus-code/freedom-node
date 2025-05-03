@@ -20,7 +20,7 @@ ZONES=(
   "Upgrade:3189:2892:3771:3235"     # system upgrade
   "info:3603:3612:3813:3788"        # information
   # dash
-  "Balances:1989:1552:1996:1556" # balances
+  "Balances:1900:1500:1900:1500" # balances
   "Internet:2309:1344:2422:1447" # internet
   "Intranet:3220:3637:3363:3782" # intranet
   "Peers:2293:2881:2430:3003"    # connections
