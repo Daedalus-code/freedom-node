@@ -13,7 +13,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Internet:2500:1416:2270:1454"
+  "Internet:2504:1403:2503:1413"
 )
 
 ################################################################################
