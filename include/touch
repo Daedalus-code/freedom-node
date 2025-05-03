@@ -23,8 +23,6 @@ ZONES=(
   "Intranet:3220:3637:3363:3782"    # intranet
   "Peers:2293:2881:2430:3003"       # connections
   "System:2921:1395:3057:1504"      # load - computer
-  "Memory:1800:1500:2800:1500"      # memory information
-  "HDD:2803:1464:2872:2476"         # HDD space
 )
 
 # if any data
@@ -98,12 +96,6 @@ Broadcast: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -
         dialog --infobox "$WALLET_SYSTEM_INFO" 4 19
       fi
       dialog --no-collapse --infobox "$WALLET_SYSTEM_INFO" 0 0
-      ;;
-    Memory)
-      dialog --no-collapse --infobox "$(echo "$(free -tm | awk '{ print $1,$2,$3,$4 }')" | column -t)" 0 0
-      ;;
-    HDD)
-      dialog --no-collapse --infobox "$(df -h)" 0 0
       ;;
     esac
     exit
