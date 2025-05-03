@@ -692,6 +692,11 @@ grep "addrlocal" /home/"$USER_NAME"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",
 # arp peers list
 ################################################################################
 
+# remove after midnight
+if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
+  rm /etc/freedom-node/arp.peers &>/dev/null
+fi
+
 # if missing
 if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
   # create arp list
@@ -762,6 +767,13 @@ $IP_ADDRESS_ARP" | awk '!a[$0]++' | sort | awk NF >/etc/freedom-node/addnode
       echo "addnode $IP_ADDRESS_ADDNODE onetry" >/home/"$USER_NAME"/node/onetry.tmp
     fi
   fi
+fi
+
+################################################################################
+
+# reset after midnight
+if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
+  truncate -s 0 "$HOME_DIR"/.trumpcoin/debug.log &>/dev/null
 fi
 
 # END
