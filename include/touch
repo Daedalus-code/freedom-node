@@ -85,7 +85,6 @@ Broadcast: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "ine
       ;;
       ##########################################################################
     esac
-    truncate -s 0 "$HOME_DIR"/node/touchcoords.tmp &>/dev/null
     exit
   }
 
