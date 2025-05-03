@@ -444,6 +444,11 @@ fi
 WALLET_BALANCES="$(grep "balance" /home/"$USER_NAME"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
 WALLET_VALUED="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
+# if zero
+if [[ -z "$WALLET_VALUED" ]] &>/dev/null; then
+  WALLET_VALUED="${GR}0${N0}"
+fi
+
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
 fi
@@ -507,9 +512,9 @@ fi
 # random quotes
 ################################################################################
 
-# random quote start
-RANDOM_QUOTES=$((((RANDOM % 11) + 1)))
-# quotes - art of the deal
+# random quotes/information start
+RANDOM_QUOTES=$((((RANDOM % 12) + 1)))
+# quotes - art of the deal, djt
 if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
   TIMELINE="${GR}Think big${N0:?}"
 elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
@@ -532,6 +537,9 @@ elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
   TIMELINE="${GR}Have fun${N0:?}"
 elif [ "$RANDOM_QUOTES" -eq "11" ] &>/dev/null; then
   TIMELINE="${GR}Fight! Fight! Fight!${N0:?}"
+  # information - system - wallet
+elif [ "$RANDOM_QUOTES" -eq "12" ] &>/dev/null; then
+  TIMELINE="Price: $FREED_PRICE USD Valued: $FREED_VALUED USD"
 fi
 
 # if zero
