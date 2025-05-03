@@ -104,7 +104,7 @@ fi
 # wallet sync w progress bar
 ################################################################################
 
-source /etc/freedom-node/include/progress
+bash /etc/freedom-node/include/progress
 
 ################################################################################
 # repository version
