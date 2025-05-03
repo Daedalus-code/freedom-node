@@ -19,7 +19,7 @@ ZONES=(
   "Balance:2000:1300:2400:1700"  # Wallet balances
   "System:3100:1300:3300:1700"   # System information
   "Intranet:3350:3620:3500:3760" # Network information
-  "Internet:2400:1350:2550:1450" # Internet information
+  "Internet:2400:1060:2550:1460" # Internet information
 )
 
 ################################################################################
