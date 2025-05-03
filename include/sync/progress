@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# home directory
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
+
+################################################################################
+
+# if not synced
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+  # function to draw the progress bar
+  draw_progress_bar() {
+    PROGRESS="$1"
+    local PERCENT
+    BAR_WIDTH="45"
+    local FILLED
+    local EMPTY
+
+    # default
+    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
+    PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
+
+    # if 100.000%
+    if [[ "$PERCENT" == "100.0000" ]] &>/dev/null; then
+      PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
+    fi
+
+    FILLED=$((PERCENT * BAR_WIDTH / 100))
+    EMPTY=$((BAR_WIDTH - FILLED))
+    # bar
+    printf ""
+    for ((I = 0; I < FILLED; I++)); do printf "#"; done
+    for ((I = 0; I < EMPTY; I++)); do printf "."; done
+    printf " %s%%\n" "$PERCENT_RAW"
+  }
+  # extract the progress value
+  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1)"
+  # draw the progress bar
+  SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
+fi
+
+WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
+echo "$WALLET_SYNC" >/home/"$USER_NAME"/node/progress.tmp
+
+WALLET_SYNC="$(awk NF /home/"$USER_NAME"/node/progress.tmp 2>/dev/null)"
+
+# if synced
+if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
+  WALLET_SYNC="${G1}OK${N0}"
+fi
+
+# if syncing
+if [[ ! "$WALLET_SYNC" == "1.00" && "$(echo "$WALLET_SYNC" | tr -d '.')" -gt "0" ]] &>/dev/null; then
+  WALLET_SYNC="${G1}$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')%${N0}"
+fi
+
+# if zero
+if [[ -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  WALLET_SYNC="${GR}0%${N0}"
+fi
+
+# END

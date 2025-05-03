@@ -12,24 +12,57 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # user
 USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
-################################################################################
-
-# if missing
-if [[ ! -f /tmp/setfont ]] &>/dev/null; then
-  # set console display font
-  sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz
-  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >/tmp/setfont
-fi
-
-################################################################################
-################################################################################
-
 # if missing
 if [[ ! -d /home/"$USER_NAME"/node/ ]] &>/dev/null; then
   # create directory
   mkdir /home/"$USER_NAME"/node/ &>/dev/null
   chmod 755 /home/"$USER_NAME"/node/
 fi
+
+################################################################################
+
+# if missing
+if [[ ! -f "$HOME_DIR"/node/setfont ]] &>/dev/null; then
+  # set console display font
+  sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz
+  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >"$HOME_DIR"/node/setfont
+fi
+
+################################################################################
+# logo, tx colors
+################################################################################
+
+# default color (idle)
+CB="${GR}"
+TX="${GR}"
+WC="${GR}"
+
+################################################################################
+# freedomcoin price
+################################################################################
+
+# check last price age
+PRICE_FILE="$HOME_DIR/node/price.tmp"
+# if found
+if [ -f "$PRICE_FILE" ]; then
+  PRICE_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$PRICE_FILE" || echo 0)))"
+else
+  PRICE_AGE="9999" # assume it's too old if the file doesn't exist
+fi
+# if the file is missing or the data is older than 420 seconds, fetch new price
+if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "420" ]; then
+  CRYPTO="freedomcoin"
+  CURRENCY="usd"
+  # fetch the latest price from the coingecko api ##############################
+  PRICE=$(timeout 10 curl -s "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" | jq -r ".$CRYPTO.$CURRENCY")
+  ##############################################################################
+  if [[ -z "$PRICE" ]] &>/dev/null; then
+    PRICE="0"
+  fi
+  echo "$PRICE" >"$PRICE_FILE"
+# read the (possibly updated) cached price
+fi
+FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null) USD"
 
 ################################################################################
 # client commands
@@ -68,69 +101,10 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" ]] &>/dev/null; then
 fi
 
 ################################################################################
-# logo, tx colors
-################################################################################
-
-# default color (idle)
-CB="${GR}"
-TX="${GR}"
-
-################################################################################
 # wallet sync w progress bar
 ################################################################################
 
-# if not synced
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-  # function to draw the progress bar
-  draw_progress_bar() {
-    PROGRESS="$1"
-    local PERCENT
-    BAR_WIDTH="45"
-    local FILLED
-    local EMPTY
-
-    # default
-    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
-    PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
-
-    # if 100.000%
-    if [[ "$PERCENT" == "100.0000" ]] &>/dev/null; then
-      PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
-    fi
-
-    FILLED=$((PERCENT * BAR_WIDTH / 100))
-    EMPTY=$((BAR_WIDTH - FILLED))
-    # bar
-    printf ""
-    for ((I = 0; I < FILLED; I++)); do printf "#"; done
-    for ((I = 0; I < EMPTY; I++)); do printf "."; done
-    printf " %s%%\n" "$PERCENT_RAW"
-  }
-  # extract the progress value
-  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1)"
-  # draw the progress bar
-  SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
-fi
-
-WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
-echo "$WALLET_SYNC" >/home/"$USER_NAME"/node/progress.tmp
-
-WALLET_SYNC="$(awk NF /home/"$USER_NAME"/node/progress.tmp 2>/dev/null)"
-
-# if synced
-if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
-  WALLET_SYNC="${G1}OK${N0}"
-fi
-
-# if syncing
-if [[ ! "$WALLET_SYNC" == "1.00" && "$(echo "$WALLET_SYNC" | tr -d '.')" -gt "0" ]] &>/dev/null; then
-  WALLET_SYNC="${G1}$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')%${N0}"
-fi
-
-# if zero
-if [[ -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
-  WALLET_SYNC="${GR}0%${N0}"
-fi
+source /etc/freedom-node/include/progress
 
 ################################################################################
 # repository version
@@ -168,6 +142,7 @@ WALLET_MOVEMENT_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/movements.tmp 2>/dev
 if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   CB="${G1}"
   TX="${G1}"
+  WC="${G1}"
 fi
 
 ################################################################################
@@ -203,6 +178,7 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &
   WALLET_POS_REWARDS="Stakes ${Y1}$WALLET_POS_REWARDS${N0}"
   CB="${Y1}"
   TX="${Y1}"
+  WC="${Y1}"
 else
   # if any rewards but after the fact
   if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
@@ -212,6 +188,7 @@ else
   fi
   CB="${GR}"
   TX="${GR}"
+  WC="${N0}"
 fi
 
 ################################################################################
@@ -274,9 +251,9 @@ fi
 # lan status (network interface)
 ################################################################################
 
-echo "$(ifconfig 2>/dev/null)" >/tmp/ifconfig
+echo "$(ifconfig 2>/dev/null)" >"$HOME_DIR"/node/ifconfig
 
-LAN_STATUS="$(cat /tmp/ifconfig 2>/dev/null | head -1 | awk '{ print $1 }' | tr -d ':')"
+LAN_STATUS="$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | head -1 | awk '{ print $1 }' | tr -d ':')"
 
 # if zero
 if [[ -z "$LAN_STATUS" ]] &>/dev/null; then
@@ -332,7 +309,7 @@ SYSTEM_USER="$USER_NAME"
 # ip address
 ################################################################################
 
-IP_ADDRESS="$(cat /tmp/ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
+IP_ADDRESS="$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
 
 # if zero
 if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
@@ -344,16 +321,16 @@ fi
 ################################################################################
 
 # get all RX byte counts from ifconfig
-DOWNLOAD_TOTAL=$(cat /tmp/ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+DOWNLOAD_TOTAL_BYTES=$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
-DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
+DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
 
 ################################################################################
 # upload
 ################################################################################
 
 # get all TX byte counts from ifconfig
-UPLOAD_TOTAL_BYTES=$(cat /tmp/ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+UPLOAD_TOTAL_BYTES=$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
 UPLOAD="$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
 
@@ -468,6 +445,7 @@ fi
 ################################################################################
 
 WALLET_BALANCES="$(grep "balance" /home/"$USER_NAME"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
+FREED_VALUED="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }') USD"
 
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
@@ -475,9 +453,9 @@ fi
 
 # if zero
 if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
-  WALLET_BALANCES="${GR}0${N0}"
+  WALLET_BALANCES="${WC}0${N0}"
 else
-  WALLET_BALANCES="$WALLET_BALANCES"
+  WALLET_BALANCES="${WC}$WALLET_BALANCES${N0}"
 fi
 
 ################################################################################
