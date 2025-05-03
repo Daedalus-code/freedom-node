@@ -143,6 +143,15 @@ if ! [ -x "$(command -v bc)" ]; then
 fi
 
 # not installed
+if ! [ -x "$(command -v jq)" ]; then
+  printf '%b' "[  ${GR}!!${N0}  ] Installing jq!\n"
+  sudo apt-get install jq -y
+  if [ $? -eq 0 ]; then
+    printf '%b' "[  ${G1}OK${N0}  ] jq installed!\n"
+  fi
+fi
+
+# not installed
 if ! [ -x "$(command -v ifconfig)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing net-tools!\n"
   sudo apt-get install net-tools -y

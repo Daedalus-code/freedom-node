@@ -62,7 +62,12 @@ if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "420" ]; then
   echo "$PRICE" >"$PRICE_FILE"
 # read the (possibly updated) cached price
 fi
-FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null) USD"
+# if zero
+if [[ -z "$FREED_PRICE" ]] &>/dev/null; then
+  FREED_PRICE="${GR}0${N0} USD"
+else
+  FREED_PRICE="${G1}$FREED_PRICE${N0} USD"
+fi
 
 ################################################################################
 # client commands
@@ -445,7 +450,12 @@ fi
 ################################################################################
 
 WALLET_BALANCES="$(grep "balance" /home/"$USER_NAME"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
-FREED_VALUED="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }') USD"
+# if zero
+if [[ -z "$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')" ]]; then
+  FREED_VALUED="${GR}0${N0} USD"
+else
+  FREED_VALUED="${G1}$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')${N0} USD"
+fi
 
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
