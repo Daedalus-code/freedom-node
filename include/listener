@@ -13,7 +13,7 @@ evtest "$DEVICE" | while read -r LINE; do
     x=$(echo "$LINE" | grep -oP 'value \K[0-9]+' | awk '{ print $NF }' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')
   elif [[ "$LINE" == *"ABS_Y"* ]]; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+' | awk '{ print $NF }' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')
-    echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
+    echo "$x $y" >>"$HOME_DIR"/node/touchcoords.tmp
   elif [[ "$LINE" == *"BTN_TOUCH"* && "$LINE" == *"value 0"* ]]; then
     if [[ $step -eq 0 ]]; then
       point[x1]=$x
