@@ -30,10 +30,10 @@ elif [ "$RANDOM_INFO" -eq "2" ] &>/dev/null; then
 elif [ "$RANDOM_INFO" -eq "3" ] &>/dev/null; then
   TIMELINE="Nodes: $(grep "total" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv4: $(grep "ipv4" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv6: $(grep "ipv6" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }')"
 elif [ "$RANDOM_INFO" -eq "4" ] &>/dev/null; then
-  LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
+  LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
   TIMELINE="Lowest input: $LOWEST_INPUT FREED"
 elif [ "$RANDOM_INFO" -eq "5" ] &>/dev/null; then
-  HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
+  HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
   TIMELINE="Highest input: $HIGHEST_INPUT FREED"
 fi
 
