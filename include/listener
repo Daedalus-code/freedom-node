@@ -21,14 +21,8 @@ evtest "$DEVICE" | while read -r LINE; do
     # capture ABS_PRESSURE (pressure value)
     pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
   # capture BTN_TOUCH (touch down or up)
-  elif [[ "$LINE" == *"BTN_TOUCH"* ]] &>/dev/null; then
+  elif [[ "$LINE" == *"ABS_PRESSURE"* ]] &>/dev/null; then
     touch_status=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-
-    # ensure that pressure is correctly assigned
-    if [ -z "$pressure" ]; then
-      pressure=0 # default to 0 if no pressure value is found
-    fi
-
     # get (format: Touch:x:y:pressure:touch_status)
     echo "Touch:$x:$y:$pressure:$touch_status" >"$HOME_DIR"/node/touchconfig.tmp
     # restart the touch process
