@@ -19,13 +19,12 @@ RANDOM_INFOS=$((((RANDOM % 2) + 1)))
 # random infos
 ################################################################################
 
-if [[ "$RANDOM_INFOS" == "2" ]] &>/dev/null; then
+if [[ "$RANDOM_INFOS" == "1" ]] &>/dev/null; then
   # random quotes/information start
-  RANDOM_INFO=$((((RANDOM % 3) + 1)))
+  RANDOM_INFO=$((((RANDOM % 5) + 1)))
   # information - system - wallet
-  if [ "$RANDOM_INFO" -eq "1" ] &>/dev/null; then
-    TIMELINE="Value: $WALLET_VALUE USD ($FREED_PRICE)"
-  fi
+elif [ "$RANDOM_INFO" -eq "1" ] &>/dev/null; then
+  TIMELINE="Value: $WALLET_VALUE USD ($FREED_PRICE)"
 elif [ "$RANDOM_INFO" -eq "2" ] &>/dev/null; then
   TIMELINE="Difficulty: $(grep "difficulty" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 elif [ "$RANDOM_INFO" -eq "3" ] &>/dev/null; then
