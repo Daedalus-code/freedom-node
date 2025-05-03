@@ -62,7 +62,7 @@ if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "420" ]; then
 # read the (possibly updated) cached price
 fi
 # if zero
-if [[ -z "$(cat "$FREED_PRICE" 2>/dev/null)" ]] &>/dev/null; then
+if [[ -z "$(cat "$PRICE_FILE" 2>/dev/null)" ]] &>/dev/null; then
   FREED_PRICE="${GR}0${N0} USD"
 else
   FREED_PRICE="${G1}$FREED_PRICE${N0} USD"
