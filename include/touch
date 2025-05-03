@@ -11,19 +11,20 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Menu:3615:312:3820:429"          # node menu
-  "Stats:3616:770:3837:879"         # stats
-  "PoS:3697:1195:3822:1303"         # proof of stake
-  "Patriotnode:3693:1813:3838:1922" # patriotnode
-  "Update:3442:2479:3784:2655"      # repo update
-  "Upgrade:3189:2892:3771:3235"     # system upgrade
-  "info:3603:3612:3813:3788"        # information
+  "Menu:3600:300:3800:400"          # node menu
+  "Stats:3600:800:3800:900"         # stats
+  "PoS:3700:1200:3800:1300"         # proof of stake
+  "Patriotnode:3700:1800:3800:1900" # patriotnode
+  "Update:3400:2500:3800:2700"      # repo update
+  "Upgrade:3200:2900:3800:3200"     # system upgrade
+  "info:3600:3600:3800:3800"        # information
   "Balances:1800:1500:2100:1700"    # balances
-  "Internet:2309:1344:2422:1447"    # internet
-  "Intranet:3220:3637:3363:3782"    # intranet
-  "Peers:2293:2881:2430:3003"       # connections
-  "System:2921:1395:3057:1504"      # load - computer
-  "Memory:1848:1517:2826:1528"      # memory information
+  "Internet:2300:1300:2400:1400"    # internet
+  "Intranet:3200:3600:3400:3800"    # intranet
+  "Peers:2300:2900:2400:3000"       # connections
+  "System:2900:1400:3100:1500"      # load - computer
+  "Memory:1800:1500:2800:1500"      # memory information
+  "HDD:2800:1500:2900:2500"         # HDD space
 )
 
 # if any data
@@ -101,7 +102,7 @@ Broadcast: $(grep -v "127" /tmp/ifconfig 2>/dev/null | grep -A7 "inet " | grep -
     Memory)
       dialog --no-collapse --infobox "$(echo "$(free -tm | awk '{ print $1,$2,$3,$4 }')" | column -t)" 0 0
       ;;
-    HDDuse)
+    HDD)
       dialog --no-collapse --infobox "$(df -h)" 0 0
       ;;
     esac
