@@ -6,6 +6,8 @@
 DEVICE="/dev/input/event0"
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
+################################################################################
+
 # evtest device
 evtest "$DEVICE" | while read -r LINE; do
   if [[ "$LINE" == *"ABS_X"* ]] &>/dev/null; then

@@ -86,6 +86,10 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" ]] &>/dev/null; then
   /usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >/home/"$USER_NAME"/node/listunspent.tmp 2>/dev/null
   # getnodeaddresses
   /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers 2>/dev/null
+  # getpatriotnodecount
+  /usr/local/bin/freedomcoin-cli getpatriotnodecount 2>/dev/null | grep -v "Error" | tr -d ',}{"' >/etc/freedom-node/getpatriotnodecount.tmp 2>/dev/null
+  # mnsync status
+  /usr/local/bin/freedomcoin-cli mnsync status 2>/dev/null | grep -v "Error" | tr -d ',}{"' >/etc/freedom-node/mnsync_status.tmp 2>/dev/null
   # version
   if [[ ! -f /home/"$USER_NAME"/node/version.tmp || ! -s /home/"$USER_NAME"/node/version.tmp ]] &>/dev/null; then
     /usr/local/bin/./freedomcoin-cli -version 2>/dev/null | grep -v "Error" >/home/"$USER_NAME"/node/version.tmp 2>/dev/null
@@ -442,13 +446,13 @@ fi
 ################################################################################
 
 WALLET_BALANCES="$(grep "balance" /home/"$USER_NAME"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
-WALLET_VALUED="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
+WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
 # if zero
-if [[ -z "$WALLET_VALUED" ]] &>/dev/null; then
-  WALLET_VALUED="${GR}0${N0}"
+if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
+  WALLET_VALUE="${GR}0${N0}"
 else
-  WALLET_VALUED="${G1}$WALLET_VALUED${N0}"
+  WALLET_VALUE="${G1}$WALLET_VALUE${N0}"
 fi
 
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
@@ -511,81 +515,8 @@ if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
 fi
 
 ################################################################################
-# random quotes
-################################################################################
 
-# random quotes/information start
-RANDOM_QUOTES=$((((RANDOM % 12) + 1)))
-# quotes - art of the deal, djt
-if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
-  TIMELINE="${GR}Think big${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
-  TIMELINE="${GR}Maximize your options${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "3" ] &>/dev/null; then
-  TIMELINE="${GR}Know your market${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "4" ] &>/dev/null; then
-  TIMELINE="${GR}Use your leverage${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "5" ] &>/dev/null; then
-  TIMELINE="${GR}Enhance your location${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "6" ] &>/dev/null; then
-  TIMELINE="${GR}Get the word out${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "7" ] &>/dev/null; then
-  TIMELINE="${GR}Fight back${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "8" ] &>/dev/null; then
-  TIMELINE="${GR}Deliver the goods${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
-  TIMELINE="${GR}Contain the costs${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
-  TIMELINE="${GR}Have fun${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "11" ] &>/dev/null; then
-  TIMELINE="${GR}Fight! Fight! Fight!${N0:?}"
-  # information - system - wallet
-elif [ "$RANDOM_QUOTES" -eq "12" ] &>/dev/null; then
-  TIMELINE="Value: $WALLET_VALUED USD ($FREED_PRICE)"
-fi
-
-# if zero
-if [[ -z "$TIMELINE" ]] &>/dev/null; then
-  TIMELINE="Always something.."
-fi
-
-################################################################################
-# random quotes from quote database
-################################################################################
-
-# random quote age (seconds)
-RANDOM_QUOTE_AGE="$(stat -c '%Y' /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
-
-# if missing, if older than n, less than n
-if [[ ! -f /home/"$USER_NAME"/node/rq.tmp || "$RANDOM_QUOTE_AGE" -gt "$(echo "180+$(wc -l /home/"$USER_NAME"/node/quotes 2>/dev/null | awk '{ print $1 }')" | bc 2>/dev/null)" || "$(wc -l /home/"$USER_NAME"/node/rq.tmp | awk '{ print $1 }')" -lt "2" ]] &>/dev/null; then
-  # fetch quotes with proxy from quotedb
-  curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss >/home/"$USER_NAME"/node/rq.tmp 2>/dev/null
-fi
-
-RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | paste -sd' ')"
-RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "authors" | tr '/' ' ' | awk -Fauthors '{ print $2 }' | xargs)"
-
-# create quotes
-echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
-# disregard duplicates, sort randomly, disregard lines greater than n, html loc, errors
-echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524|error code: 504")" >/home/"$USER_NAME"/node/quotes
-
-# if found
-if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
-  # banned quotes by authors
-  echo "$(sort /home/"$USER_NAME"/node/quotes | grep -v "$(awk NF /home/"$USER_NAME"/node/quotes.banned)")" >/home/"$USER_NAME"/node/quotes
-fi
-
-# if enough quotes
-if [[ "$(wc -l /home/"$USER_NAME"/node/quotes 2>/dev/null | awk '{ print $1 }')" -gt "10" ]] &>/dev/null; then
-  # random quote log start
-  RANDOM_QUOTE_LOG=$((((RANDOM % 2) + 1)))
-  if [[ "$RANDOM_QUOTE_LOG" == "1" ]] &>/dev/null; then
-    LAST_LOG_QUOTE="1"
-  else
-    LAST_LOG_QUOTE="0"
-  fi
-fi
+source /etc/freedom-node/include/infos
 
 ################################################################################
 # wallet tx last
