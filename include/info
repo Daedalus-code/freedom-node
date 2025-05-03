@@ -134,15 +134,4 @@ if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
   echo "$(sort /home/"$USER_NAME"/node/quotes | grep -v "$(awk NF /home/"$USER_NAME"/node/quotes.banned)")" >/home/"$USER_NAME"/node/quotes
 fi
 
-# if enough quotes
-if [[ "$(wc -l /home/"$USER_NAME"/node/quotes 2>/dev/null | awk '{ print $1 }')" -gt "10" ]] &>/dev/null; then
-  # random quote log start
-  RANDOM_QUOTE_LOG=$((((RANDOM % 2) + 1)))
-  if [[ "$RANDOM_QUOTE_LOG" == "1" ]] &>/dev/null; then
-    LAST_LOG_QUOTE="1"
-  else
-    LAST_LOG_QUOTE="0"
-  fi
-fi
-
 # END
