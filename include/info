@@ -20,6 +20,8 @@ RANDOM_INFOS=$((((RANDOM % 2) + 1)))
 ################################################################################
 
 if [[ "$RANDOM_INFOS" == "1" ]] &>/dev/null; then
+  # check last price age
+  PRICE_FILE="$HOME_DIR/node/price.tmp"
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 5) + 1)))
   # information - system - wallet
