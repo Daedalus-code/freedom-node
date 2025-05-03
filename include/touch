@@ -20,7 +20,7 @@ ZONES=(
   "Update:3442:2479:3784:2655"      # repo update
   "Upgrade:3189:2892:3771:3235"     # system upgrade
   "System:3743:368:3741:363"        # system information
-  "Balances:1410:1874:1925:1582"    # balances
+  "Balances:1937:1568:1998:1516"    # balances
   "Internet:2309:1344:2422:1447"    # internet
   "Intranet:3287:3721:2547:3198"    # intranet
   "Peers:2272:2793:2104:2636"       # connections
