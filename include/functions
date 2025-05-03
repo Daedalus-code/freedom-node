@@ -623,7 +623,7 @@ if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt 
   # if syncing
   if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
     # sync progress bar color based on percentage
-    WALLET_TXLAST="  ${Y1}${SYNC_PROGRESS_BAR}${N0}"
+    WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
   fi
 fi
 
