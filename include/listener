@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#!/bin/bash
+################################################################################
 
 # real event device
 DEVICE="/dev/input/event0"

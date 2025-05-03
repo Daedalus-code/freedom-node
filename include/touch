@@ -1,5 +1,7 @@
 #!/bin/bash
 
+################################################################################
+
 source /etc/freedom-node/include/time_fix
 
 exec 2>/dev/null
@@ -9,14 +11,18 @@ trap 'sleep '"${TIME:?}"'; reset; stty sane; clear; tput rmcup' EXIT
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
+################################################################################
+
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
   "Peers:2200:2700:2700:3100"    # Wallet connections
   "Balance:2000:1300:2400:1700"  # Wallet balances
   "System:3100:1300:3300:1700"   # System information
-  "Network:3350:3620:3500:3760"  # Network information
+  "Intranet:3350:3620:3500:3760" # Network information
   "Internet:2400:1350:2550:1450" # Internet information
 )
+
+################################################################################
 
 # if any data
 if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
@@ -25,6 +31,7 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
 
   handle_zone() {
     case "$1" in
+    ############################################################################
     Peers)
       WALLET_PEERS_INFO="$(cat /etc/freedom-node/connected.peers 2>/dev/null)"
       # if zero
@@ -35,6 +42,7 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
         dialog --infobox "$WALLET_PEERS_INFO" 0 0
       fi
       ;;
+      ##########################################################################
     Balance)
       WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')"
       # if zero
@@ -45,6 +53,14 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
         dialog --no-collapse --infobox "$WALLET_BALANCES_INFO" 0 0
       fi
       ;;
+      ##########################################################################
+    Intranet)
+      echo "$(ifconfig 2>/dev/null)" >"$HOME_DIR"/node/ifconfig
+      WALLET_NETWORK_INFO="Address: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
+    Netmask: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
+    Broadcast: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
+      ;;
+      ##########################################################################
     Internet)
       WALLET_ONION_IP="$(cat "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
       WALLET_INTERNET_INFO="LAN: $(cat "$HOME_DIR"/node/lanip.tmp 2>/dev/null)
@@ -58,12 +74,7 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
         dialog --no-collapse --infobox "$(echo "$WALLET_INTERNET_INFO" | column -t)" 0 0
       fi
       ;;
-    Intranet)
-      echo "$(ifconfig 2>/dev/null)" >"$HOME_DIR"/node/ifconfig
-      WALLET_NETWORK_INFO="Address: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
-  Netmask: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
-  Broadcast: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
-      ;;
+      ##########################################################################
     System)
       # if missing
       if [[ ! -f "$HOME_DIR"/node/hostnamectl ]] &>/dev/null; then
@@ -80,6 +91,8 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
     esac
     exit
   }
+
+  ##############################################################################
 
   # check if the touch falls inside a zone
   for ZONE in "${ZONES[@]}"; do
