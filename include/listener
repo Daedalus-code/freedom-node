@@ -7,7 +7,8 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # ensure the directory exists
 mkdir -p "$HOME_DIR"/node
-
+echo "Label:"
+read -r LABEL
 # evtest device
 evtest "$DEVICE" | while read -r LINE; do
   # capture ABS_X (X coordinate)
@@ -18,13 +19,12 @@ evtest "$DEVICE" | while read -r LINE; do
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     # write the coordinates (appending to touchcoords.tmp)
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
-    # capture ABS_PRESSURE (pressure value)
-    pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
   # capture BTN_TOUCH (touch down or up)
   elif [[ "$LINE" == *"ABS_PRESSURE"* ]] &>/dev/null; then
-    touch_status=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    # capture ABS_PRESSURE (pressure value)
+    pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     # get (format: Touch:x:y:pressure:touch_status)
-    echo "Touch:$x:$y:$pressure:$touch_status" >"$HOME_DIR"/node/touchconfig.tmp
+    echo "$LABEL:$x:$pressure:$y:$pressure" >"$HOME_DIR"/node/touchconfig.tmp
     # restart the touch process
     pkill -f /etc/freedom-node/include/touch
     bash /etc/freedom-node/include/touch &
