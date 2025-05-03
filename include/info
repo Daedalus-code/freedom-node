@@ -13,15 +13,19 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 
-RANDOM_INFOS=$((((RANDOM % 2) + 1)))
+RANDOM_INFO_QUOTE=$((((RANDOM % 2) + 1)))
 
 ################################################################################
-# random infos
+# random info and quotes
 ################################################################################
 
-if [[ "$RANDOM_INFOS" == "1" ]] &>/dev/null; then
-  # check last price age
-  PRICE_FILE="$HOME_DIR/node/price.tmp"
+FREED_PRICE="$(cat "$HOME_DIR"/node/price.tmp 2>/dev/null)"
+WALLET_BALANCES="$(grep "balance" /home/"$USER_NAME"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
+WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
+
+################################################################################
+
+if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 5) + 1)))
   # information - system - wallet
@@ -67,14 +71,14 @@ fi
 # if zero
 if [[ "$(grep -c "true" /etc/freedom-node/mnsync_status.tmp)" -eq "0" ]] &>/dev/null; then
   # still syncing, just quote
-  RANDOM_INFOS="2"
+  RANDOM_INFO_QUOTE="2"
 fi
 
 ################################################################################
 # random quotes
 ################################################################################
 
-if [[ "$RANDOM_INFOS" == "2" ]] &>/dev/null; then
+if [[ "$RANDOM_INFO_QUOTE" == "2" ]] &>/dev/null; then
   # random quotes/information start
   RANDOM_QUOTES=$((((RANDOM % 11) + 1)))
   # quotes - art of the deal, djt
