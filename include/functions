@@ -649,6 +649,7 @@ fi
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="   ${GR}Loading${N0}"
   CB="${GR}"
+  WC="${GR}"
 fi
 
 ################################################################################
