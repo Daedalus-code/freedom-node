@@ -13,18 +13,17 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Menu:3615:312:3820:429"          # node menu
+  "Node:3615:312:3820:429"          # system information
   "Stats:3616:770:3837:879"         # stats
   "PoS:3697:1195:3822:1303"         # proof of stake
   "Patriotnode:3693:1813:3838:1922" # patriotnode
   "Update:3442:2479:3784:2655"      # repo update
   "Upgrade:3189:2892:3771:3235"     # system upgrade
-  "info:3603:3612:3813:3788"        # information
+  "System:3603:3612:3813:3788"      # system information
   "Balances:2028:1497:2039:1510"    # balances
   "Internet:2309:1344:2422:1447"    # internet
   "Intranet:3287:3721:2547:3198"    # intranet
   "Peers:2334:2813:2348:2844"       # connections
-  "System:2921:1395:3057:1504"      # load - computer
 )
 
 ################################################################################
@@ -36,39 +35,6 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
 
   handle_zone() {
     case "$1" in
-    Menu)
-      break
-      HEIGHT="0"
-      WIDTH="0"
-      CHOICE_HEIGHT="3"
-      BACKTITLE="FreedomCoin node menu"
-      TITLE="Node options"
-
-      OPTIONS=(
-        1 "Send             Send FREED"
-        2 "Receive          Receive FREED"
-        3 "Inputs           Wallet inputs")
-
-      CHOICE=$(dialog --clear \
-        --backtitle "$BACKTITLE" \
-        --title "$TITLE" \
-        $HEIGHT $WIDTH $CHOICE_HEIGHT \
-        "${OPTIONS[@]}" \
-        2>&1 >/dev/tty)
-
-      clear
-      case $CHOICE in
-      "1")
-        echo "You chose Option 1"
-        ;;
-      "2")
-        echo "You chose Option 2"
-        ;;
-      "3")
-        echo "You chose Option 3"
-        ;;
-      esac
-      ;;
     ############################################################################
     Peers)
       WALLET_PEERS_INFO="$(cat /etc/freedom-node/connected.peers 2>/dev/null)"
