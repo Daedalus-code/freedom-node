@@ -13,17 +13,17 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Node:3655:361:3731:372"          # node information
-  "Stats:3616:770:3837:879"         # stats
-  "PoS:3697:1195:3822:1303"         # proof of stake
-  "Patriotnode:3693:1813:3838:1922" # patriotnode
-  "Update:3442:2479:3784:2655"      # repo update
-  "Upgrade:3189:2892:3771:3235"     # system upgrade
-  "System:3743:368:3741:363"        # system information
-  "Balances:2000:1600:1900:1600"    # balances
-  "Internet:2309:1344:2422:1447"    # internet
-  "Intranet:3287:3721:2547:3198"    # intranet
-  "Peers:2272:2793:2104:2636"       # connections
+  "Node:3635:341:3751:392"          # node information
+  "Stats:3596:750:3857:899"         # stats
+  "PoS:3677:1175:3842:1323"         # proof of stake
+  "Patriotnode:3673:1793:3858:1942" # patriotnode
+  "Update:3422:2459:3804:2675"      # repo update
+  "Upgrade:3169:2872:3791:3255"     # system upgrade
+  "System:3723:348:3761:383"        # system information
+  "Balances:1980:1580:1920:1620"    # balances
+  "Internet:2289:1324:2442:1467"    # internet
+  "Intranet:3267:3701:2567:3218"    # intranet
+  "Peers:2252:2773:2124:2656"       # connections
 )
 
 ################################################################################
