@@ -1,33 +1,32 @@
 #!/bin/bash
 
-# Real event device
 DEVICE="/dev/input/event0"
-# home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
-
-# ensure the directory exists
 mkdir -p "$HOME_DIR"/node
-echo "Label:"
-read -r LABEL
-# evtest device
+
+declare -A coords
+
 evtest "$DEVICE" | while read -r LINE; do
-  # capture ABS_X (X coordinate)
-  if [[ "$LINE" == *"ABS_X"* ]] &>/dev/null; then
+  if [[ "$LINE" == *"ABS_X"* ]]; then
     x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-  # capture ABS_Y (Y coordinate)
-  elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
+  elif [[ "$LINE" == *"ABS_Y"* ]]; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    # write the coordinates (appending to touchcoords.tmp)
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
-  # capture BTN_TOUCH (touch down or up)
-  elif [[ "$LINE" == *"ABS_PRESSURE"* ]] &>/dev/null; then
-    # capture ABS_PRESSURE (pressure value)
-    pressure=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    # get (format: Touch:x:y:pressure:touch_status)
-    echo "$LABEL:$x:$pressure:$y:$pressure" >"$HOME_DIR"/node/touchconfig.tmp
-    # restart the touch process
-    pkill -f /etc/freedom-node/include/touch
-    bash /etc/freedom-node/include/touch &
+  elif [[ "$LINE" == *"BTN_TOUCH"* && "$LINE" == *"value 0"* ]]; then
+    if [[ -z "${coords[x1]}" ]]; then
+      coords[x1]=$x
+      coords[y1]=$y
+      echo "First point recorded: ${coords[x1]}, ${coords[y1]}"
+    else
+      coords[x2]=$x
+      coords[y2]=$y
+      echo "Second point recorded: ${coords[x2]}, ${coords[y2]}"
+      echo "\"Touch:${coords[x1]}:${coords[y1]}:${coords[x2]}:${coords[y2]}\"" >>"$HOME_DIR"/node/touchzones.conf
+      echo "Zone saved."
+      # clear for next round
+      unset coords
+      declare -A coords
+    fi
   fi
 done
 
