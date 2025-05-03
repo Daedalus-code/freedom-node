@@ -37,7 +37,6 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
   handle_zone() {
     case "$1" in
     Menu)
-      sudo service freedomnode stop
       HEIGHT="0"
       WIDTH="0"
       CHOICE_HEIGHT="3"
@@ -68,7 +67,6 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
         echo "You chose Option 3"
         ;;
       esac
-      sudo service freedomnode start
       ;;
     ############################################################################
     Peers)
