@@ -21,7 +21,7 @@ RANDOM_INFO_QUOTE=$((((RANDOM % 2) + 1)))
 
 if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   # random quotes/information start
-  RANDOM_INFO=$((((RANDOM % 5) + 1)))
+  RANDOM_INFO=$((((RANDOM % 7) + 1)))
   # information - system - wallet
   if [ "$RANDOM_INFO" -eq "1" ] &>/dev/null; then
     TIMELINE="Value: $WALLET_VALUE USD ($FREED_PRICE)"
@@ -35,6 +35,12 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   elif [ "$RANDOM_INFO" -eq "5" ] &>/dev/null; then
     HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
     TIMELINE="Highest input: $HIGHEST_INPUT FREED"
+  elif [ "$RANDOM_INFO" -eq "6" ] &>/dev/null; then
+    AVERAGE_CONFIRMATIONS="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "confirmations" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')"
+    TIMELINE="Average confirmations: $AVERAGE_CONFIRMATIONS"
+  elif [ "$RANDOM_INFO" -eq "7" ] &>/dev/null; then
+    AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
+    TIMELINE="Average input size: $AVERAGE_INPUT_SIZE FREED"
   fi
 fi
 
