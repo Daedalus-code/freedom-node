@@ -210,14 +210,19 @@ if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
 fi
 
 ################################################################################
-# dash theme
+# control status (control wallet)
 ################################################################################
 
-THEME_STATUS=""
+# patriotnode count
+CONTROL_STATUS="$(egrep -c "MN|PN" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
+
+if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
+  CONTROL_STATUS="${CY}C${N0}"
+fi
 
 # if zero
-if [[ -z "$THEME_STATUS" ]] &>/dev/null; then
-  THEME_STATUS="${GR}D${N0}"
+if [[ -z "$CONTROL_STATUS" ]] &>/dev/null; then
+  CONTROL_STATUS="${GR}C${N0}"
 fi
 
 ################################################################################
@@ -240,18 +245,16 @@ fi
 # tor status (tor)
 ################################################################################
 
-TOR_STATUS="${GR}P${N0}"
-
 TOR_STATUS="$(grep "proxy" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
-
-# if zero
-if [[ "$TOR_STATUS" == "0" || -z "$TOR_STATUS" ]] &>/dev/null; then
-  TOR_STATUS="${GR}0${N0}"
-fi
 
 # if active
 if [[ "$TOR_STATUS" == "1" ]] &>/dev/null; then
   TOR_STATUS="${P1}P${N0}"
+fi
+
+# if zero
+if [[ -z "$TOR_STATUS" ]] &>/dev/null; then
+  TOR_STATUS="${GR}P${N0}"
 fi
 
 ################################################################################
