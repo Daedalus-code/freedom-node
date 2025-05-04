@@ -22,7 +22,7 @@ fi
 ################################################################################
 
 # if missing and if any display
-if [[ ! -f /tmp/setfont && -f "$HOME_DIR"/display ]] &>/dev/null; then
+if [[ ! -f /tmp/setfont && -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   # set console display font
   sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz 2>/dev/null
   echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >/tmp/setfont 2>/dev/null
@@ -574,7 +574,7 @@ fi
 # quotes
 ################################################################################
 
-source /etc/freedom-node/include/info
+source /etc/freedom-node/include/timeline
 
 # if enough quotes
 if [[ "$(wc -l "$HOME_DIR"/node/quotes 2>/dev/null | awk '{ print $1 }')" -gt "10" ]] &>/dev/null; then

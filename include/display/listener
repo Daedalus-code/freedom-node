@@ -15,8 +15,8 @@ evtest "$DEVICE" | while read -r LINE; do
   elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
-    pkill -f /etc/freedom-node/include/touch
-    bash /etc/freedom-node/include/touch &
+    pkill -f /etc/freedom-node/include/display/touch
+    bash /etc/freedom-node/include/display/touch &
   fi
 done
 
