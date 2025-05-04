@@ -565,7 +565,7 @@ fi
 ################################################################################
 
 # if zero
-if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXLAST" || "$(echo "$WALLET_TXLAST" | egrep -c "[0-9]+")" -eq "0" ]] &>/dev/null; then
   WALLET_TXLAST="   ${GR}Loading${N0}"
   CB="${GR}"
 fi
