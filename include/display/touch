@@ -7,7 +7,7 @@ source /etc/freedom-node/include/time_fix
 ################################################################################
 
 # if not running
-if [[ "$(ps -fp $(pidof bash) | grep -c "touch")" -eq "0" ]] &>/dev/null; then
+if ! pgrep -af "bash.*touch" >/dev/null; then
 
   exec 2>/dev/null
   # restore terminal to sane state
