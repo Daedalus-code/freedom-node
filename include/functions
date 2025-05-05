@@ -88,8 +88,6 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/deb
   /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers 2>/dev/null
   # getpatriotnodecount
   /usr/local/bin/freedomcoin-cli getpatriotnodecount 2>/dev/null | grep -v "Error" | tr -d ',}{"' >"$HOME_DIR"/node/getpatriotnodecount.tmp 2>/dev/null
-  # mnsync status
-  /usr/local/bin/freedomcoin-cli mnsync status 2>/dev/null | grep -v "Error" | tr -d ',}{"' >"$HOME_DIR"/node/mnsync_status.tmp 2>/dev/null
   # version
   if [[ ! -f "$HOME_DIR"/node/version.tmp || ! -s "$HOME_DIR"/node/version.tmp ]] &>/dev/null; then
     /usr/local/bin/./freedomcoin-cli -version 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/version.tmp 2>/dev/null

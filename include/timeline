@@ -44,8 +44,8 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   fi
 fi
 
-# if zero
-if [[ "$(grep "IsBlockchainSynced" "$HOME_DIR"/node/mnsync_status.tmp | grep -c "true")" -eq "0" ]] &>/dev/null; then
+# if sync is not OK
+if [[ ! "$WALLET_SYNC" == "OK" ]] &>/dev/null; then
   # still syncing, just quote
   RANDOM_INFO_QUOTE="2"
 fi
