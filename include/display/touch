@@ -7,7 +7,7 @@ source /etc/freedom-node/include/time_fix
 ################################################################################
 
 # if not running
-if ! pgrep -af "bash.*touch" >/dev/null; then
+if ! pgrep "touch" >/dev/null; then
 
   exec 2>/dev/null
   # restore terminal to sane state

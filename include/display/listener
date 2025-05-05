@@ -3,7 +3,7 @@
 ################################################################################
 
 # if not running
-if ! pgrep -af "bash.*listener" >/dev/null; then
+if ! pgrep "listener" >/dev/null; then
 
   # real event device
   DEVICE="/dev/input/event0"
