@@ -111,9 +111,9 @@ source /etc/freedom-node/include/sync/progress
 # repository version
 ################################################################################
 
-LOC_0="$(wc -l /etc/freedom-node/* 2>/dev/null | grep "total" | egrep -o "[0-9]+")"
-LOC_1="$(wc -l /etc/freedom-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+")"
-LOC_2="$(wc -l /etc/freedom-node/*/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+")"
+LOC_0="$(wc -l "$HOME_DIR"/freedom-node/* 2>/dev/null | grep "total" | egrep -o "[0-9]+")"
+LOC_1="$(wc -l "$HOME_DIR"/freedom-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+")"
+LOC_2="$(wc -l "$HOME_DIR"/freedom-node/*/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+")"
 LOC_T="$(echo "$LOC_0+$LOC_1+$LOC_2" | bc 2>/dev/null | sed 's/./&./g;s/\.$//')"
 
 REPO_VERSION="${N0}v$LOC_T"
