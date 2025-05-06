@@ -13,11 +13,8 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # if any display
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  # if already running
-  if [[ ! -f /tmp/listener.running ]] &>/dev/null; then
-    touch /tmp/listener.running
-    bash /etc/freedom-node/include/display/listener &
-  fi
+  pkill -f /etc/freedom-node/include/display/touch
+  bash /etc/freedom-node/include/display/listener &
 fi
 
 ################################################################################
