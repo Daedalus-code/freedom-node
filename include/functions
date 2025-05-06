@@ -159,6 +159,7 @@ fi
 # proof-of-stake count
 ################################################################################
 
+WALLET_POS_REWARDS="Stakes 0"
 BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
 LAST_PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
 
