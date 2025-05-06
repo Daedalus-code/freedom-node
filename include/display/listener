@@ -16,7 +16,7 @@ evtest "$DEVICE" | while read -r LINE; do
     y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
     echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
     pkill -f /etc/freedom-node/include/display/touch
-    bash /etc/freedom-node/include/display/touch
+    bash /etc/freedom-node/include/display/touch &
   fi
 done
 
