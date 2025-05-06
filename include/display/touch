@@ -6,13 +6,6 @@ source /etc/freedom-node/include/time_fix
 
 ################################################################################
 
-if [[ -f /tmp/touch.running ]] &>/dev/null; then
-  exit
-fi
-touch /tmp/touch.running
-
-################################################################################
-
 exec 2>/dev/null
 # restore terminal to sane state
 trap 'sleep '"${TIME:?}"'; reset; stty sane; clear; tput rmcup' EXIT
@@ -128,7 +121,6 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
       handle_zone "$LABEL"
     fi
   done
-  rm -f /tmp/touch.running
 fi
 exit
 
