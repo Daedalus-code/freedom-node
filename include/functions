@@ -131,25 +131,28 @@ SYSTEM_CLOCK="$(echo "$DATE_CLOCK" | awk '{ print $2 }')"
 # wallet movements
 ################################################################################
 
+ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' | tail -1)"
+LAST_MOVEMENTS="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)"
+
 # if new addtowallet
-if [[ ! "$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' | tail -1)" == "$(tail -1 "$HOME_DIR"/node/movements.tmp)" ]] &>/dev/null; then
+if [[ ! "$ADD_TO_WALLET" == "$LAST_MOVEMENTS" ]] &>/dev/null; then
   # fetch addtowallet
   grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' >"$HOME_DIR"/node/movements.tmp
-fi
-
-# reset after midnight
-if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
-  truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
 fi
 
 WALLET_MOVEMENT="$(wc -l "$HOME_DIR"/node/movements.tmp 2>/dev/null | awk '{ print $1 }')"
 WALLET_MOVEMENT_AGE="$(stat -c '%Y' "$HOME_DIR"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
-# if any movements
-if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
-  CB="${G1}"
-  TX="${G1}"
-  WC="${G1}"
+# if zero
+if [[ -z "$WALLET_MOVEMENT" ]] &>/dev/null; then
+  WALLET_MOVEMENT="0"
+fi
+
+# if any movements, less than n age
+if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
+  CB="${CY}"
+  TX="${CY}"
+  WC="${CY}"
 fi
 
 ################################################################################
@@ -157,51 +160,35 @@ fi
 ################################################################################
 
 BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
-PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp)"
+LAST_PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
 
-# if any data
-if [[ -n "$BLOCK_WAS_SIGNED" && -n "$PROOF_OF_STAKE" ]] &>/dev/null; then
-  # if new signed block
-  if [[ ! "$BLOCK_WAS_SIGNED" == "$PROOF_OF_STAKE" ]] &>/dev/null; then
-    # fetch signed proof-of-stake block
-    grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
-    # remove duplicates
-    echo "$(awk '!a[$0]++' "$HOME_DIR"/node/stakes.tmp 2>/dev/null)" >"$HOME_DIR"/node/stakes.tmp
-  fi
-fi
-
-# reset after midnight
-if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
-  truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
+# if new signed block
+if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
+  # fetch signed proof-of-stake block
+  grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >"$HOME_DIR"/node/stakes.tmp
 fi
 
 # default
 WALLET_POS_REWARDS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
+# wallet pos rewards age (seconds)
+WALLET_POS_REWARDS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
 # if zero
 if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
   WALLET_POS_REWARDS="0"
 fi
 
-# wallet pos rewards age (seconds)
-WALLET_POS_REWARDS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
+# if any rewards
+if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+  WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
+fi
 
-# if any rewards and less than n age
-if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &>/dev/null; then
+# if any rewards, less than n age
+if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
   WALLET_POS_REWARDS="Stakes ${Y1}$WALLET_POS_REWARDS${N0}"
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
-else
-  # if any rewards but after the fact
-  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-    WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
-  else
-    WALLET_POS_REWARDS="Stakes ${GR}$WALLET_POS_REWARDS${N0}"
-  fi
-  CB="${GR}"
-  TX="${GR}"
-  WC="${N0}"
 fi
 
 ################################################################################
@@ -220,7 +207,7 @@ fi
 ################################################################################
 
 # patriotnode count
-CONTROL_STATUS="$(egrep -c "MN|PN" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
+CONTROL_STATUS="$(egrep -c "MN|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
   CONTROL_STATUS="${CY}C${N0}"
@@ -534,17 +521,17 @@ fi
 ################################################################################
 
 # if any wallet movements
-if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
+if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)${N0}"
 fi
 
 # if any proof-of-stake
-if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &>/dev/null; then
+if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
 fi
 
 # if still zero
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp || "$WALLET_POS_REWARDS_AGE" -gt "2777" && "$WALLET_MOVEMENT_AGE" -gt "2777" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp || "$WALLET_POS_REWARDS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
