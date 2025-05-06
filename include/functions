@@ -520,7 +520,7 @@ fi
 ################################################################################
 
 # if zero
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp || "$WALLET_POS_REWARDS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "$WALLET_POS_REWARDS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
