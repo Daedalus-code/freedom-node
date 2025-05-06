@@ -126,5 +126,6 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
     done
   fi
 fi
+exit
 
 # END
