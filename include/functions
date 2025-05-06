@@ -446,7 +446,7 @@ else
 fi
 
 ################################################################################
-# wallet balances
+# wallet balances + wallet value
 ################################################################################
 
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
