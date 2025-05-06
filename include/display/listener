@@ -2,26 +2,22 @@
 
 ################################################################################
 
-# if not running
-if ! pgrep "listener" >/dev/null; then
+# real event device
+DEVICE="/dev/input/event0"
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
-  # real event device
-  DEVICE="/dev/input/event0"
-  HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+################################################################################
 
-  ##############################################################################
-
-  # evtest device
-  evtest "$DEVICE" | while read -r LINE; do
-    if [[ "$LINE" == *"ABS_X"* ]] &>/dev/null; then
-      x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
-      y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-      echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
-      pkill -f /etc/freedom-node/include/display/touch
-      bash /etc/freedom-node/include/display/touch
-    fi
-  done
-fi
+# evtest device
+evtest "$DEVICE" | while read -r LINE; do
+  if [[ "$LINE" == *"ABS_X"* ]] &>/dev/null; then
+    x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+  elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
+    y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
+    pkill -f /etc/freedom-node/include/display/touch
+    bash /etc/freedom-node/include/display/touch
+  fi
+done
 
 # END
