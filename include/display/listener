@@ -3,7 +3,7 @@
 ################################################################################
 
 # if not running
-if ! pgrep "listener" >/dev/null; then
+if [[ "$(ps -ef | grep "bash" | grep -c "listener")" -eq "0" ]] &>/dev/null; then
 
   # real event device
   DEVICE="/dev/input/event0"
