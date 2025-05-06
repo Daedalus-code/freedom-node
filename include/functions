@@ -159,7 +159,6 @@ fi
 # proof-of-stake count
 ################################################################################
 
-WALLET_POS_REWARDS="Stakes 0"
 BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
 LAST_PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
 
@@ -174,11 +173,6 @@ WALLET_POS_REWARDS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ pri
 # wallet pos rewards age (seconds)
 WALLET_POS_REWARDS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
-# if zero
-if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="0"
-fi
-
 # if any rewards
 if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
   WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
@@ -190,6 +184,11 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
+fi
+
+# if zero
+if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
+  WALLET_POS_REWARDS="Stakes 0"
 fi
 
 ################################################################################
