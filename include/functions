@@ -82,11 +82,12 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/deb
   /usr/local/bin/freedomcoin-cli getmempoolinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null
   # getpeerinfo
   /usr/local/bin/freedomcoin-cli getpeerinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null
-  sleep 1 # relax..
+  sleep 0.5 ##
   # listunspent
   /usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/listunspent.tmp 2>/dev/null
   # getnodeaddresses
   /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers 2>/dev/null
+  sleep 0.5 ##
   # if missing, if older than n seconds
   if [[ ! -f "$HOME_DIR"/node/getpatriotnodecount.tmp || "$(stat -c '%Y' "$HOME_DIR"/node/getpatriotnodecount.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)" -gt "600" ]] &>/dev/null; then
     # getpatriotnodecount
