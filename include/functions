@@ -187,7 +187,7 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &
 fi
 
 # if zero
-if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS_REWARDS" || "$WALLET_POS_REWARDS" -eq "0" ]] &>/dev/null; then
   WALLET_POS_REWARDS="Stakes 0"
 fi
 
