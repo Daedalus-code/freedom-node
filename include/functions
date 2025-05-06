@@ -215,7 +215,7 @@ if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
 fi
 
 # if zero
-if [[ "$CONTROL_STATUS" -eq "0" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
+if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -eq "1" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
   CONTROL_STATUS="${GR}C${N0}"
 fi
 
