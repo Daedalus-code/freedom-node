@@ -599,9 +599,9 @@ fi
 ################################################################################
 
 # create ip4 list, disregard duplicates
-grep "addrlocal" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' >/etc/freedom-node/connected.peers
+cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.peers
 # include ip6, disregard duplicates
-grep "addrlocal" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d '",' | awk '{ print $2 }' | egrep ":|::" | egrep "[a-z]+" | awk -F] '{ print $1 }' | tr -d '[' | awk '!a[$0]++' >>/etc/freedom-node/connected.peers
+cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | awk -F:15110 '{ print $1 }' | egrep ":|::" | egrep "[a-z]+" | awk '!a[$0]++' | sort -n >>/etc/freedom-node/connected.peers
 
 ################################################################################
 # arp peers list
