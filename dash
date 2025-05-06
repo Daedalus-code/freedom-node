@@ -13,7 +13,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # if any display
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  pkill -f /etc/freedom-node/include/display/touch
+  pkill -f /etc/freedom-node/include/display/listener
   bash /etc/freedom-node/include/display/listener &
 fi
 
