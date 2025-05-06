@@ -82,6 +82,7 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/deb
   /usr/local/bin/freedomcoin-cli getmempoolinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null
   # getpeerinfo
   /usr/local/bin/freedomcoin-cli getpeerinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null
+  sleep 1 # relax..
   # listunspent
   /usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/listunspent.tmp 2>/dev/null
   # getnodeaddresses
@@ -154,9 +155,6 @@ if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/
   CB="${CY}"
   TX="${CY}"
   WC="${CY}"
-  # if any movements, greater than n age
-elif [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
-  WC="${N0}"
 fi
 
 ################################################################################
