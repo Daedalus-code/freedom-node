@@ -168,15 +168,8 @@ if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
   grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >"$HOME_DIR"/node/stakes.tmp
 fi
 
-# default
 WALLET_POS_REWARDS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
-# wallet pos rewards age (seconds)
 WALLET_POS_REWARDS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
-
-# if any rewards
-if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
-fi
 
 # if any rewards, less than n age
 if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
@@ -184,6 +177,8 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
+else
+  WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
 fi
 
 # if zero
