@@ -201,7 +201,7 @@ if [[ "$MASTER_STATUS" -gt "0" ]] &>/dev/null; then
 fi
 
 # if zero
-if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
+if [[ -z "$MASTER_STATUS" || "$MASTER_STATUS" -eq "0" ]] &>/dev/null; then
   MASTER_STATUS="${GR}M${N0}"
 fi
 
