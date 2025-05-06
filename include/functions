@@ -164,6 +164,9 @@ if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/
   CB="${CY}"
   TX="${CY}"
   WC="${CY}"
+  # if greater than n age
+elif [[ "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
+  WC="${N0}"
 fi
 
 ################################################################################
