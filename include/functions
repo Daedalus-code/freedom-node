@@ -64,7 +64,7 @@ fi
 FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null)"
 
 ################################################################################
-# client commands
+# client data
 ################################################################################
 
 # client updated data age (seconds)
@@ -104,10 +104,30 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/deb
 fi
 
 ################################################################################
-# wallet sync w progress bar
+# debug data
 ################################################################################
 
-source /etc/freedom-node/include/sync/progress
+# movements ####################################################################
+ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' | tail -1)"
+LAST_MOVEMENTS="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)"
+# if new addtowallet
+if [[ ! "$ADD_TO_WALLET" == "$LAST_MOVEMENTS" ]] &>/dev/null; then
+  # fetch addtowallet
+  grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' >>"$HOME_DIR"/node/movements.tmp
+fi
+WALLET_MOVEMENT="$(wc -l "$HOME_DIR"/node/movements.tmp 2>/dev/null | awk '{ print $1 }')"
+WALLET_MOVEMENT_AGE="$(stat -c '%Y' "$HOME_DIR"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
+
+# proof of stake ###############################################################
+BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
+LAST_PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
+# if new signed block
+if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
+  # fetch signed proof-of-stake block
+  grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
+fi
+WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
+WALLET_POS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
 ################################################################################
 # repository version
@@ -129,20 +149,8 @@ SYSTEM_DATE="${GR}$(echo "$DATE_CLOCK" | awk '{ print $1 }')${N0}"
 SYSTEM_CLOCK="$(echo "$DATE_CLOCK" | awk '{ print $2 }')"
 
 ################################################################################
-# wallet movements
+# movement status
 ################################################################################
-
-ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' | tail -1)"
-LAST_MOVEMENTS="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)"
-
-# if new addtowallet
-if [[ ! "$ADD_TO_WALLET" == "$LAST_MOVEMENTS" ]] &>/dev/null; then
-  # fetch addtowallet
-  grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $3 }' >"$HOME_DIR"/node/movements.tmp
-fi
-
-WALLET_MOVEMENT="$(wc -l "$HOME_DIR"/node/movements.tmp 2>/dev/null | awk '{ print $1 }')"
-WALLET_MOVEMENT_AGE="$(stat -c '%Y' "$HOME_DIR"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
 
 # if zero
 if [[ -z "$WALLET_MOVEMENT" ]] &>/dev/null; then
@@ -158,44 +166,38 @@ if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/
 fi
 
 ################################################################################
-# proof-of-stake count
+# proof of stake status
 ################################################################################
 
-BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
-LAST_PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
-
-# if new signed block
-if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
-  # fetch signed proof-of-stake block
-  grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >"$HOME_DIR"/node/stakes.tmp
-fi
-
-WALLET_POS_REWARDS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
-WALLET_POS_REWARDS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
-
 # if any rewards, less than n age
-if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="Stakes ${Y1}$WALLET_POS_REWARDS${N0}"
+if [[ "$WALLET_POS" -gt "0" && "$WALLET_POS_AGE" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
   # if any rewards, greater than n age
-elif [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -gt "3600" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
+elif [[ "$WALLET_POS" -gt "0" && "$WALLET_POS_AGE" -gt "3600" ]] &>/dev/null; then
   WC="${N0}"
 fi
 
 # if zero
-if [[ -z "$WALLET_POS_REWARDS" || "$WALLET_POS_REWARDS" -eq "0" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="Stakes ${GR}0${N0}"
+if [[ -z "$WALLET_POS" || "$WALLET_POS" -eq "0" ]] &>/dev/null; then
+  WALLET_POS="${GR}0${N0}"
 fi
+
+# output proof of stake
+WALLET_POS="${WC}$WALLET_POS${N0}"
 
 ################################################################################
 # patriotnode status (masternode)
 ################################################################################
 
-MASTER_STATUS=""
+MASTER_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf | egrep -c "mn|MN|pn|PN|:15110" 2>/dev/null)"
+
+# if any data
+if [[ "$MASTER_STATUS" -gt "0" ]] &>/dev/null; then
+  MASTER_STATUS="${CY}M${N0}"
+fi
 
 # if zero
 if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
@@ -207,7 +209,7 @@ fi
 ################################################################################
 
 # patriotnode count
-CONTROL_STATUS="$(egrep -c "MN|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
+CONTROL_STATUS="$(egrep -c "mn|MN|pn|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
   CONTROL_STATUS="${CY}C${N0}"
@@ -219,7 +221,7 @@ if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -eq "1" || -z "$CONTROL_STA
 fi
 
 ################################################################################
-# proof-of-stake status
+# proof of stake status
 ################################################################################
 
 POS_STATUS="$(grep -c "Staking Not Active" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null)"
@@ -475,13 +477,13 @@ fi
 # wallet inputs
 ################################################################################
 
-WALLET_INPUTS_NODES="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
+WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
 # if zero
-if [[ -z "$WALLET_INPUTS_NODES" || "$WALLET_INPUTS_NODES" == "0" ]] &>/dev/null; then
-  WALLET_INPUTS_NODES="Inputs ${GR}0${N0}"
+if [[ -z "$WALLET_INPUTS" || "$WALLET_INPUTS" == "0" ]] &>/dev/null; then
+  WALLET_INPUTS="Inputs ${GR}0${N0}"
 else
-  WALLET_INPUTS_NODES="Inputs $WALLET_INPUTS_NODES"
+  WALLET_INPUTS="Inputs $WALLET_INPUTS"
 fi
 
 ################################################################################
@@ -524,7 +526,7 @@ fi
 ################################################################################
 
 # if zero
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "$WALLET_POS_REWARDS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "$WALLET_POS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
@@ -533,22 +535,6 @@ fi
 if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_TXLAST="   ${CY}Loading${N0}"
   CB="${CY}"
-fi
-
-################################################################################
-# sync progress
-################################################################################
-
-# sync progress
-SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' .trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
-
-# if any data
-if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" ]] &>/dev/null; then
-  # if syncing
-  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-    # sync progress bar color based on percentage
-    WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
-  fi
 fi
 
 ################################################################################
@@ -691,6 +677,24 @@ $IP_ADDRESS_ARP" | awk '!a[$0]++' | sort | awk NF >/etc/freedom-node/addnode
       /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADDNODE" onetry 2>/dev/null | grep -v "Error" &
       echo "addnode $IP_ADDRESS_ADDNODE onetry" >"$HOME_DIR"/node/onetry.tmp
     fi
+  fi
+fi
+
+################################################################################
+# sync progress
+################################################################################
+
+source /etc/freedom-node/include/sync/progress
+
+# sync progress
+SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' .trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
+
+# if any data
+if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+  # if syncing
+  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+    # sync progress bar color based on percentage
+    WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
   fi
 fi
 
