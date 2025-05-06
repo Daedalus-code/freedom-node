@@ -18,7 +18,9 @@ if ! pgrep "listener" >/dev/null; then
     elif [[ "$LINE" == *"ABS_Y"* ]] &>/dev/null; then
       y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
       echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
-      bash /etc/freedom-node/include/display/touch
+      if [[ "$(ps -ef | grep "bash" | grep -c "touch")" -eq "0" ]] &>/dev/null; then
+        bash /etc/freedom-node/include/display/touch
+      fi
     fi
   done
 fi
