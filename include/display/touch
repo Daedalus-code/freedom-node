@@ -22,6 +22,7 @@ ZONES=(
   "Load:3100:1300:3300:1700"     # load/system information
   "Intranet:3350:3620:3500:3760" # network information
   "WAN:2400:1060:2550:1460"      # internet information
+  "POS:2538:2201:2540:2201"      # PoS information
 )
 
 ################################################################################
@@ -106,6 +107,19 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
         dialog --infobox "$WALLET_SYSTEM_INFO" 4 19
       else
         dialog --no-collapse --infobox "$WALLET_SYSTEM_INFO" 0 0
+      fi
+      ;;
+      ##########################################################################
+      # Proof of stake (PoS)
+      ##########################################################################
+    POS)
+      WALLET_POS_INFO="$(cat "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
+      # if zero
+      if [[ -z "$WALLET_POS_INFO" ]] &>/dev/null; then
+        WALLET_POS_INFO="No stakes"
+        dialog --infobox "$WALLET_POS_INFO" 4 16
+      else
+        dialog --no-collapse --infobox "$(echo "$WALLET_POS_INFO" | column -t)" 0 0
       fi
       ;;
     esac
