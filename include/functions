@@ -112,6 +112,9 @@ fi
 cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip4.peers
 # include ip6, disregard duplicates
 cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | awk -F:15110 '{ print $1 }' | egrep ":|::" | egrep "[a-z]+" | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip6.peers
+# combine ip4, ip6
+cat /etc/freedom-node/connected.ip4.peers >/etc/freedom-node/connected.peers
+cat /etc/freedom-node/connected.ip6.peers >>/etc/freedom-node/connected.peers
 
 # movements ####################################################################
 ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' | tail -1)"
@@ -221,7 +224,7 @@ fi
 CONTROL_STATUS="$(egrep -c "mn|MN|pn|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
-  CONTROL_STATUS="${GR}C${N0}"
+  CONTROL_STATUS="C"
 fi
 
 # if zero
@@ -602,9 +605,6 @@ fi
 ################################################################################
 # arp peers list
 ################################################################################
-
-cat /etc/freedom-node/connected.ip4.peers >/etc/freedom-node/connected.peers
-cat /etc/freedom-node/connected.ip6.peers >>/etc/freedom-node/connected.peers
 
 # remove after midnight
 if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
