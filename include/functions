@@ -221,12 +221,12 @@ fi
 CONTROL_STATUS="$(egrep -c "mn|MN|pn|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
-  CONTROL_STATUS="${C1}C${N0}"
+  CONTROL_STATUS="${GR}C${N0}"
 fi
 
 # if zero
 if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -eq "1" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
-  CONTROL_STATUS="${GR}C${N0}"
+  CONTROL_STATUS=" "
 fi
 
 ################################################################################
