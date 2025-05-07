@@ -105,8 +105,13 @@ if [[ "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/deb
 fi
 
 ################################################################################
-# debug data
+# data
 ################################################################################
+
+# create ip4 list, disregard duplicates
+cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip4.peers
+# include ip6, disregard duplicates
+cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | awk -F:15110 '{ print $1 }' | egrep ":|::" | egrep "[a-z]+" | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip6.peers
 
 # movements ####################################################################
 ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' | tail -1)"
@@ -426,7 +431,7 @@ fi
 ################################################################################
 
 # ip4 address
-WALLET_PEERS_IP4="$(grep "addrlocal" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | egrep -v "[a-z]+" | grep -oP '\b(?:\d{1,3}\.){3}\d{1,3}\b' | wc -l)"
+WALLET_PEERS_IP4="$(wc -l /etc/freedom-node/connected.ip4.peers | awk '{ print $1 }')"
 
 # if zero
 if [[ -z "$WALLET_PEERS_IP4" ]] &>/dev/null; then
@@ -440,7 +445,7 @@ fi
 ################################################################################
 
 # ip6 address
-WALLET_PEERS_IP6="$(grep "addrlocal" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | grep -oP '\[?' | wc -l)"
+WALLET_PEERS_IP6="$(wc -l /etc/freedom-node/connected.ip6.peers 2>/dev/null | awk '{ print $1 }')"
 
 # if zero
 if [[ -z "$WALLET_PEERS_IP6" ]] &>/dev/null; then
@@ -595,17 +600,11 @@ if [[ "$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 
 fi
 
 ################################################################################
-# connected peers list
-################################################################################
-
-# create ip4 list, disregard duplicates
-cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.peers
-# include ip6, disregard duplicates
-cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | awk -F:15110 '{ print $1 }' | egrep ":|::" | egrep "[a-z]+" | awk '!a[$0]++' | sort -n >>/etc/freedom-node/connected.peers
-
-################################################################################
 # arp peers list
 ################################################################################
+
+cat /etc/freedom-node/connected.ip4.peers >/etc/freedom-node/connected.peers
+cat /etc/freedom-node/connected.ip6.peers >>/etc/freedom-node/connected.peers
 
 # remove after midnight
 if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
