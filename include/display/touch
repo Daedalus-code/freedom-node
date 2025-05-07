@@ -22,7 +22,7 @@ ZONES=(
   "Load:3100:1300:3300:1700"     # load/system information
   "Intranet:3350:3620:3500:3760" # network information
   "WAN:2400:1060:2550:1460"      # internet information
-  "POS:2500:2200:2500:2200"      # PoS information
+  "POS:2542:2117:2544:2134"      # PoS information
 )
 
 ################################################################################
