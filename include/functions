@@ -108,13 +108,13 @@ fi
 # data
 ################################################################################
 
-# create ip4 list, disregard duplicates
+# create ip4-ip6 list, disregard duplicates ####################################
 cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip4.peers
-# include ip6, disregard duplicates
 cat "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | tr -d ',"' | grep " addr:" | awk '{ print $2 }' | awk -F:15110 '{ print $1 }' | egrep ":|::" | egrep "[a-z]+" | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip6.peers
-# combine ip4, ip6
-cat /etc/freedom-node/connected.ip4.peers >/etc/freedom-node/connected.peers
-cat /etc/freedom-node/connected.ip6.peers >>/etc/freedom-node/connected.peers
+
+# combine ip4-ip6 list #########################################################
+cat /etc/freedom-node/connected.ip4.peers >/etc/freedom-node/connected.peers 2>/dev/null
+cat /etc/freedom-node/connected.ip6.peers >>/etc/freedom-node/connected.peers 2>/dev/null
 
 # movements ####################################################################
 ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' | tail -1)"
@@ -169,9 +169,9 @@ fi
 # if any movements, less than n age
 if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)${N0}"
-  CB="${CY}"
-  TX="${CY}"
-  WC="${CY}"
+  CB="${Y1}"
+  TX="${Y1}"
+  WC="${Y1}"
   # if greater than n age
 elif [[ "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
   WC="${N0}"
@@ -208,7 +208,7 @@ MASTER_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf | egr
 
 # if any data
 if [[ "$MASTER_STATUS" -gt "0" ]] &>/dev/null; then
-  MASTER_STATUS="${CY}M${N0}"
+  MASTER_STATUS="${Y1}M${N0}"
 fi
 
 # if zero
