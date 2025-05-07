@@ -15,14 +15,15 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 ################################################################################
 
-# define touch zones in raw touchscreen coordinates (based on evtest)
 ZONES=(
-  "Peers:2200:2700:2700:3100"    # wallet connections
-  "Balance:2000:1300:2400:1700"  # wallet balances
-  "Load:3100:1300:3300:1700"     # load/system information
-  "Intranet:3350:3620:3500:3760" # network information
-  "WAN:2400:1060:2550:1460"      # internet information
-  "POS:2542:2117:2544:2134"      # PoS information
+  "Peers:2200:2660:2700:3060"     # connections
+  "Balance:1950:1220:2450:1620"   # balances
+  "Load:3100:1220:3300:1620"      # system load
+  "Intranet:3350:3550:3550:3700"  # intranet
+  "WAN:2420:1000:2650:1400"       # internet
+  "TxCount:1950:1620:2550:2020"   # transactions
+  "FreedomCoin:140:1870:800:2050" # logo
+  "Hash:40:2100:4600:2250"        # tx hash
 )
 
 ################################################################################
