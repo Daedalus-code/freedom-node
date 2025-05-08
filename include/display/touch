@@ -29,28 +29,19 @@ ZONES=(
 
 ################################################################################
 
-# --add-zone mode: record two touches and create a zone line
-if [[ "$1" == "--add-zone" ]]; then
-  echo "Touch to set top-left corner..."
-  while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
-  read -r x1 y1 <"$TOUCH_FILE"
-  >"$TOUCH_FILE"
-  echo "Top-left: $x1 $y1"
+while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
+read -r x1 y1 <"$TOUCH_FILE"
+>"$TOUCH_FILE"
 
-  echo "Touch to set bottom-right corner..."
-  while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
-  read -r x2 y2 <"$TOUCH_FILE"
-  >"$TOUCH_FILE"
-  echo "Bottom-right: $x2 $y2"
+while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
+read -r x2 y2 <"$TOUCH_FILE"
+>"$TOUCH_FILE"
 
-  ((x1 > x2)) && tmp=$x1 && x1=$x2 && x2=$tmp
-  ((y1 > y2)) && tmp=$y1 && y1=$y2 && y2=$tmp
+((x1 > x2)) && tmp=$x1 && x1=$x2 && x2=$tmp
+((y1 > y2)) && tmp=$y1 && y1=$y2 && y2=$tmp
 
-  read -p "Enter label for new zone: " label
-  echo "${label}:${x1}:${y1}:${x2}:${y2}" >>"$CONFIG_OUT"
-  echo "Zone saved to $CONFIG_OUT"
-  exit 0
-fi
+echo "TOUCH:${x1}:${y1}:${x2}:${y2}" >>"$CONFIG_OUT"
+exit 0
 
 ################################################################################
 
