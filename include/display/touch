@@ -39,7 +39,6 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
   for ZONE in "${ZONES[@]}"; do
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
-      echo "$LABEL:$x1:$y1:$x2:$y2" >"$HOME_DIR"/node/touchconfig.tmp
       # handle zone label (display dialog)
       handle_zone "$LABEL"
     fi

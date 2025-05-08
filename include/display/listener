@@ -15,7 +15,16 @@ evemu-record "$DEVICE" | while read -r LINE; do
   elif [[ "$LINE" =~ ABS_Y ]]; then
     y=$(echo "$LINE" | awk '{ print $10 }')
     if [[ -n "$x" && -n "$y" ]]; then
-      echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
+      # print touch coordinates
+      echo "$x $y" >"$HOME_DIR"/node/touchconfig.tmp
+      # create a bounding box around the touch point (for simplicity, I use a fixed range)
+      x1=$((x - 50)) # 50px left of touch
+      y1=$((y - 50)) # 50px above touch
+      x2=$((x + 50)) # 50px right of touch
+      y2=$((y + 50)) # 50px below touch
+      # write this zone config to a file
+      echo "label:$x1:$y1:$x2:$y2" >>"$HOME_DIR"/node/touchconfig.tmp
+      # restart the touch display or any related process if needed
       pkill -f /etc/freedom-node/include/display/touch
       bash /etc/freedom-node/include/display/touch &
     fi
