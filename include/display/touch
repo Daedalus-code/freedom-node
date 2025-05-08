@@ -13,6 +13,8 @@ trap 'sleep '"${TIME:?}"'; reset; stty sane; clear; tput rmcup' EXIT
 
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+TOUCH_FILE="$HOME_DIR/node/touchcoords.tmp"
+CONFIG_OUT="$HOME_DIR/node/touchconfig.tmp"
 
 ################################################################################
 
@@ -45,5 +47,29 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
     fi
   done
 fi
+
+################################################################################
+
+exec 2>/dev/null
+
+# wait for two touches
+echo "Waiting for first touch..." >"$CONFIG_OUT"
+while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
+read -r x1 y1 <"$TOUCH_FILE"
+>"$TOUCH_FILE"
+
+echo "First touch: $x1 $y1" >>"$CONFIG_OUT"
+echo "Waiting for second touch..." >>"$CONFIG_OUT"
+while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
+read -r x2 y2 <"$TOUCH_FILE"
+>"$TOUCH_FILE"
+echo "Second touch: $x2 $y2" >>"$CONFIG_OUT"
+
+# normalize coordinates (make sure x1 < x2 and y1 < y2)
+((x1 > x2)) && tmp=$x1 && x1=$x2 && x2=$tmp
+((y1 > y2)) && tmp=$y1 && y1=$y2 && y2=$tmp
+
+# append formatted config line
+echo "TOUCH:${x1}:${y1}:${x2}:${y2}" >>"$CONFIG_OUT"
 
 # END
