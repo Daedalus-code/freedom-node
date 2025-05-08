@@ -204,16 +204,16 @@ WALLET_POS="${WC}$WALLET_POS${N0}"
 # patriotnode status (masternode)
 ################################################################################
 
-MASTER_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf | egrep -c "mn|MN|pn|PN|:15110" 2>/dev/null)"
+PATRIOT_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null | egrep -c "mn|MN|pn|PN|:15110" 2>/dev/null)"
 
 # if any data
-if [[ "$MASTER_STATUS" -gt "0" ]] &>/dev/null; then
-  MASTER_STATUS="${Y1}M${N0}"
+if [[ "$PATRIOT_STATUS" -gt "0" ]] &>/dev/null; then
+  PATRIOT_STATUS="${Y1}M${N0}"
 fi
 
 # if zero
-if [[ -z "$MASTER_STATUS" || "$MASTER_STATUS" -eq "0" ]] &>/dev/null; then
-  MASTER_STATUS="${GR}M${N0}"
+if [[ -z "$PATRIOT_STATUS" || "$PATRIOT_STATUS" -eq "0" ]] &>/dev/null; then
+  PATRIOT_STATUS="${GR}M${N0}"
 fi
 
 ################################################################################
@@ -229,7 +229,7 @@ if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STA
 fi
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
-  CONTROL_STATUS="C"
+  CONTROL_STATUS="${Y0}C${N0}"
 fi
 
 ################################################################################
