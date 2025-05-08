@@ -16,7 +16,7 @@ evemu-record "$DEVICE" | while read -r LINE; do
     y=$(echo "$LINE" | awk '{ print $10 }')
     if [[ -n "$x" && -n "$y" ]]; then
       # print touch coordinates
-      echo "$x $y" >"$HOME_DIR"/node/touchconfig.tmp
+      echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
 
       # use the actual coordinates
       x1=$x
