@@ -17,14 +17,14 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 ################################################################################
 
 ZONES=(
-  "Peers:2376:2730:2476:2830"     # connections
-  "Balance:1950:1220:2450:1620"   # balances
-  "Load:3100:1220:3300:1620"      # system load
-  "Intranet:3350:3550:3550:3700"  # intranet
-  "WAN:2420:1000:2650:1400"       # internet
-  "TxCount:1950:1620:2550:2020"   # transactions
-  "FreedomCoin:140:1870:800:2050" # logo
-  "Hash:40:2100:4600:2250"        # tx hash
+  "2200:2660:2700:3060" # connections
+  "1950:1220:2450:1620" # balances
+  "3100:1220:3300:1620" # system load
+  "3350:3550:3550:3700" # intranet
+  "2420:1000:2650:1400" # internet
+  "1950:1620:2550:2020" # transactions
+  "140:1870:800:2050"   # logo
+  "40:2100:4600:2250"   # tx hash
 )
 
 ################################################################################
@@ -37,10 +37,10 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
 
   # check if the touch falls inside a zone
   for ZONE in "${ZONES[@]}"; do
-    IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
+    IFS=":" read -r x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
-      # handle zone label (display dialog)
-      handle_zone "$LABEL"
+      # handle zone
+      handle_zone "$ZONE"
     fi
   done
 fi
