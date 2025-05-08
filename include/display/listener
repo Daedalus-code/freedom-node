@@ -14,9 +14,11 @@ evemu-record "$DEVICE" | while read -r LINE; do
     x=$(echo "$LINE" | awk '{ print $10 }')
   elif [[ "$LINE" =~ ABS_Y ]]; then
     y=$(echo "$LINE" | awk '{ print $10 }')
-    echo "$x $y" >>"$HOME_DIR"/node/touchcoords.tmp
-    pkill -f /etc/freedom-node/include/display/touch
-    bash /etc/freedom-node/include/display/touch &
+    if [[ -n "$x" && -n "$y" ]]; then
+      echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
+      pkill -f /etc/freedom-node/include/display/touch
+      bash /etc/freedom-node/include/display/touch &
+    fi
   fi
 done
 
