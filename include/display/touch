@@ -8,11 +8,11 @@ source /etc/freedom-node/include/display/functions
 ################################################################################
 
 exec 2>/dev/null
+# restore terminal to sane state
 trap 'sleep '"${TIME:?}"'; reset; stty sane; clear; tput rmcup' EXIT
 
+# home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
-TOUCH_FILE="$HOME_DIR/node/touchcoords.tmp"
-CONFIG_OUT="$HOME_DIR/node/touchconfig.tmp"
 
 ################################################################################
 
@@ -29,33 +29,17 @@ ZONES=(
 
 ################################################################################
 
-while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
-read -r x1 y1 <"$TOUCH_FILE"
->"$TOUCH_FILE"
+# if any data
+if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
+  # get last touch coordinates from tmp file (evtest listener should write here)
+  read -r x y <"$HOME_DIR"/node/touchcoords.tmp || exit 0
+  ##############################################################################
 
-while [[ ! -s $TOUCH_FILE ]]; do sleep 0.1; done
-read -r x2 y2 <"$TOUCH_FILE"
->"$TOUCH_FILE"
-
-((x1 > x2)) && tmp=$x1 && x1=$x2 && x2=$tmp
-((y1 > y2)) && tmp=$y1 && y1=$y2 && y2=$tmp
-
-echo "TOUCH:${x1}:${y1}:${x2}:${y2}" >>"$CONFIG_OUT"
-
-################################################################################
-
-# normal touch handling mode
-ZONES=()
-while IFS= read -r LINE; do
-  [[ "$LINE" =~ ^#.*$ || -z "$LINE" ]] && continue
-  ZONES+=("$LINE")
-done <"$ZONES"
-
-if [[ -f "$TOUCH_FILE" ]]; then
-  read -r x y <"$TOUCH_FILE" || exit 0
+  # check if the touch falls inside a zone
   for ZONE in "${ZONES[@]}"; do
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
     if ((x >= x1 && x <= x2 && y >= y1 && y <= y2)); then
+      # handle zone label (display dialog)
       handle_zone "$LABEL"
     fi
   done
