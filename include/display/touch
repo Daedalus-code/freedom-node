@@ -49,8 +49,8 @@ if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
 fi
 
 ################################################################################
-
-exec 2>/dev/null
+# touch configuration line
+################################################################################
 
 # wait for two touches
 echo "Waiting for first touch..." >"$CONFIG_OUT"
