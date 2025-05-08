@@ -35,9 +35,6 @@ ZONES=(
 if [[ -f "$HOME_DIR"/node/touchcoords.tmp ]] &>/dev/null; then
   # get last touch coordinates from tmp file (evtest listener should write here)
   read -r x y <"$HOME_DIR"/node/touchcoords.tmp || exit 0
-  handle_zone
-  ##############################################################################
-
   # check if the touch falls inside a zone
   for ZONE in "${ZONES[@]}"; do
     IFS=":" read -r LABEL x1 y1 x2 y2 <<<"$ZONE"
