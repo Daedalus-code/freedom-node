@@ -17,7 +17,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 ################################################################################
 
 ZONES=(
-  "Peers:2200:2660:2700:3060"     # connections
+  "Peers:2376:2730:2476:2830"     # connections
   "Balance:1950:1220:2450:1620"   # balances
   "Load:3100:1220:3300:1620"      # system load
   "Intranet:3350:3550:3550:3700"  # intranet
