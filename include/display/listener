@@ -11,10 +11,10 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 # evemu-record version
 evemu-record "$DEVICE" | while read -r LINE; do
   if [[ "$LINE" =~ ABS_X ]]; then
-    x=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
+    x=$(echo "$LINE" | awk '{ print $10 }')
   elif [[ "$LINE" =~ ABS_Y ]]; then
-    y=$(echo "$LINE" | grep -oP 'value \K[0-9]+')
-    echo "$x $y" >"$HOME_DIR"/node/touchcoords.tmp
+    y=$(echo "$LINE" | awk '{ print $10 }')
+    echo "$x $y" >>"$HOME_DIR"/node/touchcoords.tmp
     pkill -f /etc/freedom-node/include/display/touch
     bash /etc/freedom-node/include/display/touch &
   fi
