@@ -199,19 +199,19 @@ fi
 WALLET_POS="${WC}$WALLET_POS${N0}"
 
 ################################################################################
-# patriotnode status (masternode)
+# patriotnode status
 ################################################################################
 
 PATRIOT_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null | egrep -c "mn|MN|pn|PN|:15110" 2>/dev/null)"
 
 # if any data
 if [[ "$PATRIOT_STATUS" -gt "0" ]] &>/dev/null; then
-  PATRIOT_STATUS="${Y1}M${N0}"
+  PATRIOT_STATUS="${Y1}P${N0}"
 fi
 
 # if zero
 if [[ -z "$PATRIOT_STATUS" || "$PATRIOT_STATUS" -eq "0" ]] &>/dev/null; then
-  PATRIOT_STATUS="${GR}M${N0}"
+  PATRIOT_STATUS="${GR}P${N0}"
 fi
 
 ################################################################################
@@ -254,12 +254,12 @@ TOR_STATUS="$(grep "proxy" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ pri
 
 # if active
 if [[ "$TOR_STATUS" == "1" ]] &>/dev/null; then
-  TOR_STATUS="${P1}P${N0}"
+  TOR_STATUS="${P1}T${N0}"
 fi
 
 # if zero
 if [[ -z "$TOR_STATUS" ]] &>/dev/null; then
-  TOR_STATUS="${GR}P${N0}"
+  TOR_STATUS="${GR}T${N0}"
 fi
 
 ################################################################################
