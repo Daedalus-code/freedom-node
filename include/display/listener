@@ -25,7 +25,7 @@ evemu-record "$DEVICE" | while read -r LINE; do
       y2=$y
 
       # write this zone config to a file without additional offsets
-      echo "$x1:$y1:$x2:$y2" >>"$HOME_DIR"/node/touchconfig.tmp
+      echo "$x1:$y1:$x2:$y2" >"$HOME_DIR"/node/touchconfig.tmp
 
       # restart the touch display or any related process if needed
       pkill -f /etc/freedom-node/include/display/touch
