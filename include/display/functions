@@ -1,0 +1,122 @@
+#!/bin/bash
+
+# handle zone function
+handle_zone() {
+  case "$1" in
+  ##############################################################################
+  # peers
+  ##############################################################################
+
+  "Peers")
+
+    WALLET_PEERS_INFO="$(cat /etc/freedom-node/connected.peers 2>/dev/null)"
+    # if zero
+    if [[ -z "$WALLET_PEERS_INFO" ]] &>/dev/null; then
+      WALLET_PEERS_INFO="No peers.."
+      dialog --infobox "$WALLET_PEERS_INFO" 4 16
+    else
+      dialog --infobox "$WALLET_PEERS_INFO" 0 0
+    fi
+
+    ;;
+
+    ############################################################################
+    # balance
+    ############################################################################
+
+  "Balance")
+
+    WALLET_BALANCES_INFO="$(cat "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | grep "balance" | tr -d ' ,"' | tr ':' ' ' | column -t | tr '_' ' ')"
+    # if zero
+    if [[ -z "$WALLET_BALANCES_INFO" ]] &>/dev/null; then
+      WALLET_BALANCES_INFO="No balances"
+      dialog --infobox "$WALLET_BALANCES_INFO" 4 16
+    else
+      dialog --no-collapse --infobox "$WALLET_BALANCES_INFO" 0 0
+    fi
+
+    ;;
+
+    ############################################################################
+    # intranet
+    ############################################################################
+
+  "Intranet")
+
+    echo "$(ifconfig 2>/dev/null)" >"$HOME_DIR"/node/ifconfig
+    WALLET_NETWORK_INFO="Address: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $2 }')
+  Netmask: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $4 }')
+  Broadcast: $(grep -v "127" "$HOME_DIR"/node/ifconfig 2>/dev/null | grep -A7 "inet " | grep -v "flags" | grep "inet " | awk '{ print $6 }')"
+    # if zero
+    if [[ -z "$WALLET_NETWORK_INFO" ]] &>/dev/null; then
+      WALLET_NETWORK_INFO="No network.."
+      dialog --infobox "$WALLET_NETWORK_INFO" 4 16
+    else
+      dialog --no-collapse --infobox "$(echo "$WALLET_NETWORK_INFO" | column -t)" 0 0
+    fi
+
+    ;;
+
+    ############################################################################
+    # internet (WAN)
+    ############################################################################
+
+  "WAN")
+
+    WALLET_ONION_IP="$(cat "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
+    WALLET_INTERNET_INFO="LAN: $(cat "$HOME_DIR"/node/lanip.tmp 2>/dev/null)
+WAN: $(cat "$HOME_DIR"/node/wanip.tmp 2>/dev/null)
+TOR: ${WALLET_ONION_IP:0:24}...onion"
+    # if zero
+    if [[ -z "$WALLET_INTERNET_INFO" ]] &>/dev/null; then
+      WALLET_INTERNET_INFO="No network.."
+      dialog --infobox "$WALLET_INTERNET_INFO" 4 16
+    else
+      dialog --no-collapse --infobox "$(echo "$WALLET_INTERNET_INFO" | column -t)" 0 0
+    fi
+
+    ;;
+
+    ############################################################################
+    # system (Load)
+    ############################################################################
+
+  "Load")
+
+    # if missing
+    if [[ ! -f "$HOME_DIR"/node/hostnamectl ]] &>/dev/null; then
+      echo "$(hostnamectl)" >"$HOME_DIR"/node/hostnamectl
+    fi
+    WALLET_SYSTEM_INFO="$(cat "$HOME_DIR"/node/hostnamectl 2>/dev/null)"
+    # if zero
+    if [[ -z "$WALLET_SYSTEM_INFO" ]] &>/dev/null; then
+      WALLET_SYSTEM_INFO="No system info"
+      dialog --infobox "$WALLET_SYSTEM_INFO" 4 19
+    else
+      dialog --no-collapse --infobox "$WALLET_SYSTEM_INFO" 0 0
+    fi
+
+    ;;
+
+    ############################################################################
+    # Proof of stake (PoS)
+    ############################################################################
+
+  "POS")
+
+    WALLET_POS_INFO="$(cat "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
+    # if zero
+    if [[ -z "$WALLET_POS_INFO" ]] &>/dev/null; then
+      WALLET_POS_INFO="No stakes"
+      dialog --infobox "$WALLET_POS_INFO" 4 16
+    else
+      dialog --no-collapse --infobox "$(echo "$WALLET_POS_INFO" | column -t)" 0 0
+    fi
+
+    ;;
+
+  esac
+  exit
+}
+
+# END
