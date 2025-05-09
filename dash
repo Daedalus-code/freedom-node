@@ -16,16 +16,9 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 ################################################################################
 
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  # function to detect touch
-  wait_for_touch() {
-    evtest "$TOUCH_DEVICE" | grep --line-buffered "EV_KEY.*DOWN" | head -n 1
-  }
-  # detect touch event in background
-  wait_for_touch &
-  # function to display the dialog menu
-  show_menu() {
-    bash /etc/freedom-node/include/display/menu
-  }
+  if [[ "$(ps -fp $(pidof bash) | grep -c "touch")" -eq "0" ]] &>/dev/null; then
+    bash /etc/freedom-node/include/display/touch &
+  fi
 fi
 
 ################################################################################

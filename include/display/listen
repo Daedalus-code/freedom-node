@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ "$(evtest "$TOUCH_DEVICE" | grep --line-buffered "EV_KEY.*DOWN" | head -n 1)" ]] &>/dev/null; then
+  bash /etc/freedom-node/include/display/menu
+fi
+
+# END

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-HEIGHT=15
-WIDTH=40
-CHOICE_HEIGHT=4
-BACKTITLE="Backtitle here"
-TITLE="Title here"
-MENU="Choose one of the following options:"
+HEIGHT="12"
+WIDTH="23"
+CHOICE_HEIGHT="4"
+BACKTITLE="FreedomCoin"
+TITLE="Freedomnode menu"
+MENU="Choose one option:"
 
 OPTIONS=(
   "1" "Balances"
@@ -31,6 +31,9 @@ case $CHOICE in
   ;;
 3)
   echo "You chose Option 3"
+  ;;
+4)
+  exit
   ;;
 esac
 
