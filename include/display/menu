@@ -1,10 +1,10 @@
 #!/bin/bash
 
-HEIGHT="12"
+HEIGHT="10"
 WIDTH="23"
 CHOICE_HEIGHT="4"
-BACKTITLE="FreedomCoin"
-TITLE="Freedomnode menu"
+BACKTITLE="FreedomCoin Node"
+TITLE="FreedomNode Menu"
 MENU="Choose one option:"
 
 OPTIONS=(
@@ -23,16 +23,16 @@ CHOICE=$(dialog --clear \
 
 clear
 case $CHOICE in
-1)
+"1")
   echo "You chose Option 1"
   ;;
-2)
+"2")
   echo "You chose Option 2"
   ;;
-3)
+"3")
   echo "You chose Option 3"
   ;;
-4)
+"4")
   exit
   ;;
 esac

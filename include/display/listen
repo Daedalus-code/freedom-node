@@ -10,12 +10,12 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # evemu-record version
 evemu-record "$DEVICE" | while read -r LINE; do
-  if [[ "$LINE" =~ ABS_X ]]; then
+  if [[ "$LINE" =~ ABS_X ]] &>/dev/null; then
     x=$(echo "$LINE" | awk '{ print $10 }')
-  elif [[ "$LINE" =~ ABS_Y ]]; then
+  elif [[ "$LINE" =~ ABS_Y ]] &>/dev/null; then
     y=$(echo "$LINE" | awk '{ print $10 }')
-    if [[ -n "$x" && -n "$y" ]]; then
-      pkill -f /usr/local/bin/dash
+    if [[ -n "$x" && -n "$y" ]] &>/dev/null; then
+      pkill -f /usr/local/bin/dash && sleep 1
       bash /etc/freedom-node/include/display/menu
       sudo service freedomnode restart
     fi
