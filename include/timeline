@@ -23,22 +23,22 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 7) + 1)))
   # information - system - wallet
-  if [ "$RANDOM_INFO" -eq "1" ] &>/dev/null; then
+  if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
     TIMELINE="Value: $WALLET_VALUE USD ($FREED_PRICE)"
-  elif [ "$RANDOM_INFO" -eq "2" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
     TIMELINE="Difficulty: $(grep "difficulty" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
-  elif [ "$RANDOM_INFO" -eq "3" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
     TIMELINE="Nodes: $(grep "total" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv4: $(grep "ipv4" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv6: $(grep "ipv6" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }')"
-  elif [ "$RANDOM_INFO" -eq "4" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "4" ] &>/dev/null; then
     LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
     TIMELINE="Lowest input: $LOWEST_INPUT FREED"
-  elif [ "$RANDOM_INFO" -eq "5" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "5" ] &>/dev/null; then
     HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
     TIMELINE="Highest input: $HIGHEST_INPUT FREED"
-  elif [ "$RANDOM_INFO" -eq "6" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "6" ] &>/dev/null; then
     AVERAGE_CONFIRMATIONS="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "confirmations" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')"
     TIMELINE="Average confirmations: $AVERAGE_CONFIRMATIONS"
-  elif [ "$RANDOM_INFO" -eq "7" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "7" ] &>/dev/null; then
     AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
     TIMELINE="Average input size: $AVERAGE_INPUT_SIZE FREED"
   fi
@@ -58,27 +58,27 @@ if [[ "$RANDOM_INFO_QUOTE" == "2" ]] &>/dev/null; then
   # random quotes/information start
   RANDOM_QUOTES=$((((RANDOM % 11) + 1)))
   # quotes - art of the deal, djt
-  if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
+  if [ "$RANDOM_QUOTES" == "1" ] &>/dev/null; then
     TIMELINE="${GR}Think big${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "2" ] &>/dev/null; then
     TIMELINE="${GR}Maximize your options${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "3" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "3" ] &>/dev/null; then
     TIMELINE="${GR}Know your market${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "4" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "4" ] &>/dev/null; then
     TIMELINE="${GR}Use your leverage${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "5" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "5" ] &>/dev/null; then
     TIMELINE="${GR}Enhance your location${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "6" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "6" ] &>/dev/null; then
     TIMELINE="${GR}Get the word out${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "7" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "7" ] &>/dev/null; then
     TIMELINE="${GR}Fight back${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "8" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "8" ] &>/dev/null; then
     TIMELINE="${GR}Deliver the goods${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "9" ] &>/dev/null; then
     TIMELINE="${GR}Contain the costs${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "11" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" == "11" ] &>/dev/null; then
     TIMELINE="${GR}Fight! Fight! Fight!${N0:?}"
   fi
 fi

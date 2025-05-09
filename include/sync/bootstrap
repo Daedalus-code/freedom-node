@@ -35,7 +35,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     ############################################################################
     RESULT=$?
     # if any result
-    if [ ! $RESULT -eq "0" ] &>/dev/null; then
+    if [ ! $RESULT == "0" ] &>/dev/null; then
       echo "[  !!  ] Download failed"
       sleep 1
     fi

@@ -177,7 +177,7 @@ if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
 else
 
   # if no daemon running
-  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" == "0" ]] &>/dev/null; then
     # wallet exist
     if [[ -f "$HOME_DIR"/freedomcoind && -f "$HOME_DIR"/freedomcoin-cli ]] &>/dev/null; then
       # install wallet
@@ -211,7 +211,7 @@ else
   ##############################################################################
 
   # if missing
-  if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" == "0" ]] &>/dev/null; then
     # update tor configuration
     printf '%b' "[  ${GR}!!${N0}  ] Updating configuration!\n"
     echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
@@ -354,7 +354,7 @@ EOF
       # cmdline.txt
       CMDLINE_FILE="/boot/cmdline.txt"
       # if missing
-      if [[ "$(cat "$CMDLINE_FILE" | grep -c "PARTUUID")" -eq "0" ]] &>/dev/null; then
+      if [[ "$(cat "$CMDLINE_FILE" | grep -c "PARTUUID")" == "0" ]] &>/dev/null; then
         CMDLINE_FILE="/boot/firmware/cmdline.txt"
       fi
       ##########################################################################

@@ -192,7 +192,7 @@ elif [[ "$WALLET_POS" -gt "0" && "$WALLET_POS_AGE" -gt "3600" ]] &>/dev/null; th
 fi
 
 # if zero
-if [[ -z "$WALLET_POS" || "$WALLET_POS" -eq "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS" || "$WALLET_POS" == "0" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 fi
 
@@ -211,7 +211,7 @@ if [[ "$PATRIOT_STATUS" -gt "0" ]] &>/dev/null; then
 fi
 
 # if zero
-if [[ -z "$PATRIOT_STATUS" || "$PATRIOT_STATUS" -eq "0" ]] &>/dev/null; then
+if [[ -z "$PATRIOT_STATUS" || "$PATRIOT_STATUS" == "0" ]] &>/dev/null; then
   PATRIOT_STATUS="${GR}P${N0}"
 fi
 
@@ -223,7 +223,7 @@ fi
 CONTROL_STATUS="$(egrep -c "mn|MN|pn|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
 
 # if zero
-if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
+if [[ "$CONTROL_STATUS" == "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
   CONTROL_STATUS="${GR}CW${N0}"
 fi
 
@@ -266,7 +266,7 @@ if [[ "$TOR_STATUS" == "1" ]] &>/dev/null; then
 fi
 
 # if zero
-if [[ -z "$TOR_STATUS" ]] &>/dev/null; then
+if [[ -z "$TOR_STATUS" || "$TOR_STATUS" == "0" ]] &>/dev/null; then
   TOR_STATUS="${GR}T${N0}"
 fi
 
@@ -471,7 +471,7 @@ WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null
 WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
 # if zero
-if [[ -z "$WALLET_VALUE" || "$WALLET_VALUE" -eq "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_VALUE" || "$WALLET_VALUE" == "0" ]] &>/dev/null; then
   WALLET_VALUE="${GR}0${N0}"
 else
   WALLET_VALUE="${G1}$WALLET_VALUE${N0}"
@@ -482,7 +482,7 @@ if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/nu
 fi
 
 # if zero
-if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
+if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" == "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
 fi
 
@@ -558,7 +558,7 @@ fi
 ################################################################################
 
 # if zero
-if [[ -z "$WALLET_TXLAST" || "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -eq "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXLAST" || "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" == "0" ]] &>/dev/null; then
   WALLET_TXLAST="   ${GR}Loading${N0}"
   CB="${GR}"
 fi
@@ -681,7 +681,7 @@ $IP_ADDRESS_ARP" | awk '!a[$0]++' | sort | awk NF >/etc/freedom-node/addnode
   # if missing, if older than n
   if [[ ! -f "$HOME_DIR"/node/onetry.tmp || "$IP_ONETRY_AGE" -gt "180" ]] &>/dev/null; then
     # if any numbers
-    if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" -eq "1" ]] &>/dev/null; then
+    if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" == "1" ]] &>/dev/null; then
       # addnode onetry
       /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADDNODE" onetry 2>/dev/null | grep -v "Error" &
       echo "addnode $IP_ADDRESS_ADDNODE onetry" >"$HOME_DIR"/node/onetry.tmp

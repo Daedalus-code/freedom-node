@@ -15,7 +15,7 @@ for (( ; ; )); do # loop dashbord
   ##############################################################################
 
   # daemon running
-  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" == "0" ]] &>/dev/null; then
     # daemon exist
     if [[ -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
       # reset old log

@@ -115,7 +115,7 @@ fi
 ################################################################################
 
 # if missing
-if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" -eq "0" || ! -f "$HOME_DIR"/.trumpcoin/trumpcoin.conf ]] &>/dev/null; then
+if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" == "0" || ! -f "$HOME_DIR"/.trumpcoin/trumpcoin.conf ]] &>/dev/null; then
   # create configuration
   touch "$HOME_DIR"/.trumpcoin/trumpcoin.conf &>/dev/null
   printf '%b' "[  ${N0}!!${N0}  ] Setup rpcuser and rpcpassword..\n"
@@ -145,7 +145,7 @@ chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/start 2>/dev/null
 if ! [ -x "$(command -v bc)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing bc!\n"
   sudo apt-get install bc -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] bc installed!\n"
   fi
 fi
@@ -154,7 +154,7 @@ fi
 if ! [ -x "$(command -v jq)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing jq!\n"
   sudo apt-get install jq -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] jq installed!\n"
   fi
 fi
@@ -163,7 +163,7 @@ fi
 if ! [ -x "$(command -v ifconfig)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing net-tools!\n"
   sudo apt-get install net-tools -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] net-tools installed!\n"
   fi
 fi
@@ -172,7 +172,7 @@ fi
 if [[ ! "$(curl --version)" ]] &>/dev/null; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing curl!\n"
   sudo apt-get install curl -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] curl installed!\n"
   fi
 fi
@@ -181,7 +181,7 @@ fi
 if ! [ -x "$(command -v tor)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing tor!\n"
   sudo apt-get install tor -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] tor installed!\n"
   fi
 fi
@@ -190,7 +190,7 @@ fi
 if ! [ -x "$(command -v html2text)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing html2text!\n"
   sudo apt-get install html2text -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] html2text installed!\n"
   fi
 fi
@@ -199,7 +199,7 @@ fi
 if ! [ -x "$(command -v dialog)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing dialog!\n"
   sudo apt-get install dialog -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] dialog installed!\n"
   fi
 fi
@@ -208,7 +208,7 @@ fi
 if [[ ! "$(arp-scan --version)" ]] &>/dev/null; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing arp-scan!\n"
   sudo apt-get install arp-scan -y
-  if [ $? -eq 0 ]; then
+  if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] arp-scan installed!\n"
   fi
 fi
