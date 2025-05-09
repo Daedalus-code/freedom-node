@@ -227,7 +227,7 @@ if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STA
 fi
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
-  CONTROL_STATUS="${Y0}C${N0}"
+  CONTROL_STATUS="${Y0}CW${N0}"
 fi
 
 ################################################################################
