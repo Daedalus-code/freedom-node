@@ -18,8 +18,10 @@ for (( ; ; )); do # loop dashbord
   if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -eq "0" ]] &>/dev/null; then
     # daemon exist
     if [[ -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
-      # reset old debug.log
+      # reset old log
       truncate -s 0 "$HOME"/.trumpcoin/debug.log &>/dev/null
+      # remove old data files
+      rm "$HOME"/node/*.tmp &>/dev/null
       # output daemon
       printf '%b' "[  ${G1}OK${N0}  ] Daemon  : "
       # start daemon
