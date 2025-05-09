@@ -17,7 +17,9 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 # function to detect touch
 wait_for_touch() {
-  evtest "$TOUCH_DEVICE" | grep --line-buffered "EV_KEY.*DOWN" | head -n 1
+  if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+    evtest "$TOUCH_DEVICE" | grep --line-buffered "EV_KEY.*DOWN" | head -n 1
+  fi
 }
 
 ################################################################################
