@@ -15,48 +15,49 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 ################################################################################
 
-# function to detect touch
-wait_for_touch() {
-  if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+
+  # function to detect touch
+  wait_for_touch() {
     evtest "$TOUCH_DEVICE" | grep --line-buffered "EV_KEY.*DOWN" | head -n 1
-  fi
-}
+  }
 
-################################################################################
+  # detect touch event in background
+  wait_for_touch &
 
-# function to display the dialog menu
-show_menu() {
-  CHOICE=$(dialog --menu --nocancel "Select an Option" 0 0 0 \
-    "1" "Balances" \
-    "2" "Peers" \
-    "3" "Network" \
-    "4" "Exit" \
-    3>&1 1>&2 2>&3)
+  ##############################################################################
 
-  case $CHOICE in
-  "1")
-    echo "Selected 1"
-    sleep 2
-    ;;
-  "2")
-    echo "Selected 2"
-    sleep 2
-    ;;
-  "3")
-    echo "Selected 3"
-    sleep 2
-    ;;
-  4 | *) ;;
-  esac
-}
+  # function to display the dialog menu
+  show_menu() {
+    CHOICE=$(dialog --menu --nocancel "Select an Option" 0 0 0 \
+      "1" "Balances" \
+      "2" "Peers" \
+      "3" "Network" \
+      "4" "Exit" \
+      3>&1 1>&2 2>&3)
+
+    case $CHOICE in
+    "1")
+      echo "Selected 1"
+      sleep 2
+      ;;
+    "2")
+      echo "Selected 2"
+      sleep 2
+      ;;
+    "3")
+      echo "Selected 3"
+      sleep 2
+      ;;
+    4 | *) ;;
+    esac
+  }
+fi
 
 ################################################################################
 
 # main loop
 for (( ; ; )); do # loop dashboard
-
-  # detect touch event in background
-  wait_for_touch &
 
   # run dashboard content
   source /etc/freedom-node/include/functions
@@ -84,12 +85,14 @@ ${LAST_LOG:?}
 
   ##############################################################################
 
-  # check if touch was detected and run the menu if touched
-  if wait_for_touch; then
-    stop_dashboard # optional: Stop the dashboard before opening menu
-    show_menu
-    # restart the dashboard after exiting menu
-    sudo service freedomnode restart
+  if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+    # check if touch was detected and run the menu if touched
+    if wait_for_touch; then
+      sudo service freedomnode stop
+      show_menu
+      # restart the dashboard after exiting menu
+      sudo service freedomnode restart
+    fi
   fi
 
   ##############################################################################
