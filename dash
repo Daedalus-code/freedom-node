@@ -16,8 +16,8 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 ################################################################################
 
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  if [[ "$(ps -fp "$(pidof bash)" | grep -c "touch")" == "0" ]] &>/dev/null; then
-    bash /etc/freedom-node/include/display/touch &
+  if [[ "$(ps -fp "$(pidof bash)" | grep -c "listen")" == "0" ]] &>/dev/null; then
+    bash /etc/freedom-node/include/display/listen &
   fi
 fi
 
