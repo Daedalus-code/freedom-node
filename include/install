@@ -63,6 +63,14 @@ sudo mkdir /etc/freedom-node &>/dev/null
 # fix ownership for freedom-node (whoami)
 sudo chown -R "$(whoami)":"$(whoami)" /etc/freedom-node/ 2>/dev/null
 
+# if missing
+if [[ ! -f /etc/freedom-node/config ]] &>/dev/null; then
+  # create configuration file
+  echo "# freedom-node configuration
+WALLET_PASSPHRASE="" # walletpassphrase" >/etc/freedom-node/config
+  printf '%b' "[  ${N0}!!${N0}  ] Creating freedom-node configuration..\n"
+fi
+
 # fetch user
 echo "$(whoami)" >/etc/freedom-node/user
 # user name
