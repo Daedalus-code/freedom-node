@@ -26,7 +26,7 @@ wait_for_touch() {
 
 # function to display the dialog menu
 show_menu() {
-  CHOICE=$(dialog --menu "Select an Option" 15 50 4 \
+  CHOICE=$(dialog --menu --nocancel "Select an Option" 0 0 0 \
     "1" "Balances" \
     "2" "Peers" \
     "3" "Network" \
@@ -89,6 +89,7 @@ ${LAST_LOG:?}
     stop_dashboard # optional: Stop the dashboard before opening menu
     show_menu
     # restart the dashboard after exiting menu
+    sudo service freedomnode restart
   fi
 
   ##############################################################################
