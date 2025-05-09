@@ -15,7 +15,6 @@ evemu-record "$DEVICE" | while read -r LINE; do
   elif [[ "$LINE" =~ ABS_Y ]]; then
     y=$(echo "$LINE" | awk '{ print $10 }')
     if [[ -n "$x" && -n "$y" ]]; then
-      pkill -f /etc/freedom-node/include/display/listen
       sudo service freedomnode stop
       bash /etc/freedom-node/include/display/menu
       sudo service freedomnode restart
