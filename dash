@@ -8,15 +8,6 @@ export TERM=linux
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 ################################################################################
-# display (touchscreen)
-################################################################################
-
-# if any display
-if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  bash /etc/freedom-node/include/display/htop
-fi
-
-################################################################################
 
 for (( ; ; )); do # loop dashbord
 
