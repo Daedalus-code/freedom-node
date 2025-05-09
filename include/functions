@@ -223,7 +223,7 @@ CONTROL_STATUS="$(egrep -c "mn|MN|pn|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotno
 
 # if zero
 if [[ "$CONTROL_STATUS" -eq "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
-  CONTROL_STATUS=" "
+  CONTROL_STATUS="${GR}CW${N0}"
 fi
 
 if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
