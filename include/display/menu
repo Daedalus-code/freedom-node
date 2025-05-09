@@ -1,5 +1,7 @@
 #!/bin/bash
 
+reset
+
 HEIGHT="10"
 WIDTH="23"
 CHOICE_HEIGHT="4"
