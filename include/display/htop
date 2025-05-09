@@ -14,8 +14,9 @@ evemu-record "$DEVICE" | while read -r LINE; do
     x=$(echo "$LINE" | awk '{ print $10 }')
   elif [[ "$LINE" =~ ABS_Y ]]; then
     y=$(echo "$LINE" | awk '{ print $10 }')
+    # detect any
     if [[ -n "$x" && -n "$y" ]]; then
-      bash /etc/freedom-node/include/display/menu
+      htop
     fi
   fi
 done
