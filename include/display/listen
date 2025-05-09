@@ -17,7 +17,7 @@ evemu-record "$DEVICE" | while read -r LINE; do
     if [[ -n "$x" && -n "$y" ]] &>/dev/null; then
       pkill -f /usr/local/bin/dash && reset
       bash /etc/freedom-node/include/display/menu
-      sudo service freedomnode restart
+      # sudo service freedomnode restart
     fi
   fi
 done
