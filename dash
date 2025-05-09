@@ -23,7 +23,7 @@ fi
 ################################################################################
 
 # main loop
-for (( ; ; )); do # loop dashboard
+while true; do
 
   # run dashboard content
   source /etc/freedom-node/include/functions
