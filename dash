@@ -1,58 +1,55 @@
 #!/bin/bash
 
+################################################################################
+
 source /etc/freedom-node/config
 
+################################################################################
+
 export TERM=linux
+
+################################################################################
 
 # home directory
 HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
-# function to display the dialog menu
-show_menu() {
-  bash /etc/freedom-node/include/display/menu
-}
+################################################################################
+
+if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+  pkill -f /etc/freedom-node/include/display/listen
+  bash /etc/freedom-node/include/display/listen &
+fi
+
+################################################################################
 
 # main loop
-while true; do
-  # detect touch event and trigger menu if touched
-  if [[ "$(evemu-record "$DEVICE")" ]] &>/dev/null; then
-    pkill -f /usr/local/bin/dash # kill the dashboard to show the menu
-    # give the system a moment to clean up after killing the process
-    sleep 1
-    # reset terminal state (optional but helps with clean UI)
-    reset
-    # show menu when touch is detected
-    show_menu
-    # after menu is closed, resume dashboard by calling the script again
-    echo "Resuming Dashboard..."
-    bash /usr/local/bin/dash # Restart the dashboard after menu exit
-    # pause the loop for a while (optional, adjust as needed)
-    sleep 1
-  fi
+for (( ; ; )); do # loop dashboard
 
-  # run dashboard content (in the loop, this is where the dashboard code resides)
+  # run dashboard content
   source /etc/freedom-node/include/functions
   source /etc/freedom-node/include/color
 
   clear
   printf '%b' "
-  ${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
-  ${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox      ${CONTROL_STATUS:?} ${PATRIOT_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
-  ${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
-  ${CB:?}   | ##          ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
-  ${CB:?}   | ######      ${N0:?} FreeMem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})
-  ${CB:?}   | ##___/      ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
-  ${CB:?}   | ##          ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
-  ${CB:?}   | ##          ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_IP4:?} ${WALLET_PEERS_IP6:?}
-  ${CB:?}   | ##          ${N0:?}
-  ${CB:?}   |__/          ${N0:?} Balance ${WALLET_BALANCES:?} Stakes ${WALLET_POS:?} ${WALLET_INPUTS:?}
-  ${CB:?}                 ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
-  ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
-  ${TX:?}${WALLET_TXLAST:?}
-  ${LAST_LOG:?}
-  "
+${GR:?}                 ${GR:?} Freedom-node ${REPO_VERSION:?}   $SYSTEM_DATE ${SYSTEM_CLOCK:?}
+${CB:?}    /#########   ${N0:?} Patriotnode + Stakebox      ${CONTROL_STATUS:?} ${PATRIOT_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
+${CB:?}   | ##______/   ${GR:?} -----------------------------------------${N0:?}
+${CB:?}   | ##          ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
+${CB:?}   | ######      ${N0:?} FreeMem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})
+${CB:?}   | ##___/      ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
+${CB:?}   | ##          ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
+${CB:?}   | ##          ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_IP4:?} ${WALLET_PEERS_IP6:?}
+${CB:?}   | ##          ${N0:?}
+${CB:?}   |__/          ${N0:?} Balance ${WALLET_BALANCES:?} Stakes ${WALLET_POS:?} ${WALLET_INPUTS:?}
+${CB:?}                 ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
+${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 
-  # optional: sleep before repeating the loop (or adjust timing as needed)
+${TX:?}${WALLET_TXLAST:?}
+
+${LAST_LOG:?}
+"
+
+  # wait for n seconds before updating
   sleep "${TIME:?}"
 done
 
