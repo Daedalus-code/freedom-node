@@ -704,6 +704,8 @@ fi
 # reset after midnight
 if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
   truncate -s 0 "$HOME_DIR"/.trumpcoin/debug.log &>/dev/null
+  truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
+  truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
 fi
 
 # END
