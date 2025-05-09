@@ -15,7 +15,6 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 ################################################################################
 
-echo "true" >/tmp/control_loop.tmp
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   pkill -f /etc/freedom-node/include/display/listen
   bash /etc/freedom-node/include/display/listen &
