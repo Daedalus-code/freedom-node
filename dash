@@ -15,6 +15,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 ################################################################################
 
+echo "true" >/tmp/control_loop.tmp
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   pkill -f /etc/freedom-node/include/display/listen
   bash /etc/freedom-node/include/display/listen &
@@ -24,6 +25,12 @@ fi
 
 # main loop
 while true; do
+  # check if the loop should continue
+  if ! "$(cat /tmp/control_loop.tmp 2>/dev/null)"; then
+    # if control loop is false, we pause the loop, and it won't continue until CONTROL_LOOP is set to true again
+    sleep 1
+    continue
+  fi
 
   # run dashboard content
   source /etc/freedom-node/include/functions
