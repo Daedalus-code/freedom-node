@@ -29,27 +29,39 @@ if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
 
   # function to display the dialog menu
   show_menu() {
-    CHOICE=$(dialog --menu --nocancel "Select an Option" 0 0 0 \
-      "1" "Balances" \
-      "2" "Peers" \
-      "3" "Network" \
-      "4" "Exit" \
-      3>&1 1>&2 2>&3)
 
+    HEIGHT=15
+    WIDTH=40
+    CHOICE_HEIGHT=4
+    BACKTITLE="Backtitle here"
+    TITLE="Title here"
+    MENU="Choose one of the following options:"
+
+    OPTIONS=(
+      "1" "Balances"
+      "2" "Peers"
+      "3" "Network"
+      "4" "Exit")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
     case $CHOICE in
-    "1")
-      echo "Selected 1"
-      sleep 2
+    1)
+      echo "You chose Option 1"
       ;;
-    "2")
-      echo "Selected 2"
-      sleep 2
+    2)
+      echo "You chose Option 2"
       ;;
-    "3")
-      echo "Selected 3"
-      sleep 2
+    3)
+      echo "You chose Option 3"
       ;;
-    4 | *) ;;
     esac
   }
 fi
