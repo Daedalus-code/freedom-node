@@ -129,11 +129,6 @@ TOR: ${WALLET_ONION_IP:0:24}...onion"
   fi
 
   ;;
-
-################################################################################
-
 esac
-
-sudo service freedomnode start &>/dev/null
 
 # END
