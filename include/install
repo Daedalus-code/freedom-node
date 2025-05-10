@@ -66,10 +66,11 @@ sudo chown -R "$(whoami)":"$(whoami)" /etc/freedom-node/ 2>/dev/null
 # if missing
 if [[ ! -f /etc/freedom-node/config ]] &>/dev/null; then
   # create configuration file
-  echo "# freedom-node configuration
-WALLET_PASSPHRASE="" # walletpassphrase
-# set touch device (change to the correct device path)
-TOUCH_DEVICE="/dev/input/event0" # <-- replace with your actual touchscreen device" >/etc/freedom-node/config
+  echo "Configuration
+# wallet passphrase
+WALLET_PASSPHRASE=
+# touch device
+TOUCH_DEVICE=/dev/input/event0" | column -t >/etc/freedom-node/config
   printf '%b' "[  ${N0}!!${N0}  ] Creating freedom-node configuration..\n"
 fi
 
