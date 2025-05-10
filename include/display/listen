@@ -15,7 +15,7 @@ evemu-record "$DEVICE" | while read -r LINE; do
   elif [[ "$LINE" =~ ABS_Y ]] &>/dev/null; then
     y=$(echo "$LINE" | awk '{ print $10 }')
     if [[ -n "$x" && -n "$y" ]] &>/dev/null; then
-      bash /etc/freedom-node/include/display/menu
+      pkill -f /usr/local/bin/dash # reset
     fi
   fi
 done
