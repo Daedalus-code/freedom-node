@@ -30,6 +30,8 @@ if [[ -f "$HOME_DIR"/node/display && ! -f /tmp/setfont ]] &>/dev/null; then
   echo "${SET_FONT}" >/tmp/setfont 2>/dev/null
 fi
 
+PID_OF_DAEMON="$(pidof freedomcoind 2>/dev/null | wc -l)"
+
 ################################################################################
 # logo, tx colors
 ################################################################################
@@ -73,7 +75,7 @@ FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null)"
 CLIENT_UPDATED_DATA="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/KEK.tmp 2>/dev/null || echo 0)))"
 
 # if older than n, if not syncing
-if [[ "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   # getinfo
   /usr/local/bin/./freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getinfo.tmp 2>/dev/null && sleep 0.1 ##
   # getwalletinfo
@@ -544,8 +546,7 @@ fi
 # wallet tx last
 ################################################################################
 
-# if zero
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "$WALLET_POS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" || -z "$WALLET_TXLAST" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "$WALLET_POS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
