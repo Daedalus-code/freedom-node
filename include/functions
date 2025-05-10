@@ -23,10 +23,10 @@ fi
 ################################################################################
 
 # if missing and if any display
-if [[ ! -f /tmp/setfont && -f "$HOME_DIR"/node/display ]] &>/dev/null; then
+if [[ ! -f "$HOME_DIR"/node/setfont && -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   # set console display font
   sudo setfont /usr/share/consolefonts/Uni2-TerminusBold14.psf.gz 2>/dev/null
-  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >/tmp/setfont 2>/dev/null
+  echo "/usr/share/consolefonts/Uni2-TerminusBold14.psf.gz" >"$HOME_DIR"/node/setfont 2>/dev/null
 fi
 
 ################################################################################
