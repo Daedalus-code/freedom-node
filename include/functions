@@ -25,9 +25,9 @@ fi
 # if missing and if any display
 if [[ "$HOME_DIR"/node/display && ! -f /tmp/node/setfont ]] &>/dev/null; then
   # set console display font
-  sudo setfont "$SET_FONT" 2>/dev/null
+  sudo setfont "${SET_FONT}" 2>/dev/null
   # set temp file, reset on reboot
-  echo "$SET_FONT" >/tmp/node/setfont 2>/dev/null
+  echo "${SET_FONT}" >/tmp/node/setfont 2>/dev/null
 fi
 
 ################################################################################
