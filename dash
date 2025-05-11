@@ -19,7 +19,7 @@ if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   if [[ ! -f /tmp/listening ]] &>/dev/null; then
     pkill -f /etc/freedom-node/include/display/listen
     bash /etc/freedom-node/include/display/listen &
-    echo "$(ps -fp $(pidof bash) | grep "listen")" >/tmp/listening
+    echo "$(ps -fp $(pidof bash) | grep "listen" | column -t)" >/tmp/listening
   fi
 fi
 
