@@ -683,11 +683,11 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   if [[ "$(echo "$IP_ADDRESS_FAILED" | egrep -c "[0-9]+|[a-z]+")" -gt "0" ]] &>/dev/null; then
     # disregard failed peers, create addnode
     echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_FAILED")" >/etc/freedom-node/addnode
-    # disregard connected peers, create addnode
-    echo "$(cat /etc/freedom-node/addnode 2>/dev/null | grep -v /etc/freedom-node/connected.peers 2>/dev/null)" >/etc/freedom-node/addnode
+    # disregard connected peers, create addnode, disregard duplicates
+    echo "$(cat /etc/freedom-node/addnode 2>/dev/null | grep -v /etc/freedom-node/connected.peers 2>/dev/null)" | awk '!a[$0]++' >/etc/freedom-node/addnode
   fi
 
-  # fetch random address to add, disregard uplicates
+  # fetch random address to add
   IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null | sort -R | tail -1)"
   # onetry age (seconds)
   IP_ONETRY_AGE="$(($(echo "$DATE") - $(stat -c '%Y'"$HOME_DIR"/node/onetry.tmp 2>/dev/null || echo 0)))"
