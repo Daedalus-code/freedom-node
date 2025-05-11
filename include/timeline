@@ -28,7 +28,7 @@ fi
 if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 9) + 1)))
-  # information - system - wallet
+  # wallet timeline
   if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
     TIMELINE="Value: $WALLET_VALUE USD ($FREED_PRICE)"
   elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
@@ -43,10 +43,12 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     TIMELINE="Highest input: $HIGHEST_INPUT FREED"
   elif [ "$RANDOM_INFO" == "6" ] &>/dev/null; then
     AVERAGE_CONFIRMATIONS="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "confirmations" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')"
-    TIMELINE="Average confirmations: $AVERAGE_CONFIRMATIONS"
+    AVERAGE_CONFI_IN_DAYS="$(echo "$AVERAGE_CONFIRMATIONS/1440" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
+    TIMELINE="Average confirmations: $AVERAGE_CONFIRMATIONS (${AVERAGE_CONFI_IN_DAYS}/day)"
   elif [ "$RANDOM_INFO" == "7" ] &>/dev/null; then
     AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
     TIMELINE="Average input: $AVERAGE_INPUT_SIZE FREED"
+    # coingecko timeline
   elif [ "$RANDOM_INFO" == "8" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
