@@ -249,7 +249,6 @@ if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
   if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
     ############################################################################
     # start missing
-    /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE:0}" 1 && sleep 0.1
     /usr/local/bin/freedomcoin-cli startpatriotnode missing 0 >"$HOME_DIR"/node/startpatriotnode.tmp && sleep 0.1
   ##############################################################################
   fi
@@ -259,15 +258,20 @@ fi
 # proof of stake status
 ################################################################################
 
-POS_STATUS="$(grep -c "Staking Not Active" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null)"
+POS_STATUS="$(grep -c "Staking Active" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null)"
 
-# if zero
-if [[ "$POS_STATUS" == "0" || -z "$POS_STATUS" ]] &>/dev/null; then
+# if active
+if [[ "$POS_STATUS" == "1" || -z "$POS_STATUS" ]] &>/dev/null; then
   POS_STATUS="${G1}S${N0}"
 fi
 
-# if active
-if [[ "$POS_STATUS" == "1" ]] &>/dev/null; then
+# if zero
+if [[ "$POS_STATUS" == "0" ]] &>/dev/null; then
+  # if any password set
+  if [[ -n "$WALLET_PASSPHRASE" ]] &>/dev/null; then
+    # start staking
+    /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE:0}" 0 && sleep 0.1
+  fi
   POS_STATUS="${GR}S${N0}"
 fi
 
