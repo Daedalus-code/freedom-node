@@ -46,6 +46,8 @@ WC="${GR}"
 ################################################################################
 
 DATE="$(date '+%s')"
+CRYPTO="freedomcoin"
+CURRENCY="usd"
 
 # check last price age
 PRICE_FILE="$HOME_DIR/node/price.tmp"
@@ -57,8 +59,6 @@ else
 fi
 # if the file is missing or the data is older than 420 seconds, fetch new price
 if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "900" ]; then
-  CRYPTO="freedomcoin"
-  CURRENCY="usd"
   # fetch the latest price from the coingecko api ##############################
   PRICE=$(timeout 10 curl -s "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" | jq -r ".$CRYPTO.$CURRENCY")
   ##############################################################################
