@@ -669,7 +669,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # ip address connected
   IP_ADDRESS_CONNECTED="$(awk NF /etc/freedom-node/connected.peers 2>/dev/null)"
   # ip address arp
-  IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+")"
+  IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
   # ip address failed
   IP_ADDRESS_FAILED="$(awk NF /etc/freedom-node/failed.peers 2>/dev/null)"
 
