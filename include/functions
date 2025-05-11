@@ -77,6 +77,8 @@ if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/de
   # watchlist
   WATCHLIST="$(timeout 10 curl -s 'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
   echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
+  # convert jq -r raw data
+  echo "$(jq -r . "${HOME_DIR:?}"/node/coingecko)" >"${HOME_DIR:?}"/node/coingecko
 fi
 
 ################################################################################
