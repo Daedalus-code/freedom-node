@@ -199,7 +199,12 @@ else
   cd || exit && sudo cp freedom-node/dash /usr/local/bin
   sudo chmod +x "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
   sudo chown "$USER_NAME":"$USER_NAME" /usr/local/bin/dash 2>/dev/null
-  # listener (display)
+
+  ##############################################################################
+  # touchscreen
+  ##############################################################################
+
+  # listen (display)
   sudo chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/display/listen 2>/dev/null
   sudo chown "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/display/listen 2>/dev/null
   # reset
