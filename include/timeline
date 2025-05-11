@@ -51,7 +51,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     TELEGRAM_USERS="$(grep "telegram_channel_user_count" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
-    TIMELINE="W: $WATCHLIST_USERS X: $X_FOLLOWERS TG: $TELEGRAM_USERS"
+    TIMELINE="Watchlist: $WATCHLIST_USERS X: $X_FOLLOWERS TG: $TELEGRAM_USERS"
   elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
     FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
     if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
@@ -59,7 +59,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     else
       FPC="${G1}"
     fi
-    TIMELINE="Price: $FREED_PRICE USD :: ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
+    TIMELINE="Price: $FREED_PRICE USD (${FPC}${FREED_PRICE_CHANGE24}%${N0})"
   fi
 fi
 
