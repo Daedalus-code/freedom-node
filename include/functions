@@ -90,6 +90,7 @@ CLIENT_UPDATED_DATA="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/KEK.tm
 
 # if older than n, if not syncing
 if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  echo "CHECKED @ $(date | xargs)" >"$HOME_DIR"/node/KEK.tmp
   # getinfo
   /usr/local/bin/./freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getinfo.tmp 2>/dev/null && sleep 0.1 ##
   # getwalletinfo
@@ -117,7 +118,6 @@ if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1
   if [[ ! -f "$HOME_DIR"/node/getblockchaininfo.tmp || ! -s "$HOME_DIR"/node/getblockchaininfo.tmp ]] &>/dev/null; then
     /usr/local/bin/freedomcoin-cli getblockchaininfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getblockchaininfo.tmp 2>/dev/null && sleep 0.1 ##
   fi
-  echo "CHECKED @ $(date | xargs)" >"$HOME_DIR"/node/KEK.tmp
 fi
 
 ################################################################################
