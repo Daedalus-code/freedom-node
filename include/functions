@@ -75,7 +75,8 @@ COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingeck
 # if missing, if old
 if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/dev/null; then
   # watchlist
-  timeout 10 curl -s "${HOME_DIR:?}"/node/coingecko -X 'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json'
+  WATCHLIST="$(timeout 10 curl -s 'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
+  echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
 fi
 
 ################################################################################
