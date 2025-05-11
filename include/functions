@@ -633,7 +633,7 @@ fi
 ################################################################################
 
 # if missing
-if [[ ! -f /etc/freedom-node/arp.peers || "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
+if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
   # create arp list
   cd /tmp || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
   # fetch ip address, disregard duplicates
@@ -723,11 +723,13 @@ fi
 
 ################################################################################
 
-# reset after midnight
+# reset/remove after midnight
 if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
   truncate -s 0 "$HOME_DIR"/.trumpcoin/debug.log &>/dev/null
   truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
   truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
+  rm /etc/freedom-node/arp.peers &>/dev/null
+  rm /tmp/listening &>/dev/null
 fi
 
 # END
