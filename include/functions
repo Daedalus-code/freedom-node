@@ -53,7 +53,7 @@ CURRENCY="usd"
 PRICE_FILE="$HOME_DIR/node/price.tmp"
 # if found
 if [ -f "$PRICE_FILE" ]; then
-  PRICE_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$PRICE_FILE" || echo 0)))"
+  PRICE_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$PRICE_FILE" 2>/dev/null || echo 0)))"
 else
   PRICE_AGE="9999" # assume it's too old if the file doesn't exist
 fi
@@ -71,7 +71,7 @@ FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null)"
 # freedomcoin watchlist
 ################################################################################
 
-COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingecko || echo 0)))"
+COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingecko 2>/dev/null || echo 0)))"
 # if missing, if old
 if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/dev/null; then
   # watchlist
