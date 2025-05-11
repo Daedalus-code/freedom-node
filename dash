@@ -15,11 +15,12 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
 ################################################################################
 
+# if touchscreen detected
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
   if [[ ! -f /tmp/listening ]] &>/dev/null; then
     pkill -f /etc/freedom-node/include/display/listen
     bash /etc/freedom-node/include/display/listen &
-    echo "$(ps -fp $(pidof bash) | grep "listen" | column -t)" >/tmp/listening
+    echo "$(ps -fp $(pidof bash 2>/dev/null) | grep "listen" | column -t)" >/tmp/listening
   fi
 fi
 
