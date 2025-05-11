@@ -59,7 +59,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     else
       FPC="${G1}"
     fi
-    TIMELINE="Price: $FREED_PRICE USD Change: ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
+    TIMELINE="Price: $FREED_PRICE USD :: ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
   fi
 fi
 
