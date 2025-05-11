@@ -30,7 +30,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   RANDOM_INFO=$((((RANDOM % 9) + 1)))
   # wallet timeline
   if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
-    TIMELINE="Value: $WALLET_VALUE USD ($FREED_PRICE)"
+    TIMELINE="Value: $WALLET_VALUE USD Price: $FREED_PRICE USD"
   elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
     TIMELINE="Difficulty: $(grep "difficulty" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
   elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
@@ -59,9 +59,9 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
       FPC="${R1}"
     else
-      FPC="${G1}"
+      FPC="${G1}+"
     fi
-    TIMELINE="Price: $FREED_PRICE USD (${FPC}${FREED_PRICE_CHANGE24}%${N0})"
+    TIMELINE="Price: $FREED_PRICE USD Change: ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
   fi
 fi
 
