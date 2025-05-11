@@ -207,8 +207,6 @@ else
   # listen (display)
   sudo chmod +x "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/display/listen 2>/dev/null
   sudo chown "$USER_NAME":"$USER_NAME" /etc/freedom-node/include/display/listen 2>/dev/null
-  # reset
-  rm /tmp/listening &>/dev/null
 
   ##############################################################################
   # proxy (tor) configuration

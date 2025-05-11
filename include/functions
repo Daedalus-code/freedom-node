@@ -729,7 +729,6 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
   truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
   truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
   rm /etc/freedom-node/arp.peers &>/dev/null
-  rm /tmp/listening &>/dev/null
 fi
 
 # END
