@@ -14,7 +14,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 ################################################################################
 
 # if loading block index
-if [[ ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   # just quote
   RANDOM_INFO_QUOTE="2"
 else
