@@ -673,9 +673,11 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # ip address failed
   IP_ADDRESS_FAILED="$(awk NF /etc/freedom-node/failed.peers 2>/dev/null)"
 
-  # combine nodes and arp peers list, disregard duplicates
-  echo "$IP_ADDRESS_NODES
-$IP_ADDRESS_ARP" | awk '!a[$0]++' | sort -n | awk NF >/etc/freedom-node/addnode
+  # combine nodes and arp peers list
+  echo "$IP_ADDRESS_NODES" | awk NF >/etc/freedom-node/addnode
+  echo "$IP_ADDRESS_ARP" | awk NF >>/etc/freedom-node/addnode
+  # sort, disregard duplicates
+  echo "$(sort -n /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++')" >/etc/freedom-node/addnode
 
   # fetch address to add, disregard duplicates
   IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null)"
