@@ -14,6 +14,11 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 ################################################################################
 
 RANDOM_INFO_QUOTE=$((((RANDOM % 2) + 1)))
+# if loading block index
+if [[ ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  # just quote
+  RANDOM_INFO_QUOTE="2"
+fi
 
 ################################################################################
 # random info and quotes
@@ -42,12 +47,6 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
     TIMELINE="Average input size: $AVERAGE_INPUT_SIZE FREED"
   fi
-fi
-
-# if sync is not OK
-if [[ ! "$WALLET_SYNC" == "OK" ]] &>/dev/null; then
-  # still syncing, just quote
-  RANDOM_INFO_QUOTE="2"
 fi
 
 ################################################################################
