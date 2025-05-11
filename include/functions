@@ -679,7 +679,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # sort, disregard duplicates
   echo "$(sort -n /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++')" >/etc/freedom-node/addnode
 
-  # fetch address to add, disregard duplicates
+  # fetch address to add
   IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null)"
 
   # if any data
@@ -697,7 +697,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   IP_ONETRY_AGE="$(($(echo "$DATE") - $(stat -c '%Y'"$HOME_DIR"/node/onetry.tmp 2>/dev/null || echo 0)))"
 
   # if missing, if older than n
-  if [[ ! -f "$HOME_DIR"/node/onetry.tmp || "$IP_ONETRY_AGE" -gt "180" ]] &>/dev/null; then
+  if [[ "$IP_ONETRY_AGE" -gt "180" ]] &>/dev/null; then
     # if any numbers
     if [[ "$(echo "$IP_ADDRESS_ADDNODE" | egrep -c "[0-9]+|[a-z]+")" == "1" ]] &>/dev/null; then
       # addnode onetry
