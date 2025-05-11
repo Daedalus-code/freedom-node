@@ -53,7 +53,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     TELEGRAM_USERS="$(grep "telegram_channel_user_count" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     TIMELINE="W: $WATCHLIST_USERS X: $X_FOLLOWERS TG: $TELEGRAM_USERS"
   elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
-    FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',')"
+    FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
     if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
       FPC="${R1}"
     else
