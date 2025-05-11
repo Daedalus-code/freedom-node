@@ -16,7 +16,7 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 ################################################################################
 
 if [[ -f "$HOME_DIR"/node/display ]] &>/dev/null; then
-  if [[ ! -f /tmp/listen ]] &>/dev/null; then
+  if [[ ! -f /tmp/listening ]] &>/dev/null; then
     pkill -f /etc/freedom-node/include/display/listen
     bash /etc/freedom-node/include/display/listen &
     echo "$(ps -fp $(pidof bash) | grep "listen")" >/tmp/listening
