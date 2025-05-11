@@ -665,8 +665,6 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
 
   # ip address node
   IP_ADDRESS_NODES="$(awk NF /etc/freedom-node/node.peers 2>/dev/null)"
-  # ip address connected
-  IP_ADDRESS_CONNECTED="$(cat /etc/freedom-node/connected.peers 2>/dev/null)"
   # ip address arp
   IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
   # ip address failed
@@ -686,7 +684,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
     # disregard failed peers, create addnode
     echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_FAILED")" >/etc/freedom-node/addnode
     # disregard connected peers, create addnode
-    echo "$(cat /etc/freedom-node/addnode 2>/dev/null | grep -v "$IP_ADDRESS_CONNECTED")" >/etc/freedom-node/addnode
+    echo "$(cat /etc/freedom-node/addnode 2>/dev/null | grep -v /etc/freedom-node/connected.peers 2>/dev/null)" >/etc/freedom-node/addnode
   fi
 
   # fetch random address to add, disregard uplicates
