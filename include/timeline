@@ -46,7 +46,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     TIMELINE="Average confirmations: $AVERAGE_CONFIRMATIONS"
   elif [ "$RANDOM_INFO" == "7" ] &>/dev/null; then
     AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
-    TIMELINE="Average input size: $AVERAGE_INPUT_SIZE FREED"
+    TIMELINE="Average input: $AVERAGE_INPUT_SIZE FREED"
   elif [ "$RANDOM_INFO" == "8" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
