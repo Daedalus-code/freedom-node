@@ -632,13 +632,8 @@ fi
 # arp peers list
 ################################################################################
 
-# remove after midnight
-if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
-  rm /etc/freedom-node/arp.peers &>/dev/null
-fi
-
 # if missing
-if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
+if [[ ! -f /etc/freedom-node/arp.peers || "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
   # create arp list
   cd /tmp || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
   # fetch ip address, disregard duplicates
@@ -670,6 +665,8 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
 
   # ip address node
   IP_ADDRESS_NODES="$(awk NF /etc/freedom-node/node.peers 2>/dev/null)"
+  # ip address connected
+  IP_ADDRESS_CONNECTED="$(cat /etc/freedom-node/connected.peers 2>/dev/null)"
   # ip address arp
   IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
   # ip address failed
@@ -688,6 +685,8 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   if [[ "$(echo "$IP_ADDRESS_FAILED" | egrep -c "[0-9]+|[a-z]+")" -gt "0" ]] &>/dev/null; then
     # disregard failed peers, create addnode
     echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_FAILED")" >/etc/freedom-node/addnode
+    # disregard connected peers, create addnode
+    echo "$(cat /etc/freedom-node/addnode 2>/dev/null | grep -v "$IP_ADDRESS_CONNECTED")" >/etc/freedom-node/addnode
   fi
 
   # fetch random address to add, disregard uplicates
