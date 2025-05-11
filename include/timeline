@@ -54,12 +54,12 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     TIMELINE="W: $WATCHLIST_USERS X: $X_FOLLOWERS TG: $TELEGRAM_USERS"
   elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
     FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',')"
-    if [[ "$FREED_PRICE_CHANGE24" < "0" ]] &>/dev/null; then
+    if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
       FPC="${R1}"
     else
       FPC="${G1}"
     fi
-    TIMELINE="Price: $FREED_PRICE USD - ${FPC}$FREED_PRICE_CHANGE24${N0}"
+    TIMELINE="Price: $FREED_PRICE USD Change: ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
   fi
 fi
 
