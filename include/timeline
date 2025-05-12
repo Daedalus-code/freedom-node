@@ -27,7 +27,7 @@ fi
 
 if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
   # random quotes/information start
-  RANDOM_INFO=$((((RANDOM % 9) + 1)))
+  RANDOM_INFO=$((((RANDOM % 11) + 1)))
   # wallet timeline
   if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
     TIMELINE="Value: $WALLET_VALUE USD Price: $FREED_PRICE USD"
@@ -37,31 +37,37 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     TIMELINE="Nodes: $(grep "total" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv4: $(grep "ipv4" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv6: $(grep "ipv6" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }')"
   elif [ "$RANDOM_INFO" == "4" ] &>/dev/null; then
     LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
-    TIMELINE="Lowest input: $LOWEST_INPUT FREED"
+    TIMELINE="Lowest Input: $LOWEST_INPUT FREED"
   elif [ "$RANDOM_INFO" == "5" ] &>/dev/null; then
     HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
-    TIMELINE="Highest input: $HIGHEST_INPUT FREED"
+    TIMELINE="Highest Input: $HIGHEST_INPUT FREED"
   elif [ "$RANDOM_INFO" == "6" ] &>/dev/null; then
     AVERAGE_CONFIRMATIONS="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "confirmations" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')"
     AVERAGE_CONFI_IN_DAYS="$(echo "$AVERAGE_CONFIRMATIONS/1440" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
     TIMELINE="Confirmations: $AVERAGE_CONFIRMATIONS = ${AVERAGE_CONFI_IN_DAYS}/day(s)"
   elif [ "$RANDOM_INFO" == "7" ] &>/dev/null; then
     AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
-    TIMELINE="Average input: $AVERAGE_INPUT_SIZE FREED"
-    # coingecko timeline
+    TIMELINE="Average Input: $AVERAGE_INPUT_SIZE FREED"
   elif [ "$RANDOM_INFO" == "8" ] &>/dev/null; then
+    WALLET_MOVEMENT_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_MOVEMENT_AGE:?}" 2>&1)/3600")) $(("$(echo "${WALLET_MOVEMENT_AGE:?}" 2>&1)%3600/60")) $(("$(echo "${WALLET_MOVEMENT_AGE:?}" 2>&1)%60")))
+    TIMELINE="Last Movement: $WALLET_MOVEMENT_AGE_FORMAT"
+  elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
+    WALLET_POS_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_POS_AGE:?}" 2>&1)/3600")) $(("$(echo "${WALLET_POS_AGE:?}" 2>&1)%3600/60")) $(("$(echo "${WALLET_POS_AGE:?}" 2>&1)%60")))
+    TIMELINE="Last Stake: $WALLET_POS_AGE_FORMAT"
+    # coingecko timeline
+  elif [ "$RANDOM_INFO" == "10" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     TELEGRAM_USERS="$(grep "telegram_channel_user_count" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     TIMELINE="Watchlist: $WATCHLIST_USERS X: $X_FOLLOWERS TG: $TELEGRAM_USERS"
-  elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
+  elif [ "$RANDOM_INFO" == "11" ] &>/dev/null; then
     FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
     if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
       FPC="${R1}"
     else
       FPC="${G1}+"
     fi
-    TIMELINE="Price: $FREED_PRICE USD Change: ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
+    TIMELINE="Price: $FREED_PRICE USD : ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
   fi
 fi
 
