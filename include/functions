@@ -60,7 +60,7 @@ fi
 # if the file is missing or the data is older than 420 seconds, fetch new price
 if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "900" ]; then
   # fetch the latest price from the coingecko api ##############################
-  PRICE=$(timeout 10 curl -s "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" | jq -r ".$CRYPTO.$CURRENCY")
+  PRICE=$(timeout 10 curl -s --proxy socks5h://localhost:9050 "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" | jq -r ".$CRYPTO.$CURRENCY")
   ##############################################################################
   echo "$PRICE" >"$PRICE_FILE"
 # read the (possibly updated) cached price
@@ -75,7 +75,7 @@ COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingeck
 # if missing, if old
 if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/dev/null; then
   # watchlist
-  WATCHLIST="$(timeout 10 curl -s 'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
+  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
   echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
   # convert jq -r raw data
   echo "$(jq -r . "${HOME_DIR:?}"/node/coingecko)" >"${HOME_DIR:?}"/node/coingecko
@@ -420,22 +420,33 @@ fi
 # public ip address
 ################################################################################
 
-# if missing
+# if public missing
 if [[ ! -f "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
   PUBLIC_IP="$(curl -s http://whatismyip.akamai.com/)"
   echo "$PUBLIC_IP" >"$HOME_DIR"/node/wanip.tmp
 fi
 
-# random start number
-RANDOM_PUBLIC_IP=$((((RANDOM % 2) + 1)))
+# if proxy missing
+if [[ ! -f "$HOME_DIR"/node/proxyip.tmp ]] &>/dev/null; then
+  PUBLIC_IP="$(curl -s --proxy socks5h://localhost:9050 http://whatismyip.akamai.com/)"
+  echo "$PUBLIC_IP" >"$HOME_DIR"/node/proxyip.tmp
+fi
 
-# onion ip address
+# random start number
+RANDOM_PUBLIC_IP=$((((RANDOM % 3) + 1)))
+
+# proxy ip address
 if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
+  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/proxyip.tmp 2>/dev/null)"
+  PUBLIC_IP="${P1}${PUBLIC_IP}${N0:?}"
+fi
+# onion ip address
+if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
   PUBLIC_IP="$(awk NF "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
   PUBLIC_IP="${P1}${PUBLIC_IP:0:9}...onion${N0:?}"
 fi
 # wan ip address
-if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
+if [[ "$RANDOM_PUBLIC_IP" == "3" ]] &>/dev/null; then
   PUBLIC_IP="${CY}$(awk NF "$HOME_DIR"/node/wanip.tmp 2>/dev/null):15110${N0}"
 fi
 # if zero
