@@ -188,7 +188,7 @@ if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
-  # if greater than n age
+  # if greater than n seconds
 elif [[ "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
   WC="${N0}"
 fi
@@ -741,9 +741,17 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
   truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
   truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
   # remove
-  rm "$HOME_DIR"/node/proxyip.tmp &>/dev/null
   rm "$HOME_DIR"/node/wanip.tmp &>/dev/null
   rm /etc/freedom-node/arp.peers &>/dev/null
+fi
+
+################################################################################
+
+# reset/remove based on age (seconds)
+PROXY_IP_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/proxyip.tmp 2>/dev/null || echo 0)))"
+# if greater than n seconds
+if [[ "$PROXY_IP_AGE" -gt "3600" ]] &>/dev/null; then
+  rm "$HOME_DIR"/node/proxyip.tmp &>/dev/null
 fi
 
 # END
