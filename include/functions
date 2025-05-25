@@ -244,7 +244,7 @@ if [[ "$CONTROL_STATUS" == "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STAT
   CONTROL_STATUS="${GR}CW${N0}"
 fi
 
-if [[ "$CONTROL_STATUS" -gt "1" ]] &>/dev/null; then
+if [[ "$CONTROL_STATUS" -ge "2" ]] &>/dev/null; then
   CONTROL_STATUS="${Y1}CW${N0}"
   if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
     ############################################################################
