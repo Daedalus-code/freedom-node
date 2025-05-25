@@ -217,6 +217,13 @@ fi
 WALLET_POS="${WC}$WALLET_POS${N0}"
 
 ################################################################################
+
+start_patriotnode() {
+  # start missing
+  /usr/local/bin/freedomcoin-cli startpatriotnode missing 0 >"$HOME_DIR"/node/startpatriotnode.tmp && sleep 0.1
+}
+
+################################################################################
 # patriotnode status
 ################################################################################
 
@@ -225,6 +232,9 @@ PATRIOT_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/d
 # if any data
 if [[ "$PATRIOT_STATUS" -gt "0" ]] &>/dev/null; then
   PATRIOT_STATUS="${Y1}P${N0}"
+  if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+    start_patriotnode
+  fi
 fi
 
 # if zero
@@ -247,10 +257,7 @@ fi
 if [[ "$CONTROL_STATUS" -ge "2" ]] &>/dev/null; then
   CONTROL_STATUS="${Y1}CW${N0}"
   if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
-    ############################################################################
-    # start missing
-    /usr/local/bin/freedomcoin-cli startpatriotnode missing 0 >"$HOME_DIR"/node/startpatriotnode.tmp && sleep 0.1
-  ##############################################################################
+    start_patriotnode
   fi
 fi
 
