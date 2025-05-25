@@ -157,8 +157,8 @@ if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
     printf '%b' "[  ${GR}!!${N0}  ] Not enough space..\n" && exit
   fi
   # if tiny sd card found
-  if [[ "$(echo "$HDD_TOTAL" | tr -d 'G')" -lt "32" ]] &>/dev/null; then
-    printf '%b' "[  ${GR}!!${N0}  ] 32GB SD card recommended.\n" && exit
+  if [[ "$(echo "$HDD_TOTAL" | tr -d 'G')" -lt "16" ]] &>/dev/null; then
+    printf '%b' "[  ${GR}!!${N0}  ] 16GB SD card recommended.\n" && exit
   fi
 else
   printf '%b' "[  ${GR}!!${N0}  ] Error\n" && exit
