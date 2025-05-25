@@ -237,7 +237,7 @@ fi
 ################################################################################
 
 # patriotnode count
-CONTROL_STATUS="$(egrep -c "mn|MN|pn|PN|:15110" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null)"
+CONTROL_STATUS="$(grep -v "#" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/dev/null | egrep -c "mn|MN|pn|PN|:15110")"
 
 # if zero
 if [[ "$CONTROL_STATUS" == "0" || "$CONTROL_STATUS" -lt "2" || -z "$CONTROL_STATUS" ]] &>/dev/null; then
