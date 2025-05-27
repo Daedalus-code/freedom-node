@@ -35,27 +35,27 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     TIMELINE="Nodes: $(grep "total" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv4: $(grep "ipv4" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }') IPv6: $(grep "ipv6" "$HOME_DIR"/node/getpatriotnodecount.tmp | awk '{ print $NF }')"
   elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
     LOWEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | head -1)"
-    TIMELINE="Lowest Input: $LOWEST_INPUT FREED"
+    TIMELINE="Lowest Input: ${LOWEST_INPUT:0} FREED"
   elif [ "$RANDOM_INFO" == "4" ] &>/dev/null; then
     HIGHEST_INPUT="$(grep "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | sort -n | tail -1)"
-    TIMELINE="Highest Input: $HIGHEST_INPUT FREED"
+    TIMELINE="Highest Input: ${HIGHEST_INPUT:0} FREED"
   elif [ "$RANDOM_INFO" == "5" ] &>/dev/null; then
     AVERAGE_CONFIRMATIONS="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "confirmations" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk -F. '{ print $1 }')"
     AVERAGE_CONFI_IN_DAYS="$(echo "$AVERAGE_CONFIRMATIONS/1440" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
-    TIMELINE="Confirmations: $AVERAGE_CONFIRMATIONS = ${AVERAGE_CONFI_IN_DAYS}/day(s)"
+    TIMELINE="Confirmations: ${AVERAGE_CONFIRMATIONS:0} = ${AVERAGE_CONFI_IN_DAYS:0}/day(s)"
   elif [ "$RANDOM_INFO" == "6" ] &>/dev/null; then
     AVERAGE_INPUT_SIZE="$(cat "$HOME_DIR"/node/listunspent.tmp 2>/dev/null | grep "amount" | awk '{ print $2 }' | tr -d ',' | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' | awk '{ printf "%.8f\n", $1 }')"
-    TIMELINE="Average Input: $AVERAGE_INPUT_SIZE FREED"
+    TIMELINE="Average Input: ${AVERAGE_INPUT_SIZE:0} FREED"
   elif [ "$RANDOM_INFO" == "7" ] &>/dev/null; then
-    WALLET_MOVEMENT_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_MOVEMENT_AGE:?}" 2>&1)/3600")) $(("$(echo "${WALLET_MOVEMENT_AGE:?}" 2>&1)%3600/60")) $(("$(echo "${WALLET_MOVEMENT_AGE:?}" 2>&1)%60")))
+    WALLET_MOVEMENT_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_MOVEMENT_AGE:0}" 2>&1)/3600")) $(("$(echo "${WALLET_MOVEMENT_AGE:0}" 2>&1)%3600/60")) $(("$(echo "${WALLET_MOVEMENT_AGE:0}" 2>&1)%60")))
     TIMELINE="Last Movement: $WALLET_MOVEMENT_AGE_FORMAT"
   elif [ "$RANDOM_INFO" == "8" ] &>/dev/null; then
-    WALLET_POS_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_POS_AGE:?}" 2>&1)/3600")) $(("$(echo "${WALLET_POS_AGE:?}" 2>&1)%3600/60")) $(("$(echo "${WALLET_POS_AGE:?}" 2>&1)%60")))
+    WALLET_POS_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_POS_AGE:0}" 2>&1)/3600")) $(("$(echo "${WALLET_POS_AGE:0}" 2>&1)%3600/60")) $(("$(echo "${WALLET_POS_AGE:0}" 2>&1)%60")))
     TIMELINE="Last Stake: $WALLET_POS_AGE_FORMAT"
 
     # coingecko timeline
   elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
-    TIMELINE="Value: $WALLET_VALUE USD @ $FREED_PRICE USD"
+    TIMELINE="Value: ${WALLET_VALUE:0} USD @ ${FREED_PRICE:0} USD"
   elif [ "$RANDOM_INFO" == "10" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
@@ -68,7 +68,7 @@ if [[ "$RANDOM_INFO_QUOTE" == "1" ]] &>/dev/null; then
     else
       FPC="${G1}+"
     fi
-    TIMELINE="Price: $FREED_PRICE USD @ ${FPC}${FREED_PRICE_CHANGE24}%${N0}"
+    TIMELINE="Price: ${FREED_PRICE:0} USD @ ${FPC}${FREED_PRICE_CHANGE24:0}%${N0}"
   fi
 fi
 
