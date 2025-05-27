@@ -107,7 +107,9 @@ fi
 
 # wan ip address
 if [[ "$RANDOM_PUBLIC_IP" == "3" ]] &>/dev/null; then
-  PUBLIC_IP="${CY}$(awk NF "$HOME_DIR"/node/wanip.tmp 2>/dev/null):15110${N0}"
+  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/wanip.tmp 2>/dev/null)"
+  zero_public_ip
+  PUBLIC_IP="${CY}$PUBLIC_IP${N0}"
 fi
 
 # if zero
