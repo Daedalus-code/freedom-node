@@ -47,6 +47,10 @@ if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
   }
   # extract the progress value
   PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1)"
+  # if zero
+  if [[ -z "$PROGRESS" ]] &>/dev/null; then
+    PROGRESS="$LATEST_PROGRESS"
+  fi
   # draw the progress bar
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
 fi
