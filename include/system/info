@@ -112,11 +112,6 @@ if [[ "$RANDOM_PUBLIC_IP" == "3" ]] &>/dev/null; then
   PUBLIC_IP="${CY}$PUBLIC_IP${N0}"
 fi
 
-# if zero
-if [[ -z "$PUBLIC_IP" || ! -s "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
-  PUBLIC_IP="${GR}Updating${N0}"
-fi
-
 ################################################################################
 # download
 ################################################################################
