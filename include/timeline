@@ -61,7 +61,8 @@ fi
 if [ "$RANDOM_INFO_QUOTE" == "2" ] &>/dev/null; then
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 3) + 1)))
-elif [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
+fi
+if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
   TIMELINE="Value: ${WALLET_VALUE:0} USD @ ${FREED_PRICE:0} USD"
 elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
   WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
