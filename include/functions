@@ -210,7 +210,7 @@ fi
 
 # if zero
 if [[ -z "$WALLET_POS" || "$WALLET_POS" == "0" ]] &>/dev/null; then
-  WALLET_POS="${GR}0${N0}"
+  WALLET_POS="0"
 fi
 
 # output proof of stake
@@ -523,10 +523,7 @@ fi
 # if zero
 if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" == "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
-fi
-
-# if any balance
-if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+else
   WALLET_BALANCES="${WC}$WALLET_BALANCES${N0}"
 fi
 
