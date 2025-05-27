@@ -7,8 +7,15 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
 
+LATEST_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")"
+
+# if zero
+if [[ -z "$LATEST_PROGRESS" ]] &>/dev/null; then
+  LATEST_PROGRESS="$(grep "verificationprogress" /home/"$USER_NAME"/node/getblockchaininfo 2>/dev/null | awk '{ print $2 }' | tr -d ',' | awk '{ printf "%.6f\n", $2 }')"
+fi
+
 # if not synced
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
   # function to draw the progress bar
   draw_progress_bar() {
     PROGRESS="$1"
