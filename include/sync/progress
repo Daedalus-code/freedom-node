@@ -11,7 +11,7 @@ LATEST_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.lo
 
 # if zero
 if [[ -z "$LATEST_PROGRESS" ]] &>/dev/null; then
-  LATEST_PROGRESS="$(grep "verificationprogress" /home/"$USER_NAME"/node/getblockchaininfo 2>/dev/null | awk '{ print $2 }' | tr -d ',' | awk '{ printf "%.6f\n", $2 }')"
+  LATEST_PROGRESS="$(grep "verificationprogress" /home/"$USER_NAME"/node/getblockchaininfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',' | awk '{ printf "%.6f\n", $2 }')"
 fi
 
 # if not synced
