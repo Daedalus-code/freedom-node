@@ -605,8 +605,8 @@ if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:0}" -gt "360
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
 
-# if loading block index
-if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+# if loading block index, if syncing
+if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" || ! "$WALLET_SYNC" == "${G1}OK${N0}" ]] &>/dev/null; then
   WALLET_TXLAST="   ${CY}Loading${N0}"
   CB="${CY}"
 fi
