@@ -308,8 +308,6 @@ fi
 # lan status (network interface)
 ################################################################################
 
-echo "$(ifconfig 2>/dev/null)" >"$HOME_DIR"/node/ifconfig
-
 LAN_STATUS="$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | head -1 | awk '{ print $1 }' | tr -d ':')"
 
 # if zero
@@ -373,44 +371,6 @@ if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt 
     # sync progress bar color based on percentage
     WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
   fi
-fi
-
-################################################################################
-# public ip address
-################################################################################
-
-# if public missing
-if [[ ! -f "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
-  PUBLIC_IP="$(curl -s http://whatismyip.akamai.com/)"
-  echo "$PUBLIC_IP" >"$HOME_DIR"/node/wanip.tmp
-fi
-
-# if proxy missing
-if [[ ! -f "$HOME_DIR"/node/proxyip.tmp ]] &>/dev/null; then
-  PUBLIC_IP="$(curl -s --proxy socks5h://localhost:9050 http://whatismyip.akamai.com/)"
-  echo "$PUBLIC_IP" >"$HOME_DIR"/node/proxyip.tmp
-fi
-
-# random start number
-RANDOM_PUBLIC_IP=$((((RANDOM % 3) + 1)))
-
-# proxy ip address
-if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
-  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/proxyip.tmp 2>/dev/null)"
-  PUBLIC_IP="${P1}${PUBLIC_IP}${N0:?}"
-fi
-# onion ip address
-if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
-  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
-  PUBLIC_IP="${P1}${PUBLIC_IP:0:9}...onion${N0:?}"
-fi
-# wan ip address
-if [[ "$RANDOM_PUBLIC_IP" == "3" ]] &>/dev/null; then
-  PUBLIC_IP="${CY}$(awk NF "$HOME_DIR"/node/wanip.tmp 2>/dev/null):15110${N0}"
-fi
-# if zero
-if [[ -z "$PUBLIC_IP" || ! -s "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
-  PUBLIC_IP="${GR}Updating..${N0}"
 fi
 
 ################################################################################

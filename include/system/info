@@ -6,6 +6,10 @@ HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 ################################################################################
+
+echo "$(ifconfig 2>/dev/null)" >"$HOME_DIR"/node/ifconfig
+
+################################################################################
 # system load
 ################################################################################
 
@@ -57,6 +61,44 @@ IP_ADDRESS="$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "inet" | egrep -v
 # if zero
 if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
   IP_ADDRESS="Disconnected"
+fi
+
+################################################################################
+# public ip address
+################################################################################
+
+# if public missing
+if [[ ! -f "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
+  PUBLIC_IP="$(curl -s http://whatismyip.akamai.com/)"
+  echo "$PUBLIC_IP" >"$HOME_DIR"/node/wanip.tmp
+fi
+
+# if proxy missing
+if [[ ! -f "$HOME_DIR"/node/proxyip.tmp ]] &>/dev/null; then
+  PUBLIC_IP="$(curl -s --proxy socks5h://localhost:9050 http://whatismyip.akamai.com/)"
+  echo "$PUBLIC_IP" >"$HOME_DIR"/node/proxyip.tmp
+fi
+
+# random start number
+RANDOM_PUBLIC_IP=$((((RANDOM % 3) + 1)))
+
+# proxy ip address
+if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
+  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/proxyip.tmp 2>/dev/null)"
+  PUBLIC_IP="${P1}${PUBLIC_IP}${N0:?}"
+fi
+# onion ip address
+if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
+  PUBLIC_IP="$(awk NF "$HOME_DIR"/node/onionip.tmp 2>/dev/null)"
+  PUBLIC_IP="${P1}${PUBLIC_IP:0:9}...onion${N0:?}"
+fi
+# wan ip address
+if [[ "$RANDOM_PUBLIC_IP" == "3" ]] &>/dev/null; then
+  PUBLIC_IP="${CY}$(awk NF "$HOME_DIR"/node/wanip.tmp 2>/dev/null):15110${N0}"
+fi
+# if zero
+if [[ -z "$PUBLIC_IP" || ! -s "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
+  PUBLIC_IP="${GR}Updating..${N0}"
 fi
 
 ################################################################################
