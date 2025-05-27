@@ -510,7 +510,7 @@ WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null
 WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
 # if zero
-if [[ -z "$WALLET_VALUE" || "$WALLET_VALUE" == "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_VALUE" || "$WALLET_VALUE" == "0.00" ]] &>/dev/null; then
   WALLET_VALUE="${GR}0${N0}"
 else
   WALLET_VALUE="${G1}$WALLET_VALUE${N0}"
