@@ -11,8 +11,12 @@ LATEST_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.lo
 
 # if zero
 if [[ -z "$LATEST_PROGRESS" ]] &>/dev/null; then
-  LATEST_PROGRESS="$(grep "verificationprogress" /home/"$USER_NAME"/node/getblockchaininfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',' | awk '{ printf "%.6f\n", $1 }')"
+  if [[ -f /home/"$USER_NAME"/node/getblockchaininfo.tmp ]] &>/dev/null; then
+    LATEST_PROGRESS="$(grep "verificationprogress" /home/"$USER_NAME"/node/getblockchaininfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',' | awk '{ printf "%.6f\n", $1 }')"
+  fi
 fi
+
+################################################################################
 
 # if not synced
 if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
@@ -47,10 +51,20 @@ if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
 fi
 
+################################################################################
+
 WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
+
+# if zero
+if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
+  WALLET_SYNC="$(echo "$LATEST_PROGRESS" | awk '{ printf "%.2f\n", $1 }')"
+fi
+
 echo "$WALLET_SYNC" >/home/"$USER_NAME"/node/progress.tmp
 
 WALLET_SYNC="$(awk NF /home/"$USER_NAME"/node/progress.tmp 2>/dev/null)"
+
+################################################################################
 
 # if synced
 if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
