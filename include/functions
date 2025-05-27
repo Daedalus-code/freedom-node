@@ -576,7 +576,7 @@ fi
 WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
 
 # if zero, if syncing
-if [[ -z "$WALLET_MEMPOOL" || "$WALLET_MEMPOOL" == "0" || ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ -z "$WALLET_MEMPOOL" || "$WALLET_MEMPOOL" == "0" || ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1000000" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}0${N0}"
 else
   WALLET_MEMPOOL="$WALLET_MEMPOOL"
