@@ -95,7 +95,7 @@ zero_public_ip() {
 if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
   PUBLIC_IP="$(awk NF "$HOME_DIR"/node/proxyip.tmp 2>/dev/null)"
   zero_public_ip
-  PUBLIC_IP="${P1}${PUBLIC_IP}${N0:?}"
+  PUBLIC_IP="${P0}${PUBLIC_IP}${N0:?}"
 fi
 
 # onion ip address
