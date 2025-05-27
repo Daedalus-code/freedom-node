@@ -61,22 +61,22 @@ fi
 if [ "$RANDOM_INFO_QUOTE" == "2" ] &>/dev/null; then
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 3) + 1)))
-fi
-if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
-  TIMELINE="Value: ${WALLET_VALUE:0} USD @ ${FREED_PRICE:0} USD"
-elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
-  WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
-  X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
-  TELEGRAM_USERS="$(grep "telegram_channel_user_count" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
-  TIMELINE="Watchlist: ${WATCHLIST_USERS:0} X: ${X_FOLLOWERS:0} TG: ${TELEGRAM_USERS:0}"
-elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
-  FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
-  if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
-    FPC="${R1}"
-  else
-    FPC="${G1}+"
+  if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
+    TIMELINE="Value: ${WALLET_VALUE:0} USD @ ${FREED_PRICE:0} USD"
+  elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
+    WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
+    X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
+    TELEGRAM_USERS="$(grep "telegram_channel_user_count" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
+    TIMELINE="Watchlist: ${WATCHLIST_USERS:0} X: ${X_FOLLOWERS:0} TG: ${TELEGRAM_USERS:0}"
+  elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
+    FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
+      FPC="${R1}"
+    else
+      FPC="${G1}+"
+    fi
+    TIMELINE="Price: ${FREED_PRICE:0} USD @ ${FPC}${FREED_PRICE_CHANGE24:0}%${N0}"
   fi
-  TIMELINE="Price: ${FREED_PRICE:0} USD @ ${FPC}${FREED_PRICE_CHANGE24:0}%${N0}"
 fi
 
 ################################################################################
