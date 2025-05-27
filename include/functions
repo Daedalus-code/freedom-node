@@ -183,13 +183,13 @@ if [[ -z "$WALLET_MOVEMENT" ]] &>/dev/null; then
 fi
 
 # if any movements, less than n age
-if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
+if [[ "$WALLET_MOVEMENT" -gt "0" && "${WALLET_MOVEMENT_AGE:0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
   # if greater than n seconds
-elif [[ "$WALLET_MOVEMENT_AGE" -gt "3600" ]] &>/dev/null; then
+elif [[ "${WALLET_MOVEMENT_AGE:0}" -gt "3600" ]] &>/dev/null; then
   WC="${N0}"
 fi
 
@@ -198,13 +198,13 @@ fi
 ################################################################################
 
 # if any rewards, less than n age
-if [[ "$WALLET_POS" -gt "0" && "$WALLET_POS_AGE" -lt "3600" ]] &>/dev/null; then
+if [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
   # if any rewards, greater than n age
-elif [[ "$WALLET_POS" -gt "0" && "$WALLET_POS_AGE" -gt "3600" ]] &>/dev/null; then
+elif [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -gt "3600" ]] &>/dev/null; then
   WC="${N0}"
 fi
 
@@ -582,7 +582,7 @@ fi
 # wallet tx last
 ################################################################################
 
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "$WALLET_POS_AGE" -gt "3600" && "$WALLET_MOVEMENT_AGE" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:0}" -gt "3600" && "${WALLET_MOVEMENT_AGE:0}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
