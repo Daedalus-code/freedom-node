@@ -77,14 +77,11 @@ fi
 
 # if syncing
 if [[ "${WALLET_SYNC:0}" < "1.00" && "${WALLET_SYNC:0}" > "0" ]] &>/dev/null; then
-  if [[ "${WALLET_SYNC:0}" < "0.01" ]] &>/dev/null; then
-    WALLET_SYNC="0"
-  fi
   WALLET_SYNC="${G1}$(echo "${WALLET_SYNC:0}" | tr -d '.' | sed 's/^0*//')%${N0}"
 fi
 
 # if zero
-if [[ -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" || "$PROGRESS" < "1.0000" ]] &>/dev/null; then
   WALLET_SYNC="${GR}0%${N0}"
 fi
 
