@@ -424,6 +424,24 @@ if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
 fi
 
 ################################################################################
+# sync progress
+################################################################################
+
+source /etc/freedom-node/include/sync/progress
+
+# sync progress
+SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' .trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
+
+# if any data
+if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" || -n "$LATEST_PROGRESS" ]] &>/dev/null; then
+  # if syncing
+  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" || "$LATEST_PROGRESS" < "1.000000" ]] &>/dev/null; then
+    # sync progress bar color based on percentage
+    WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
+  fi
+fi
+
+################################################################################
 # public ip address
 ################################################################################
 
@@ -715,24 +733,6 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
       /usr/local/bin/freedomcoin-cli addnode "$IP_ADDRESS_ADDNODE" onetry 2>/dev/null | grep -v "Error" &
       echo "addnode $IP_ADDRESS_ADDNODE onetry" >"$HOME_DIR"/node/onetry.tmp
     fi
-  fi
-fi
-
-################################################################################
-# sync progress
-################################################################################
-
-source /etc/freedom-node/include/sync/progress
-
-# sync progress
-SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' .trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
-
-# if any data
-if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" || -n "$LATEST_PROGRESS" ]] &>/dev/null; then
-  # if syncing
-  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" || "$LATEST_PROGRESS" < "1.000000" ]] &>/dev/null; then
-    # sync progress bar color based on percentage
-    WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
   fi
 fi
 
