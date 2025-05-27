@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# home directory
+HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
+# user
+USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
+
+################################################################################
+# system load
+################################################################################
+
+SYSTEM_LOAD="$(awk '{ print $1,$2,$3 }' /proc/loadavg 2>/dev/null)"
+
+################################################################################
+# cpu temperatue
+################################################################################
+
+# read raw temp in millidegrees
+CPU_CTEMP_RAW="$(awk NF /sys/devices/virtual/thermal/thermal_zone0/temp)"
+# integer celsius
+CPU_CTEMP_C="$((CPU_CTEMP_RAW / 1000))"
+# integer fahrenheit (using integer math)
+CPU_FTEMP=$(((CPU_CTEMP_C * 9 / 5) + 32))
+# with symbol
+CPU_CTEMP_C="${CPU_CTEMP_C}°C"
+CPU_FTEMP="${CPU_FTEMP}°F"
+
+################################################################################
+# system memory
+################################################################################
+
+TOTAL_MEM="${G0}$(echo "$(echo "$(grep "MemTotal" /proc/meminfo 2>/dev/null | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo 2>/dev/null | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null)${N0}"
+FREE_MEM="${G1}$(echo "$(grep "MemFree" /proc/meminfo 2>/dev/null | awk '{ print $2 }')/1024" | bc 2>/dev/null)${N0}"
+
+################################################################################
+# hard drive
+################################################################################
+
+DF_TOTAL="$(df -h --total 2>/dev/null)"
+
+TOTAL_HDD="${G0}$(echo "$DF_TOTAL" | tail -1 | xargs | tr -d '-' | awk '{ print $2 }')${N0}"
+USED_HDD="${G1}$(echo "$DF_TOTAL" | tail -1 | xargs | tr -d '-' | awk '{ print $3 }')${N0}"
+USED_HDD_P="$(echo "$DF_TOTAL" | tail -1 | xargs | tr -d '-' | awk '{ print $5 }' | tr -d 'G')"
+
+################################################################################
+# system user
+################################################################################
+
+SYSTEM_USER="$USER_NAME"
+
+################################################################################
+# ip address
+################################################################################
+
+IP_ADDRESS="$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
+
+# if zero
+if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
+  IP_ADDRESS="Disconnected"
+fi
+
+################################################################################
+# download
+################################################################################
+
+# get all RX byte counts from ifconfig
+DOWNLOAD_TOTAL_BYTES=$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+# convert RX bytes to MB and GB
+DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
+
+################################################################################
+# upload
+################################################################################
+
+# get all TX byte counts from ifconfig
+UPLOAD_TOTAL_BYTES=$(cat "$HOME_DIR"/node/ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+# convert RX bytes to MB and GB
+UPLOAD="$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')G"
+
+# END
