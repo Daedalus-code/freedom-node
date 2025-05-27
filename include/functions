@@ -5,7 +5,6 @@
 source /etc/freedom-node/config
 source /etc/freedom-node/include/color
 source /etc/freedom-node/include/time_fix
-source /etc/freedom-node/include/system/info
 
 ################################################################################
 
@@ -20,6 +19,12 @@ if [[ ! -d "$HOME_DIR"/node/ ]] &>/dev/null; then
   mkdir "$HOME_DIR"/node/ &>/dev/null
   chmod 755 "$HOME_DIR"/node/
 fi
+
+################################################################################
+# system info
+################################################################################
+
+source /etc/freedom-node/include/system/info
 
 ################################################################################
 
