@@ -430,12 +430,12 @@ fi
 source /etc/freedom-node/include/sync/progress
 
 # sync progress
-SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' .trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
+SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
 
 # if any data
 if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" || -n "$LATEST_PROGRESS" ]] &>/dev/null; then
   # if syncing
-  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" || "$LATEST_PROGRESS" < "1.000000" ]] &>/dev/null; then
+  if [[ ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1.000000" || "$LATEST_PROGRESS" < "1.000000" ]] &>/dev/null; then
     # sync progress bar color based on percentage
     WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
   fi
@@ -575,8 +575,8 @@ fi
 
 WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
 
-# if zero
-if [[ -z "$WALLET_MEMPOOL" || "$WALLET_MEMPOOL" == "0" ]] &>/dev/null; then
+# if zero, if syncing
+if [[ -z "$WALLET_MEMPOOL" || "$WALLET_MEMPOOL" == "0" || ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}0${N0}"
 else
   WALLET_MEMPOOL="$WALLET_MEMPOOL"
