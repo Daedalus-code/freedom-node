@@ -141,7 +141,7 @@ if [[ ! "$ADD_TO_WALLET" == "$LAST_MOVEMENTS" ]] &>/dev/null; then
   grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' >>"$HOME_DIR"/node/movements.tmp
 fi
 WALLET_MOVEMENT="$(wc -l "$HOME_DIR"/node/movements.tmp 2>/dev/null | awk '{ print $1 }')"
-WALLET_MOVEMENT_AGE="$(stat -c '%Y' "$HOME_DIR"/node/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
+WALLET_MOVEMENT_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/movements.tmp 2>/dev/null || echo 0)))"
 
 # proof of stake ###############################################################
 BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
@@ -152,7 +152,7 @@ if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
   grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
 fi
 WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
-WALLET_POS_AGE="$(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
+WALLET_POS_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null || echo 0)))"
 
 ################################################################################
 # repository version
@@ -705,7 +705,7 @@ if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers &&
   # fetch random address to add
   IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null | sort -R | tail -1)"
   # onetry age (seconds)
-  IP_ONETRY_AGE="$(($(echo "$DATE") - $(stat -c '%Y'"$HOME_DIR"/node/onetry.tmp 2>/dev/null || echo 0)))"
+  IP_ONETRY_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/onetry.tmp 2>/dev/null || echo 0)))"
 
   # if missing, if older than n
   if [[ ! -f "$HOME_DIR"/node/onetry.tmp || "$IP_ONETRY_AGE" -gt "180" ]] &>/dev/null; then
