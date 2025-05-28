@@ -209,7 +209,7 @@ if [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -lt "3600" ]] &>/dev/null; 
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   TX="${Y1}"
-  WC="${Y1}"
+  WS="${Y1}"
 fi
 
 # if zero
@@ -218,7 +218,7 @@ if [[ -z "$WALLET_POS" || "$WALLET_POS" == "0" ]] &>/dev/null; then
 fi
 
 # output proof of stake
-WALLET_POS="${WC}$WALLET_POS${N0}"
+WALLET_POS="${WS}$WALLET_POS${N0}"
 
 ################################################################################
 
