@@ -488,8 +488,6 @@ WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ 
 # if zero
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
   WALLET_HEADS="${GR}0${N0}"
-else
-  WALLET_HEADS="${WC}$WALLET_HEADS${N0}"
 fi
 
 ################################################################################
