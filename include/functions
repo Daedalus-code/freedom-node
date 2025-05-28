@@ -108,7 +108,11 @@ if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1
   # getpeerinfo
   /usr/local/bin/freedomcoin-cli getpeerinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null && sleep 0.1 ##
   # listunspent
-  /usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/listunspent.tmp 2>/dev/null && sleep 0.1 ##
+  WALLET_LISTUNSPENT="$(/usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" 2>/dev/null)"
+  # if any data
+  if [[ -n "$WALLET_LISTUNSPENT" ]] &>/dev/null; then
+    echo "$WALLET_LISTUNSPENT" >"$HOME_DIR"/node/listunspent.tmp 2>/dev/null && sleep 0.1 ##
+  fi
   # getnodeaddresses
   /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers 2>/dev/null && sleep 0.1 ##
   # if missing, if older than n seconds
