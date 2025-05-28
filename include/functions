@@ -461,6 +461,8 @@ WALLET_TXCOUNT="$(grep "txcount" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" || "$WALLET_TXCOUNT" == "0" ]] &>/dev/null; then
   WALLET_TXCOUNT="${GR}0${N0}"
+else
+  WALLET_TXCOUNT="${WC}$WALLET_TXCOUNT${N0}"
 fi
 
 ################################################################################
@@ -472,6 +474,8 @@ WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | 
 # if zero, if syncing
 if [[ -z "$WALLET_MEMPOOL" || ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1000000" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}0${N0}"
+else
+  WALLET_MEMPOOL="${WC}$WALLET_MEMPOOL${N0}"
 fi
 
 # if active
@@ -488,6 +492,8 @@ WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ 
 # if zero
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
   WALLET_HEADS="${GR}0${N0}"
+else
+  WALLET_HEADS="${WC}$WALLET_HEADS${N0}"
 fi
 
 ################################################################################
