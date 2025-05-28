@@ -77,7 +77,7 @@ fi
 
 # if syncing
 if [[ "${WALLET_SYNC:0}" < "1.00" && "${WALLET_SYNC:0}" > "0" ]] &>/dev/null; then
-  WALLET_SYNC="${G1}$(echo "${WALLET_SYNC:0}" | tr -d '.' | sed 's/^0*//')%${N0}"
+  WALLET_SYNC="${Y1}$(echo "${WALLET_SYNC:0}" | tr -d '.' | sed 's/^0*//')%${N0}"
 fi
 
 # if zero

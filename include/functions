@@ -642,12 +642,19 @@ fi
 
 # reset/remove after midnight
 if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/dev/null; then
-  # reset
+  # keep last line
+  LAST_DEBUG="$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)"
+  # reset debug
   truncate -s 0 "$HOME_DIR"/.trumpcoin/debug.log &>/dev/null
+  # add last line
+  echo "$LAST_DEBUG" >"$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null
+  # reset movements
   truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
+  # reset stakes
   truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
-  # remove
+  # remove wanip
   rm "$HOME_DIR"/node/wanip.tmp &>/dev/null
+  # remove arp.peers
   rm /etc/freedom-node/arp.peers &>/dev/null
 fi
 
