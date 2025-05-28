@@ -194,9 +194,6 @@ if [[ "$WALLET_MOVEMENT" -gt "0" && "${WALLET_MOVEMENT_AGE:0}" -lt "3600" ]] &>/
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
-  # if greater than n seconds
-elif [[ "$WALLET_MOVEMENT" -gt "0" && "${WALLET_MOVEMENT_AGE:0}" -gt "3600" ]] &>/dev/null; then
-  WC="${N0}"
 fi
 
 ################################################################################
@@ -209,9 +206,6 @@ if [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -lt "3600" ]] &>/dev/null; 
   CB="${Y1}"
   TX="${Y1}"
   WC="${Y1}"
-  # if any rewards, greater than n age
-elif [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -gt "3600" ]] &>/dev/null; then
-  WC="${N0}"
 fi
 
 # if zero
