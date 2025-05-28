@@ -564,8 +564,13 @@ fi
 
 # if missing
 if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
+  # if missing
+  if [[ ! -d "$HOME_DIR"/scan ]] &>/dev/null; then
+    # create temp directory
+    mkdir "$HOME_DIR"/scan &>/dev/null
+  fi
   # create arp list
-  cd /tmp || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
+  cd "$HOME_DIR"/scan || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
   # fetch ip address, disregard duplicates
   echo "$(awk NF /etc/freedom-node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
   cd || exit
