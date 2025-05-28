@@ -447,9 +447,9 @@ WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
 # if zero
 if [[ -z "$WALLET_INPUTS" || "$WALLET_INPUTS" == "0" ]] &>/dev/null; then
-  WALLET_INPUTS="Inputs ${GR}0${N0}"
+  WALLET_INPUTS="${GR}0${N0}"
 else
-  WALLET_INPUTS="Inputs ${WC}$WALLET_INPUTS${N0}"
+  WALLET_INPUTS="${WC}$WALLET_INPUTS${N0}"
 fi
 
 ################################################################################
