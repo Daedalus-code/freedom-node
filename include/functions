@@ -210,7 +210,7 @@ if [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -lt "3600" ]] &>/dev/null; 
 fi
 
 # if zero
-if [[ -z "$WALLET_POS" || "$WALLET_POS" == "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 fi
 
@@ -221,12 +221,13 @@ fi
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
 WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
+# if any balance
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
 fi
 
 # if zero
-if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" == "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
+if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
 fi
 
@@ -237,7 +238,7 @@ fi
 WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
 # if zero
-if [[ -z "$WALLET_INPUTS" || "$WALLET_INPUTS" == "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_INPUTS" ]] &>/dev/null; then
   WALLET_INPUTS="${GR}0${N0}"
 fi
 
