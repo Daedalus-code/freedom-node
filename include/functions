@@ -73,6 +73,10 @@ if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "900" ]; then
 fi
 FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null)"
 
+if [[ -z "$FREED_PRICE" ]] &>/dev/null; then
+  FREED_PRICE="0"
+fi
+
 ################################################################################
 # freedomcoin watchlist
 ################################################################################
@@ -224,6 +228,11 @@ fi
 
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
 WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
+
+# if zero
+if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
+  WALLET_VALUE="0"
+fi
 
 # if any balance
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then

@@ -59,19 +59,9 @@ fi
 ################################################################################
 
 if [ "$RANDOM_INFO_QUOTE" == "2" ] &>/dev/null; then
-
-  if [[ -z "$FREED_PRICE" ]] &>/dev/null; then
-    FREED_PRICE="0"
-  fi
-
   # random quotes/information start
   RANDOM_INFO=$((((RANDOM % 3) + 1)))
   if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
-
-    if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
-      WALLET_VALUE="0"
-    fi
-
     TIMELINE="Value: ${WALLET_VALUE:0} USD @ ${FREED_PRICE:0} USD"
     ############################################################################
   elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
