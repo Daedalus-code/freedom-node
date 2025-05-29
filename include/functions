@@ -196,6 +196,7 @@ fi
 if [[ "$WALLET_MOVEMENT" -gt "0" && "${WALLET_MOVEMENT_AGE:0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
+  DC="${Y1}"
   TX="${Y1}"
 fi
 
