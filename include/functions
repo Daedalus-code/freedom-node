@@ -232,6 +232,8 @@ WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | a
 # if zero
 if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
   WALLET_VALUE="0"
+else
+  WALLET_VALUE="${G1}$WALLET_VALUE${N0}"
 fi
 
 # if any balance
