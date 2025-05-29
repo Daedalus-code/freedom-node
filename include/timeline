@@ -67,6 +67,17 @@ if [ "$RANDOM_INFO_QUOTE" == "2" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     X_FOLLOWERS="$(grep "twitter_followers" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     TELEGRAM_USERS="$(grep "telegram_channel_user_count" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
+
+    if [[ -z "$WATCHLIST_USERS" ]] &>/dev/null; then
+      WATCHLIST_USERS="0"
+    fi
+    if [[ -z "$X_FOLLOWERS" ]] &>/dev/null; then
+      X_FOLLOWERS="0"
+    fi
+    if [[ -z "$TELEGRAM_USERS" ]] &>/dev/null; then
+      TELEGRAM_USERS="0"
+    fi
+
     TIMELINE="Watchlist: ${WATCHLIST_USERS:0} X: ${X_FOLLOWERS:0} TG: ${TELEGRAM_USERS:0}"
   elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
     FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"

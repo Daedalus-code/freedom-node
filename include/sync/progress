@@ -81,7 +81,7 @@ if [[ "${WALLET_SYNC:0}" < "1.00" && "${WALLET_SYNC:0}" > "0" ]] &>/dev/null; th
 fi
 
 # if zero
-if [[ -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ "${WALLET_SYNC:0}" == "0" || -z "$WALLET_SYNC" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_SYNC="${GR}0%${N0}"
 fi
 
