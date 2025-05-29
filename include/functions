@@ -45,6 +45,7 @@ PID_OF_DAEMON="$(pidof freedomcoind 2>/dev/null | wc -l)"
 # default color (idle)
 CB="${GR}"
 TX="${GR}"
+DC="${N0}"
 
 ################################################################################
 # freedomcoin price
@@ -207,6 +208,7 @@ if [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -lt "3600" ]] &>/dev/null; 
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
   WALLET_POS="${Y1}$WALLET_POS${N0}"
   CB="${Y1}"
+  DC="${Y1}"
   TX="${Y1}"
 fi
 
@@ -231,7 +233,7 @@ fi
 if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
 else
-  WALLET_BALANCES="${CB}$WALLET_BALANCES${N0}"
+  WALLET_BALANCES="${DC}$WALLET_BALANCES${N0}"
 fi
 
 ################################################################################
@@ -244,7 +246,7 @@ WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 if [[ -z "$WALLET_INPUTS" ]] &>/dev/null; then
   WALLET_INPUTS="${GR}0${N0}"
 else
-  WALLET_INPUTS="${CB}$WALLET_INPUTS${N0}"
+  WALLET_INPUTS="${DC}$WALLET_INPUTS${N0}"
 fi
 
 ################################################################################
