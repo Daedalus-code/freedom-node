@@ -114,7 +114,7 @@ if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1
     echo "$WALLET_LISTUNSPENT" >"$HOME_DIR"/node/listunspent.tmp 2>/dev/null && sleep 0.1 ##
   fi
   # getnodeaddresses
-  /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>/etc/freedom-node/node.peers 2>/dev/null && sleep 0.1 ##
+  /usr/local/bin/freedomcoin-cli getnodeaddresses 2>/dev/null | grep -v "Error" | grep "address" | awk '{ print $2 }' | tr -d '",' >>"$HOME_DIR"/node/node.peers 2>/dev/null && sleep 0.1 ##
   # if missing, if older than n seconds
   if [[ ! -f "$HOME_DIR"/node/getpatriotnodecount.tmp || "$(stat -c '%Y' "$HOME_DIR"/node/getpatriotnodecount.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)" -gt "600" ]] &>/dev/null; then
     # getpatriotnodecount
@@ -135,12 +135,12 @@ fi
 ################################################################################
 
 # create ip4-ip6 list, disregard duplicates ####################################
-grep "addr" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | egrep -v "get|v2|send" | tr -d ',"' | grep "addr:" | awk '{ print $2 }' | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip4.peers
-grep "addr" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | egrep -v "get|v2|send" | tr -d ',"' | grep "addr:" | awk '{ print $2 }' | egrep "[a-z]+" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' | sort -n >/etc/freedom-node/connected.ip6.peers
+grep "addr" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | egrep -v "get|v2|send" | tr -d ',"' | grep "addr:" | awk '{ print $2 }' | egrep -v "[a-z]+" | awk -F: '{ print $1 }' | awk '!a[$0]++' | sort -n >"$HOME_DIR"/node/connected.ip4.peers
+grep "addr" "$HOME_DIR"/node/getpeerinfo.tmp 2>/dev/null | egrep -v "get|v2|send" | tr -d ',"' | grep "addr:" | awk '{ print $2 }' | egrep "[a-z]+" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' | sort -n >"$HOME_DIR"/node/connected.ip6.peers
 
 # combine ip4-ip6 list #########################################################
-cat /etc/freedom-node/connected.ip4.peers >/etc/freedom-node/connected.peers 2>/dev/null
-cat /etc/freedom-node/connected.ip6.peers >>/etc/freedom-node/connected.peers 2>/dev/null
+cat "$HOME_DIR"/node/connected.ip4.peers >"$HOME_DIR"/node/connected.peers 2>/dev/null
+cat "$HOME_DIR"/node/connected.ip6.peers >>"$HOME_DIR"/node/connected.peers 2>/dev/null
 
 # movements ####################################################################
 ADD_TO_WALLET="$(grep "AddToWallet" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "new" | awk '{ print $3 }' | tail -1)"
@@ -389,7 +389,7 @@ fi
 ################################################################################
 
 # ip4 address
-WALLET_PEERS_IP4="$(wc -l /etc/freedom-node/connected.ip4.peers | awk '{ print $1 }')"
+WALLET_PEERS_IP4="$(wc -l "$HOME_DIR"/node/connected.ip4.peers | awk '{ print $1 }')"
 
 # if zero
 if [[ -z "$WALLET_PEERS_IP4" ]] &>/dev/null; then
@@ -403,7 +403,7 @@ fi
 ################################################################################
 
 # ip6 address
-WALLET_PEERS_IP6="$(wc -l /etc/freedom-node/connected.ip6.peers 2>/dev/null | awk '{ print $1 }')"
+WALLET_PEERS_IP6="$(wc -l "$HOME_DIR"/node/connected.ip6.peers 2>/dev/null | awk '{ print $1 }')"
 
 # if zero
 if [[ -z "$WALLET_PEERS_IP6" ]] &>/dev/null; then
@@ -561,16 +561,16 @@ fi
 ################################################################################
 
 # if missing
-if [[ ! -f /etc/freedom-node/arp.peers ]] &>/dev/null; then
+if [[ ! -f "$HOME_DIR"/node/arp.peers ]] &>/dev/null; then
   # if missing
   if [[ ! -d "$HOME_DIR"/scan ]] &>/dev/null; then
     # create temp directory
     mkdir "$HOME_DIR"/scan &>/dev/null
   fi
   # create arp list
-  cd "$HOME_DIR"/scan || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >/etc/freedom-node/arp.peers
+  cd "$HOME_DIR"/scan || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >"$HOME_DIR"/node/arp.peers
   # fetch ip address, disregard duplicates
-  echo "$(awk NF /etc/freedom-node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
+  echo "$(awk NF "$HOME_DIR"/node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >"$HOME_DIR"/node/arp.peers
   cd || exit
 fi
 
@@ -579,49 +579,49 @@ fi
 ################################################################################
 
 # failed, disregard duplicates
-grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | grep "15110" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >/etc/freedom-node/failed.peers
+grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | grep "15110" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >"$HOME_DIR"/node/failed.peers
 # failed after select() (111), disregard duplicates
-grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' | grep "15110" | grep -v "to" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >>/etc/freedom-node/failed.peers
+grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' | grep "15110" | grep -v "to" | awk -F:15110 '{ print $1 }' | awk '!a[$0]++' >>"$HOME_DIR"/node/failed.peers
 
 ################################################################################
 # addnode onetry
 ################################################################################
 
 # if found
-if [[ -f /etc/freedom-node/node.peers && -f /etc/freedom-node/connected.peers && -f /etc/freedom-node/arp.peers && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
+if [[ -f "$HOME_DIR"/node/node.peers && -f "$HOME_DIR"/node/connected.peers && -f "$HOME_DIR"/node/arp.peers && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
 
   # sort lists
-  echo "$(awk NF /etc/freedom-node/node.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >/etc/freedom-node/node.peers
-  echo "$(awk NF /etc/freedom-node/connected.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >/etc/freedom-node/connected.peers
-  echo "$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >/etc/freedom-node/arp.peers
-  echo "$(awk NF /etc/freedom-node/failed.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >/etc/freedom-node/failed.peers
+  echo "$(awk NF "$HOME_DIR"/node/node.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/node.peers
+  echo "$(awk NF "$HOME_DIR"/node/connected.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/connected.peers
+  echo "$(awk NF "$HOME_DIR"/node/arp.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/arp.peers
+  echo "$(awk NF "$HOME_DIR"/node/failed.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/failed.peers
 
   # ip address node
-  IP_ADDRESS_NODES="$(awk NF /etc/freedom-node/node.peers 2>/dev/null)"
+  IP_ADDRESS_NODES="$(awk NF "$HOME_DIR"/node/node.peers 2>/dev/null)"
   # ip address arp
-  IP_ADDRESS_ARP="$(awk NF /etc/freedom-node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
+  IP_ADDRESS_ARP="$(awk NF "$HOME_DIR"/node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
   # ip address failed
-  IP_ADDRESS_FAILED="$(awk NF /etc/freedom-node/failed.peers 2>/dev/null)"
+  IP_ADDRESS_FAILED="$(awk NF "$HOME_DIR"/node/failed.peers 2>/dev/null)"
 
   # combine nodes and arp peers list
-  echo "$IP_ADDRESS_NODES" | awk NF >/etc/freedom-node/addnode
-  echo "$IP_ADDRESS_ARP" | awk NF >>/etc/freedom-node/addnode
+  echo "$IP_ADDRESS_NODES" | awk NF >"$HOME_DIR"/node/addnode.peers
+  echo "$IP_ADDRESS_ARP" | awk NF >>"$HOME_DIR"/node/addnode.peers
   # sort, disregard duplicates
-  echo "$(sort -n /etc/freedom-node/addnode 2>/dev/null | awk '!a[$0]++')" >/etc/freedom-node/addnode
+  echo "$(sort -n "$HOME_DIR"/node/addnode.peers 2>/dev/null | awk '!a[$0]++')" >"$HOME_DIR"/node/addnode.peers
 
   # fetch address to add
-  IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null)"
+  IP_ADDRESS_ADDNODE="$(awk NF "$HOME_DIR"/node/addnode.peers 2>/dev/null)"
 
   # if any data
   if [[ "$(echo "$IP_ADDRESS_FAILED" | egrep -c "[0-9]+|[a-z]+")" -gt "0" ]] &>/dev/null; then
     # disregard failed peers, create addnode
-    echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_FAILED")" >/etc/freedom-node/addnode
+    echo "$(echo "$IP_ADDRESS_ADDNODE" | grep -v "$IP_ADDRESS_FAILED")" >"$HOME_DIR"/node/addnode.peers
     # disregard connected peers, create addnode, disregard duplicates
-    echo "$(cat /etc/freedom-node/addnode 2>/dev/null | grep -v /etc/freedom-node/connected.peers 2>/dev/null | awk '!a[$0]++')" >/etc/freedom-node/addnode
+    echo "$(cat "$HOME_DIR"/node/addnode.peers 2>/dev/null | grep -v "$HOME_DIR"/node/connected.peers 2>/dev/null | awk '!a[$0]++')" >"$HOME_DIR"/node/addnode.peers
   fi
 
   # fetch random address to add
-  IP_ADDRESS_ADDNODE="$(awk NF /etc/freedom-node/addnode 2>/dev/null | sort -R | tail -1)"
+  IP_ADDRESS_ADDNODE="$(awk NF "$HOME_DIR"/node/addnode.peers 2>/dev/null | sort -R | tail -1)"
   # onetry age (seconds)
   IP_ONETRY_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/onetry.tmp 2>/dev/null || echo 0)))"
 
@@ -653,7 +653,7 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
   # remove wanip
   rm "$HOME_DIR"/node/wanip.tmp &>/dev/null
   # remove arp.peers
-  rm /etc/freedom-node/arp.peers &>/dev/null
+  rm "$HOME_DIR"/node/arp.peers &>/dev/null
 fi
 
 ################################################################################
