@@ -154,6 +154,15 @@ if ! [ -x "$(command -v bc)" ]; then
 fi
 
 # not installed
+if ! [ -x "$(command -v fping)" ]; then
+  printf '%b' "[  ${GR}!!${N0}  ] Installing fping!\n"
+  sudo apt-get install fping -y
+  if [ $? == 0 ]; then
+    printf '%b' "[  ${G1}OK${N0}  ] fping installed!\n"
+  fi
+fi
+
+# not installed
 if ! [ -x "$(command -v jq)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing jq!\n"
   sudo apt-get install jq -y
@@ -204,15 +213,6 @@ if ! [ -x "$(command -v dialog)" ]; then
   sudo apt-get install dialog -y
   if [ $? == 0 ]; then
     printf '%b' "[  ${G1}OK${N0}  ] dialog installed!\n"
-  fi
-fi
-
-# not installed
-if [[ ! "$(arp-scan --version)" ]] &>/dev/null; then
-  printf '%b' "[  ${GR}!!${N0}  ] Installing arp-scan!\n"
-  sudo apt-get install arp-scan -y
-  if [ $? == 0 ]; then
-    printf '%b' "[  ${G1}OK${N0}  ] arp-scan installed!\n"
   fi
 fi
 

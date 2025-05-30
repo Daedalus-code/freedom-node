@@ -560,20 +560,23 @@ if [[ "$(ls -lSh "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $5 
 fi
 
 ################################################################################
-# arp peers list
+# fping peers list
 ################################################################################
 
 # if missing
-if [[ ! -f "$HOME_DIR"/node/arp.peers ]] &>/dev/null; then
+if [[ ! -f "$HOME_DIR"/node/fping.peers ]] &>/dev/null; then
   # if missing
   if [[ ! -d "$HOME_DIR"/scan ]] &>/dev/null; then
     # create temp directory
     mkdir "$HOME_DIR"/scan &>/dev/null
   fi
-  # create arp list
-  cd "$HOME_DIR"/scan || exit && sudo arp-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >"$HOME_DIR"/node/arp.peers
+  if [[ -n "$IP_ADDRESS" ]] &>/dev/null; then
+    # create fping list, disregard client ip
+    fping -a -g "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 2>/dev/null | grep -v "$IP_ADDRESS" >"$HOME_DIR"/node/fping.peers
+  fi
+  cd "$HOME_DIR"/scan || exit && sudo fping-scan "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 >"$HOME_DIR"/node/fping.peers
   # fetch ip address, disregard duplicates
-  echo "$(awk NF "$HOME_DIR"/node/arp.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >"$HOME_DIR"/node/arp.peers
+  echo "$(awk NF "$HOME_DIR"/node/fping.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >"$HOME_DIR"/node/fping.peers
   cd || exit
 fi
 
@@ -591,24 +594,24 @@ grep "failed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $4 }' 
 ################################################################################
 
 # if found
-if [[ -f "$HOME_DIR"/node/node.peers && -f "$HOME_DIR"/node/connected.peers && -f "$HOME_DIR"/node/arp.peers && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
+if [[ -f "$HOME_DIR"/node/node.peers && -f "$HOME_DIR"/node/connected.peers && -f "$HOME_DIR"/node/fping.peers && -f "$HOME_DIR"/.trumpcoin/debug.log ]] &>/dev/null; then
 
   # sort lists
   echo "$(awk NF "$HOME_DIR"/node/node.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/node.peers
   echo "$(awk NF "$HOME_DIR"/node/connected.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/connected.peers
-  echo "$(awk NF "$HOME_DIR"/node/arp.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/arp.peers
+  echo "$(awk NF "$HOME_DIR"/node/fping.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/fping.peers
   echo "$(awk NF "$HOME_DIR"/node/failed.peers 2>/dev/null | sort -n | awk '!a[$0]++')" >"$HOME_DIR"/node/failed.peers
 
   # ip address node
   IP_ADDRESS_NODES="$(awk NF "$HOME_DIR"/node/node.peers 2>/dev/null)"
-  # ip address arp
-  IP_ADDRESS_ARP="$(awk NF "$HOME_DIR"/node/arp.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
+  # ip address fping
+  IP_ADDRESS_FPING="$(awk NF "$HOME_DIR"/node/fping.peers 2>/dev/null | awk '{ print $1 }' | egrep -v "[a-z]+" | awk '!a[$0]++')"
   # ip address failed
   IP_ADDRESS_FAILED="$(awk NF "$HOME_DIR"/node/failed.peers 2>/dev/null)"
 
-  # combine nodes and arp peers list
+  # combine nodes and fping peers list
   echo "$IP_ADDRESS_NODES" | awk NF >"$HOME_DIR"/node/addnode.peers
-  echo "$IP_ADDRESS_ARP" | awk NF >>"$HOME_DIR"/node/addnode.peers
+  echo "$IP_ADDRESS_FPING" | awk NF >>"$HOME_DIR"/node/addnode.peers
   # sort, disregard duplicates
   echo "$(sort -n "$HOME_DIR"/node/addnode.peers 2>/dev/null | awk '!a[$0]++')" >"$HOME_DIR"/node/addnode.peers
 
@@ -655,8 +658,8 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
   truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
   # remove wanip
   rm "$HOME_DIR"/node/wanip.tmp &>/dev/null
-  # remove arp.peers
-  rm "$HOME_DIR"/node/arp.peers &>/dev/null
+  # remove fping.peers
+  rm "$HOME_DIR"/node/fping.peers &>/dev/null
 fi
 
 ################################################################################
