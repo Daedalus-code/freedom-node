@@ -645,10 +645,16 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
   truncate -s 0 "$HOME_DIR"/.trumpcoin/debug.log &>/dev/null
   # add last line
   echo "$LAST_DEBUG" >"$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null
-  # reset movements
-  truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
-  # reset stakes
-  truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
+  # if any data
+  if [[ "$(wc -l "$HOME_DIR"/node/movements.tmp | awk '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+    # reset movements
+    truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
+  fi
+  # if any data
+  if [[ "$(wc -l "$HOME_DIR"/node/stakes.tmp | awk '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+    # reset stakes
+    truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
+  fi
   # remove wanip
   rm "$HOME_DIR"/node/wanip.tmp &>/dev/null
   # remove fping.peers
