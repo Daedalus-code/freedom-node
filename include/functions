@@ -565,18 +565,12 @@ fi
 
 # if missing
 if [[ ! -f "$HOME_DIR"/node/fping.peers ]] &>/dev/null; then
-  # if missing
-  if [[ ! -d "$HOME_DIR"/scan ]] &>/dev/null; then
-    # create temp directory
-    mkdir "$HOME_DIR"/scan &>/dev/null
-  fi
   if [[ -n "$IP_ADDRESS" ]] &>/dev/null; then
     # create fping list, disregard client ip
     fping -a -g "$(echo "$IP_ADDRESS" | egrep -o "[0-9]+.[0-9]+.[0-9]+").0"/24 2>/dev/null | grep -v "$IP_ADDRESS" >"$HOME_DIR"/node/fping.peers
   fi
   # fetch ip address, disregard duplicates
   echo "$(awk NF "$HOME_DIR"/node/fping.peers | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | awk '!a[$0]++')" >"$HOME_DIR"/node/fping.peers
-  cd || exit
 fi
 
 ################################################################################
