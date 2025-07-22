@@ -495,11 +495,6 @@ fi
 # wallet tx last
 ################################################################################
 
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:0}" -gt "3600" && "${WALLET_MOVEMENT_AGE:0}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  # get best block hash
-  WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
-fi
-
 # if loading block index
 if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_TXLAST="   ${CY}Loading${N0}"
@@ -512,6 +507,13 @@ fi
 if [[ -z "$WALLET_TXLAST" && "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" == "0" ]] &>/dev/null; then
   WALLET_TXLAST="   ${GR}Loading${N0}"
   CB="${GR}"
+fi
+
+################################################################################
+
+# get best block hash
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:0}" -gt "3600" && "${WALLET_MOVEMENT_AGE:0}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
 
 ################################################################################
