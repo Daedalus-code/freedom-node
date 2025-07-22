@@ -508,8 +508,8 @@ fi
 
 ################################################################################
 
-# if zero
-if [[ -z "$WALLET_TXLAST" || "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" == "0" ]] &>/dev/null; then
+# if zero and zero progress
+if [[ -z "$WALLET_TXLAST" && "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" == "0" ]] &>/dev/null; then
   WALLET_TXLAST="   ${GR}Loading${N0}"
   CB="${GR}"
 fi
