@@ -517,6 +517,13 @@ if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:0}" -gt "360
 fi
 
 ################################################################################
+
+# if best block hash and zero
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
+fi
+
+################################################################################
 # quotes
 ################################################################################
 
