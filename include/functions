@@ -264,9 +264,10 @@ fi
 ################################################################################
 
 # if any password set
-if [[ -n "$WALLET_PASSPHRASE" ]] &>/dev/null; then
+if [[ -n "$WALLET_PASSPHRASE" && ! -f "$HOME_DIR"/node/walletpassphrase.tmp ]] &>/dev/null; then
   # start staking
   /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE:0}" 0 2>/dev/null | grep -v "Error" && sleep 0.1
+  echo "wallet_unlocked @ $(date | xargs)" >"$HOME_DIR"/node/walletpassphrase.tmp
 fi
 
 ################################################################################
