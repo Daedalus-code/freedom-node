@@ -12,5 +12,4 @@ Raspberry pi + [Raspberry Pi OS  ](https://www.raspberrypi.com/software/)
 
 ### Trade FreedomCoin (FREED) on XeggeX, NonKYC
 
-[XeggeX](https://xeggex.com?ref=650e9399625501b3b53b1172)  
 [NonKYC](https://nonkyc.io?ref=66a730caaee63aa82784b011)  
