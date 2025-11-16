@@ -10,6 +10,6 @@ Raspberry pi + [Raspberry Pi OS  ](https://www.raspberrypi.com/software/)
 
 ``bash freedom-node/include/install``  
 
-### Trade FreedomCoin (FREED) on XeggeX, NonKYC
+### Trade FreedomCoin (FREED) on NonKYC
 
 [NonKYC](https://nonkyc.io?ref=66a730caaee63aa82784b011)  
