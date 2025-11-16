@@ -69,14 +69,26 @@ fi
 
 # if public missing
 if [[ ! -f "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
-  PUBLIC_IP="$(curl -s http://whatismyip.akamai.com/)"
-  echo "$PUBLIC_IP" >"$HOME_DIR"/node/wanip.tmp
+  PUBLIC_IP_DATA="$(curl -s http://whatismyip.akamai.com/)"
+
+  # if zero
+  if [[ -z "$PUBLIC_IP_DATA" ]] &>/dev/null; then
+    PUBLIC_IP_DATA="$(curl -s icanhazip.com)"
+  fi
+
+  echo "$PUBLIC_IP_DATA" >"$HOME_DIR"/node/wanip.tmp
 fi
 
 # if proxy missing
 if [[ ! -f "$HOME_DIR"/node/proxyip.tmp ]] &>/dev/null; then
-  PUBLIC_IP="$(curl -s --proxy socks5h://localhost:9050 http://whatismyip.akamai.com/)"
-  echo "$PUBLIC_IP" >"$HOME_DIR"/node/proxyip.tmp
+  PUBLIC_IP_DATA="$(curl -s --proxy socks5h://localhost:9050 http://whatismyip.akamai.com/)"
+
+  # if zero
+  if [[ -z "$PUBLIC_IP_DATA" ]] &>/dev/null; then
+    PUBLIC_IP_DATA="$(curl -s --proxy socks5h://localhost:9050 icanhazip.com)"
+  fi
+
+  echo "$PUBLIC_IP_DATA" >"$HOME_DIR"/node/proxyip.tmp
 fi
 
 # if onion missing
