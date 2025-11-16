@@ -123,7 +123,7 @@ RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | egrep -v
 RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "authors" | tr '/' ' ' | awk -Fauthors '{ print $2 }' | xargs)"
 
 # create quotes
-echo '"Are we still talking about Jeffrey Epstein?" --Donald-John-Trump' >>/home/"$USER_NAME"/node/quotes
+echo '"Are we still talking about Jeffrey Epstein?" --donald-john-trump' >>/home/"$USER_NAME"/node/quotes
 echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
 # disregard duplicates, sort randomly, disregard lines greater than n, html loc, errors
 echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524|error code: 504")" >/home/"$USER_NAME"/node/quotes
