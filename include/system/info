@@ -68,7 +68,7 @@ fi
 ################################################################################
 
 # if public missing
-if [[ ! -f "$HOME_DIR"/node/wanip.tmp || ! -s "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
+if [[ ! -f "$HOME_DIR"/node/wanip.tmp || -s "$HOME_DIR"/node/wanip.tmp ]] &>/dev/null; then
   PUBLIC_IP_DATA="$(curl -s http://whatismyip.akamai.com/)"
 
   # if zero
