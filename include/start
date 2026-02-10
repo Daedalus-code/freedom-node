@@ -30,7 +30,7 @@ for (( ; ; )); do # loop dashbord
   # freedomcoin daemon
   ##############################################################################
 
-  # daemon running
+  # daemon not running
   if ! pgrep -x freedomcoind >/dev/null; then
     # client exist
     if [[ -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
