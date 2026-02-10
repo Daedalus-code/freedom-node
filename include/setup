@@ -170,14 +170,14 @@ fi
 
 # if VPS already, skip this
 if [[ -d "$HOME_DIR"/freed1 || -d "$HOME_DIR"/trump1 ]] &>/dev/null; then
-  echo "[  !!  ] This is a VPS Server already with $(pidof freedomcoind 2>/dev/null | wc -w) nodes running.."
+  echo "[  !!  ] This is a VPS Server already with $(pgrep -x freedomcoind 2>/dev/null | wc -w) nodes running.."
   # remove obsolete dash for vps server
   sudo rm /usr/local/bin/dash &>/dev/null
 
 else
 
   # if no daemon running
-  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" == "0" ]] &>/dev/null; then
+  if [[ "$(pgrep -x freedomcoind 2>/dev/null | wc -l)" == "0" ]] &>/dev/null; then
     # wallet exist
     if [[ -f "$HOME_DIR"/freedomcoind && -f "$HOME_DIR"/freedomcoin-cli ]] &>/dev/null; then
       # install wallet
@@ -396,8 +396,8 @@ EOF
   ##############################################################################
 
   # daemon running
-  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
-    printf '%b' "[  ${G1}OK${N0}  ] Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
+  if pgrep -x freedomcoind >/dev/null; then
+    printf '%b' "[  ${G1}OK${N0}  ] Already running! PID: ${G1}$(pgrep -x freedomcoind)${N0}\n"
     printf '%b' "[  ${G1}OK${N0}  ] Run ${CY}dash${N0} to monitor!\n"
   else
     # start service

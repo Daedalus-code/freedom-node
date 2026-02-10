@@ -11,11 +11,31 @@ for (( ; ; )); do # loop dashbord
   HOME_DIR="$(cat /etc/freedom-node/homedir 2>/dev/null)"
 
   ##############################################################################
+
+  sync_check() {
+    # sync check
+    /usr/local/bin/./freedomcoind getblockchaininfo | head -20 >/tmp/gbci.tmp
+    GET_BLOCKCHAIN_INFO="$(</tmp/gbci.tmp)"
+    BLOCKS="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "blocks:" | awk '{ print $NF }')"
+    HEADERS="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "headers:" | awk '{ print $NF }')"
+    DOWNLOADING_BLOCK="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "initial_block_downloading:" | awk '{ print $NF }')"
+    # synced but still downloading
+    if [[ "$BLOCKS" == "$HEADERS" && "$DOWNLOADING_BLOCK" == "true" ]]; then
+      # stop wallet
+      /usr/local/bin/./freedomcoin-cli stop
+    fi
+  }
+
+  ##############################################################################
   # freedomcoin daemon
   ##############################################################################
 
   # daemon running
-  if [[ "$(pidof freedomcoind 2>/dev/null | wc -l)" == "0" ]] &>/dev/null; then
+  if ! pgrep -x freedomcoind >/dev/null; then
+    # client exist
+    if [[ -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
+      sync_check
+    fi
     # daemon exist
     if [[ -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
       # reset old log

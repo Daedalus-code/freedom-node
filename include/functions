@@ -36,7 +36,7 @@ if [[ -f "$HOME_DIR"/node/display && ! -f /tmp/setfont ]] &>/dev/null; then
   echo "${SET_FONT}" >/tmp/setfont 2>/dev/null
 fi
 
-PID_OF_DAEMON="$(pidof freedomcoind 2>/dev/null | wc -l)"
+PID_OF_DAEMON="$(pgrep -x freedomcoind 2>/dev/null | wc -l)"
 
 ################################################################################
 # logo, tx colors
