@@ -248,7 +248,10 @@ HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   # if missing
   if [[ ! -f /home/"$USER_NAME"/node/wanip.tmp ]] &>/dev/null; then
     # fetch wan from whatismyip
-    curl -s http://whatismyip.akamai.com/ >/home/"$USER_NAME"/node/wanip.tmp
+    WAN_IP="$(curl -s http://whatismyip.akamai.com/ 2>/dev/null)"
+    if [[ -n "$WAN_IP" ]]; then
+      echo "$WAN_IP" >/home/"$USER_NAME"/node/wanip.tmp
+    fi
   fi
   printf '%b' "[  ${G1}OK${N0}  ] ${CY}$(cat /home/"$USER_NAME"/node/wanip.tmp 2>/dev/null)${N0}\n"
   ##############################################################################
