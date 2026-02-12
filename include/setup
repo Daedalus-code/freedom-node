@@ -216,7 +216,15 @@ else
   if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" == "0" ]] &>/dev/null; then
     # update tor configuration
     printf '%b' "[  ${P1}OK${N0}  ] Updating Tor configuration!\n"
-    echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
+    echo "RunAsDaemon 1
+
+# Control port for Tor controller
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+
+# Hidden service
+HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # fix permissions
     sudo mkdir -p /var/lib/tor/FreedomCoin-service/
