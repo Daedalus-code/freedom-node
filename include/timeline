@@ -122,11 +122,15 @@ fi
 RANDOM_QUOTES="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | egrep -v "www|Image" | sed '/^[[:space:]]*$/d' | paste -sd' ')"
 RANDOM_AUTHOR="$(html2text /home/"$USER_NAME"/node/rq.tmp 2>/dev/null | grep "authors" | tr '/' ' ' | awk -Fauthors '{ print $2 }' | xargs)"
 
-# create quotes
+# create quotes ################################################################
 echo '"Are we still talking about Jeffrey Epstein?" --donald-john-trump' >>/home/"$USER_NAME"/node/quotes
+echo '"The Dow is over 50,000 right now!!" --pam-bondi' >>/home/"$USER_NAME"/node/quotes
+################################################################################
+
 echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
+
 # disregard duplicates, sort randomly, disregard lines greater than n, html loc, errors
-echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|502 Bad Gateway|error code: 524|error code: 504")" >/home/"$USER_NAME"/node/quotes
+echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|Bad Gateway|error code:")" >/home/"$USER_NAME"/node/quotes
 
 # if found
 if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
