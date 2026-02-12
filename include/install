@@ -154,15 +154,6 @@ if ! [ -x "$(command -v bc)" ]; then
 fi
 
 # not installed
-if ! [ -x "$(command -v fping)" ]; then
-  printf '%b' "[  ${GR}!!${N0}  ] Installing fping!\n"
-  sudo apt-get install fping -y
-  if [ $? == 0 ]; then
-    printf '%b' "[  ${G1}OK${N0}  ] fping installed!\n"
-  fi
-fi
-
-# not installed
 if ! [ -x "$(command -v jq)" ]; then
   printf '%b' "[  ${GR}!!${N0}  ] Installing jq!\n"
   sudo apt-get install jq -y
