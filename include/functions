@@ -107,7 +107,7 @@ CLIENT_UPDATED_DATA="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/KEK.tm
 if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   echo "CHECKED @ $(date | xargs)" >"$HOME_DIR"/node/KEK.tmp
   # getinfo
-  /usr/local/bin/./freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getinfo.tmp 2>/dev/null && sleep 0.1 ##
+  /usr/local/bin/freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getinfo.tmp 2>/dev/null && sleep 0.1 ##
   # getwalletinfo
   /usr/local/bin/freedomcoin-cli getwalletinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null && sleep 0.1 ##
   # getbestblockhash
@@ -131,7 +131,7 @@ if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1
   fi
   # version
   if [[ ! -f "$HOME_DIR"/node/version.tmp || ! -s "$HOME_DIR"/node/version.tmp ]] &>/dev/null; then
-    /usr/local/bin/./freedomcoin-cli -version 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/version.tmp 2>/dev/null && sleep 0.1 ##
+    /usr/local/bin/freedomcoin-cli -version 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/version.tmp 2>/dev/null && sleep 0.1 ##
   fi
   # getblockchaininfo
   if [[ ! -f "$HOME_DIR"/node/getblockchaininfo.tmp || ! -s "$HOME_DIR"/node/getblockchaininfo.tmp ]] &>/dev/null; then
