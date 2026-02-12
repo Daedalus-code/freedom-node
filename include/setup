@@ -217,7 +217,9 @@ else
     # update tor configuration
     printf '%b' "[  ${GR}!!${N0}  ] Updating configuration!\n"
     echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
-HiddenServicePort 15110 127.0.0.1:9050" | sudo tee -a /etc/tor/torrc >/dev/null
+HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
+    sudo chown -R debian-tor:debian-tor /var/lib/tor/FreedomCoin-service/
+    sudo chmod 700 /var/lib/tor/FreedomCoin-service/
     # update tor configuration
     printf '%b' "[  ${GR}!!${N0}  ] Restarting tor!\n"
     sudo service tor@default restart
