@@ -123,12 +123,16 @@ if [[ "$(grep -c "rpcuser=" "$HOME_DIR"/.trumpcoin/trumpcoin.conf)" == "0" || ! 
   touch "$HOME_DIR"/.trumpcoin/trumpcoin.conf &>/dev/null
   printf '%b' "[  ${N0}!!${N0}  ] Setup rpcuser and rpcpassword..\n"
   # add random rpc credentials
-  echo "
+  echo "# FreedomCoin config file
+
 # RPC credentials
 rpcuser=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
 rpcpassword=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
 rpcallowip=127.0.0.1
-rpcbind=127.0.0.1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
+rpcbind=127.0.0.1
+
+server=1
+listen=1" >>"$HOME_DIR"/.trumpcoin/trumpcoin.conf
 fi
 
 ################################################################################
@@ -206,16 +210,6 @@ if ! [ -x "$(command -v dialog)" ]; then
     printf '%b' "[  ${G1}OK${N0}  ] dialog installed!\n"
   fi
 fi
-
-################################################################################
-# arp home network addnode
-################################################################################
-
-sudo chmod 644 /usr/share/arp-scan/*.txt
-printf '%b' "[  ${G1}OK${N0}  ] Scanning home network!\n"
-sudo arp-scan --localnet 2>/dev/null | awk '{ print $1 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | uniq >>"$HOME"/node/arp.peers
-printf '%b' "[  ${G1}OK${N0}  ] Creating home network addnodes!\n"
-echo "$(cat "$HOME"/node/arp.peers 2>/dev/null | awk '!a[$0]++')" >"$HOME"/node/arp.peers
 
 ################################################################################
 # run setup
