@@ -14,7 +14,7 @@ for (( ; ; )); do # loop dashbord
 
   sync_check() {
     # sync check
-    /usr/local/bin/./freedomcoind getblockchaininfo | head -20 >/tmp/gbci.tmp
+    /usr/local/bin/./freedomcoind getblockchaininfo 2>/dev/null | head -20 >/tmp/gbci.tmp
     GET_BLOCKCHAIN_INFO="$(</tmp/gbci.tmp)"
     BLOCKS="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "blocks:" | awk '{ print $NF }')"
     HEADERS="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "headers:" | awk '{ print $NF }')"

@@ -66,9 +66,14 @@ fi
 # if the file is missing or the data is older than 420 seconds, fetch new price
 if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "900" ]; then
   # fetch the latest price from the coingecko api ##############################
-  PRICE=$(timeout 10 curl -s --proxy socks5h://localhost:9050 "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" | jq -r ".$CRYPTO.$CURRENCY")
+  PRICE=$(timeout 10 curl -s --proxy socks5h://localhost:9050 \
+    "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" |
+    jq -r ".$CRYPTO.$CURRENCY // empty")
   ##############################################################################
-  echo "$PRICE" >"$PRICE_FILE"
+  # update only if we got something
+  if [[ -n "$PRICE" ]]; then
+    echo "$PRICE" >"$PRICE_FILE"
+  fi
 # read the (possibly updated) cached price
 fi
 FREED_PRICE="$(cat "$PRICE_FILE" 2>/dev/null)"
