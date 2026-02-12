@@ -45,7 +45,7 @@ for (( ; ; )); do # loop dashbord
       # output daemon
       printf '%b' "[  ${G1}OK${N0}  ] Daemon  : "
       # start daemon
-      /usr/local/bin/./freedomcoind -datadir="$HOME_DIR/.trumpcoin" -debuglogfile="$HOME_DIR/.trumpcoin/debug.log" -conf="$HOME_DIR/.trumpcoin/trumpcoin.conf" -debug="tor" -proxy="127.0.0.1:9050" -daemon
+      /usr/local/bin/./freedomcoind -datadir="$HOME_DIR/.trumpcoin" -debuglogfile="$HOME_DIR/.trumpcoin/debug.log" -conf="$HOME_DIR/.trumpcoin/trumpcoin.conf" -debug="tor" -proxy="127.0.0.1:9050"
     fi
   fi
   sleep 60
