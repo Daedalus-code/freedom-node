@@ -215,13 +215,15 @@ else
   # if missing
   if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" == "0" ]] &>/dev/null; then
     # update tor configuration
-    printf '%b' "[  ${GR}!!${N0}  ] Updating configuration!\n"
+    printf '%b' "[  ${P1}OK${N0}  ] Updating Tor configuration!\n"
     echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
-    sudo chown -R debian-tor:debian-tor /var/lib/tor/FreedomCoin-service/
+    # fix permissions
+    sudo mkdir -p /var/lib/tor/FreedomCoin-service/
+    sudo chown -R $(ps -o user= -p $(pidof tor)):$(ps -o group= -p $(pidof tor)) /var/lib/tor/FreedomCoin-service/
     sudo chmod 700 /var/lib/tor/FreedomCoin-service/
     # update tor configuration
-    printf '%b' "[  ${GR}!!${N0}  ] Restarting tor!\n"
+    printf '%b' "[  ${P1}OK${N0}  ] Restarting Tor!\n"
     sudo service tor@default restart
   fi
 
