@@ -227,8 +227,10 @@ CookieAuthFileGroupReadable 1
 HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # fix permissions
+    TORUSER=$(systemctl show -p User tor | cut -d= -f2)
+    TORGROUP=$(systemctl show -p Group tor | cut -d= -f2)
     sudo mkdir -p /var/lib/tor/FreedomCoin-service/
-    sudo chown -R $(ps -o user= -p $(pidof tor)):$(ps -o group= -p $(pidof tor)) /var/lib/tor/FreedomCoin-service/
+    sudo chown -R "$TORUSER":"$TORGROUP" /var/lib/tor/FreedomCoin-service/
     sudo chmod 700 /var/lib/tor/FreedomCoin-service/
     # update tor configuration
     printf '%b' "[  ${P1}OK${N0}  ] Restarting Tor!\n"
