@@ -213,7 +213,7 @@ fi
 
 sudo chmod 644 /usr/share/arp-scan/*.txt
 printf '%b' "[  ${G1}OK${N0}  ] Scanning home network!\n"
-sudo arp-scan --localnet 2>/dev/null | awk '{ print $1 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | uniq >"$HOME"/node/arp.peers
+sudo arp-scan --localnet 2>/dev/null | awk '{ print $1 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | uniq >>"$HOME"/node/arp.peers
 printf '%b' "[  ${G1}OK${N0}  ] Creating home network addnodes!\n"
 echo "$(cat "$HOME"/node/arp.peers 2>/dev/null | awk '!a[$0]++')" >"$HOME"/node/arp.peers
 
