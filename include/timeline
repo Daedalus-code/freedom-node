@@ -129,8 +129,8 @@ echo '"The Dow is over 50,000 right now!!" --pam-bondi' >>/home/"$USER_NAME"/nod
 
 echo "$RANDOM_QUOTES --$RANDOM_AUTHOR" >>/home/"$USER_NAME"/node/quotes
 
-# disregard duplicates, sort randomly, disregard lines greater than n, html loc, errors
-echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|Bad Gateway|error code:")" >/home/"$USER_NAME"/node/quotes
+# disregard duplicates, sort randomly, disregard lines greater than n, html loc, errors, 1 word line
+echo "$(tail -777 /home/"$USER_NAME"/node/quotes 2>/dev/null | awk 'length($0)<171' | awk '!a[$0]++' | sort -R | egrep -v ";|<|>|{|}|Bad Gateway|error code:" | awk 'NF >= 2')" >/home/"$USER_NAME"/node/quotes
 
 # if found
 if [[ -f /home/"$USER_NAME"/node/quotes.banned ]] &>/dev/null; then
