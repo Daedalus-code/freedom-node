@@ -350,9 +350,8 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
     # if service doesn't exist, create it
     if [[ ! -f /etc/systemd/system/freedomnode.service ]] &>/dev/null; then
-
-      cat <<EOF >/home/"$USER_NAME"/node/service.tmp
-[Unit]
+      # create service
+      echo "[Unit]
 Description=FreedomNode Startup Script
 After=network.target
 
@@ -366,8 +365,7 @@ StandardError=inherit
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
-EOF
+WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
       # install service
       sudo mv /home/"$USER_NAME"/node/service.tmp /etc/systemd/system/freedomnode.service
@@ -406,6 +404,7 @@ EOF
   # arp home network addnode
   ##############################################################################
 
+  truncate -s 0 "$HOME"/node/*.peers
   sudo chmod 644 /usr/share/arp-scan/*.txt
   printf '%b' "[  ${G1}OK${N0}  ] Scanning home network!\n"
   sudo arp-scan --localnet 2>/dev/null | awk '{ print $1 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | uniq >>"$HOME"/node/arp.peers
