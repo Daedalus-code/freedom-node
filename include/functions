@@ -409,11 +409,18 @@ fi
 
 source /etc/freedom-node/include/sync/progress
 
+# default
+DOWNLOADING_BLOCK="false"
+
 # sync progress
 SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
+# getblockchaininfo
+GET_BLOCKCHAIN_INFO="$(<"$HOME_DIR"/node/getblockchaininfo.tmp)"
+# initial block downloading
+DOWNLOADING_BLOCK="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "initial_block_downloading:" | awk '{ print $NF }')"
 
-# if any data
-if [[ "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" || -n "$LATEST_PROGRESS" ]] &>/dev/null; then
+# synced but still downloading, if any data
+if [[ "$DOWNLOADING_BLOCK" == "true" && "$(grep -c "progress=" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null)" -gt "0" || -n "$LATEST_PROGRESS" ]] &>/dev/null; then
   # if syncing
   if [[ ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1000000" || "$LATEST_PROGRESS" < "1.000000" ]] &>/dev/null; then
     # sync progress bar color based on percentage
