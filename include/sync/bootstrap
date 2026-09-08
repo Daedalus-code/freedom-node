@@ -17,7 +17,7 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 # if missing
 if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
-  # if enough space 10g
+  # if enough space greater than ng
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G' | tr -d '.')" -gt "10" ]] &>/dev/null; then
     printf '%b' "[  ${G1}OK${N0}  ] Downloading bootstrap.zip - ${CY}https://freedomcoin.global/wallets/bootstrap.zip${N0}\n"
 
@@ -68,6 +68,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     # remove blockchain.zip
     printf '%b' "[  ${G1}OK${N0}  ] Removing bootstrap.zip..\n"
     rm "$HOME_DIR"/bootstrap.zip &>/dev/null
+    # make directory for stopping this
     mkdir "$HOME_DIR"/.trumpcoin/bootstrap &>/dev/null
 
     ############################################################################
