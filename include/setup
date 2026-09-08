@@ -373,7 +373,7 @@ Restart=always
 WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
       # install service
-      sudo mv /home/"$USER_NAME"/node/service.tmp /etc/systemd/system/freedomnode.service
+      sudo mv /home/"$USER_NAME"/node/service.tmp /etc/systemd/system/freedomnode.service 2>/dev/null
       printf '%b' "[  ${G1}OK${N0}  ] Enabling display service..\n"
       # apply service + disable getty on tty1
       sudo systemctl daemon-reexec

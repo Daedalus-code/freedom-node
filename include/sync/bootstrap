@@ -73,7 +73,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
 
     # move blockchain out of bootstrap folder
     printf '%b' "[  ${G1}OK${N0}  ] Installing blockchain..\n"
-    mv "$HOME_DIR"/.trumpcoin/bootstrap/* "$HOME_DIR"/.trumpcoin
+    mv "$HOME_DIR"/.trumpcoin/bootstrap/* "$HOME_DIR"/.trumpcoin 2>/dev/null
   else
     printf '%b' "[  ${G1}OK${N0}  ] Not enouh space for bootstrap.zip, skipping! ${GR}Brace yourself, Mmmmm coffeee..${N0}\n"
     mkdir "$HOME_DIR"/.trumpcoin/bootstrap &>/dev/null
