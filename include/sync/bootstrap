@@ -68,6 +68,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
     # remove blockchain.zip
     printf '%b' "[  ${G1}OK${N0}  ] Removing bootstrap.zip..\n"
     rm "$HOME_DIR"/bootstrap.zip &>/dev/null
+    mkdir "$HOME_DIR"/.trumpcoin/bootstrap &>/dev/null
 
     ############################################################################
 
