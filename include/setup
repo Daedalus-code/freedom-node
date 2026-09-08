@@ -233,11 +233,11 @@ HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     sudo chown -R debian-tor:debian-tor /var/lib/tor/FreedomCoin-service/
     # set strict read/write/execute permissions for the Tor user only
     sudo chmod 700 /var/lib/tor/FreedomCoin-service/
-
-    # update tor configuration
-    printf '%b' "[  ${P1}OK${N0}  ] Restarting Tor!\n"
-    sudo service tor@default restart
   fi
+
+  # update tor configuration
+  printf '%b' "[  ${P1}OK${N0}  ] Restarting Tor!\n"
+  sudo service tor@default restart
 
   ##############################################################################
   # network interface
