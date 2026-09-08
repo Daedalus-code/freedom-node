@@ -61,7 +61,7 @@ WALLET_SYNC="$(grep -o "progress........." "$HOME_DIR"/.trumpcoin/debug.log 2>/d
 
 # if zero
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
-  WALLET_SYNC="$(echo "$LATEST_PROGRESS" | awk '{ printf "%.2f\n", $1 }')"
+  WALLET_SYNC="$(echo "$LATEST_PROGRESS" | awk '{ printf "%.4f\n", $1 }')"
 fi
 
 echo "$WALLET_SYNC" >/home/"$USER_NAME"/node/progress.tmp
