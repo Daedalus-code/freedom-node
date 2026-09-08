@@ -29,12 +29,12 @@ if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
     local EMPTY
 
     # default
-    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
-    PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
+    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 1}" 2>/dev/null)
+    PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 1}" 2>/dev/null)
 
     # if 100.000%
     if [[ "$PERCENT" == "100.0000" ]] &>/dev/null; then
-      PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
+      PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 1}" 2>/dev/null)
     fi
 
     FILLED=$((PERCENT * BAR_WIDTH / 100))
