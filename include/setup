@@ -409,10 +409,14 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
   # arp home network addnode
   ##############################################################################
 
-  truncate -s 0 "$HOME"/node/*.peers
-  sudo chmod 644 /usr/share/arp-scan/*.txt
+  rm "$HOME"/node/*.peers
+  sudo chmod 644 /usr/share/arp-scan/*.txt 2>/dev/null
   printf '%b' "[  ${G1}OK${N0}  ] Scanning home network!\n"
   sudo arp-scan --localnet 2>/dev/null | awk '{ print $1 }' | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | uniq >>"$HOME"/node/arp.peers
+  # if empty
+  if [[ "$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "$HOME"/node/arp.peers)" -eq "0" ]]; then
+    sudo arp -a 2>/dev/null | awk '{ print $2 }' | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" | uniq >>"$HOME"/node/arp.peers
+  fi
   printf '%b' "[  ${G1}OK${N0}  ] Creating home network addnodes!\n"
   echo "$(cat "$HOME"/node/arp.peers 2>/dev/null | awk '!a[$0]++')" >"$HOME"/node/arp.peers
 
