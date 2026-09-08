@@ -226,12 +226,14 @@ CookieAuthFileGroupReadable 1
 # Hidden service
 HiddenServiceDir /var/lib/tor/FreedomCoin-service/
 HiddenServicePort 80 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
-    # fix permissions
-    TORUSER=$(systemctl show -p User tor | cut -d= -f2)
-    TORGROUP=$(systemctl show -p Group tor | cut -d= -f2)
+
+    # create the directory if it doesn't exist
     sudo mkdir -p /var/lib/tor/FreedomCoin-service/
-    sudo chown -R "$TORUSER":"$TORGROUP" /var/lib/tor/FreedomCoin-service/
+    # change ownership to the Tor system user (adjust 'debian-tor' to 'tor' if on Alpine/Arch/RHEL)
+    sudo chown -R debian-tor:debian-tor /var/lib/tor/FreedomCoin-service/
+    # set strict read/write/execute permissions for the Tor user only
     sudo chmod 700 /var/lib/tor/FreedomCoin-service/
+
     # update tor configuration
     printf '%b' "[  ${P1}OK${N0}  ] Restarting Tor!\n"
     sudo service tor@default restart
