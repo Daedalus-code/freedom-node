@@ -24,7 +24,7 @@ if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
   draw_progress_bar() {
     PROGRESS="$1"
     local PERCENT
-    BAR_WIDTH="45"
+    BAR_WIDTH="44"
     local FILLED
     local EMPTY
 
