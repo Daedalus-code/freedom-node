@@ -415,7 +415,7 @@ DOWNLOADING_BLOCK="false"
 # sync progress
 SYNC_PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | tail -1 | tr -d '.')"
 # getblockchaininfo
-GET_BLOCKCHAIN_INFO="$(<"$HOME_DIR"/node/getblockchaininfo.tmp)"
+GET_BLOCKCHAIN_INFO="$(cat "$HOME_DIR"/node/getblockchaininfo.tmp 2>/dev/null)"
 # initial block downloading
 DOWNLOADING_BLOCK="$(echo "$GET_BLOCKCHAIN_INFO" | tr -d '",' | grep "initial_block_downloading:" | awk '{ print $NF }')"
 
