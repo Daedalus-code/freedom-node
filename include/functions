@@ -437,7 +437,6 @@ if [[ "$DOWNLOADING_BLOCK" == "true" && "$(grep -c "progress=" "$HOME_DIR"/.trum
     WALLET_TXLAST="   ${Y1}${SYNC_PROGRESS_BAR}${N0}"
     CB="${GR}"
     DC="${GR}"
-    TX="${GR}"
   fi
 fi
 
