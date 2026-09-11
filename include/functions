@@ -236,11 +236,8 @@ fi
 # wallet balances + wallet value
 ################################################################################
 
-# default
-WALLET_BALANCES="${GR}0${N0}"
-
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
-WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
+WALLET_VALUE="$(echo "${WALLET_BALANCES:-0}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
 # if zero
 if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
@@ -250,13 +247,13 @@ else
 fi
 
 # if any balance
-if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
-  WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
+if [[ "$(echo "${WALLET_BALANCES:-0}" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+  WALLET_BALANCES="$(echo "${WALLET_BALANCES:-0}" | awk '{ printf "%.2f\n", $1 }')"
 fi
 
 # if any data
 if [[ -n "$WALLET_BALANCES" ]] &>/dev/null; then
-  WALLET_BALANCES="${DC}$WALLET_BALANCES${N0}"
+  WALLET_BALANCES="${DC}${WALLET_BALANCES:-0}${N0}"
 fi
 
 ################################################################################
