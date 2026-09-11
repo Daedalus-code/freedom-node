@@ -33,7 +33,19 @@ if [ "$RANDOM_INFO_QUOTE" == "1" ] &>/dev/null; then
     ############################################################################
   elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
-    TIMELINE="Watchlist: ${WATCHLIST_USERS:-0}"
+    WATCHLIST_USERS_AGE="$(stat -c '%Y' "$HOME"/node/watchlist.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
+    # if any data and if missing, or older than n
+    if [[ -n "$WATCHLIST_USERS" && ! -f "$HOME"/node/watchlist.tmp || "${WATCHLIST_USERS_AGE:-0}" -gt "604800" ]]; then
+      echo "$WATCHLIST_USERS" >"$HOME"/node/watchlist.tmp
+    fi
+    WATCHLIST_USERS_7D="$(cat "$HOME"/node/watchlist.tmp 2>/dev/null)"
+    WATCHLIST_DIFF="$(echo "${WATCHLIST_USERS:-0}-${WATCHLIST_USERS_7D:-0}" | bc 2>/dev/null)"
+    if [[ "$(echo "$WATCHLIST_DIFF" | grep -c "-")" -eq "1" ]] &>/dev/null; then
+      WD="${R1}"
+    else
+      WD="${G1}+"
+    fi
+    TIMELINE="Watchlist: ${WATCHLIST_USERS:-0} $WD$WATCHLIST_DIFF 7d${N0}"
     ############################################################################
   elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
     # random price date
