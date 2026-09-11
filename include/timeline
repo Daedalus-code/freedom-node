@@ -42,12 +42,11 @@ if [ "$RANDOM_INFO_QUOTE" == "1" ] &>/dev/null; then
     WATCHLIST_USERS_7D="$(cat "$HOME"/node/watchlist.tmp 2>/dev/null)"
     # calculate change
     WATCHLIST_CHANGE="$(echo "${WATCHLIST_USERS:-0}-${WATCHLIST_USERS_7D:-0}" | bc 2>/dev/null)"
-    if [[ "$WATCHLIST_CHANGE" -eq "0" ]] &>/dev/null; then
-      WD="0 weekly"
-    elif [[ "$(echo "$WATCHLIST_CHANGE" | grep -c "-")" -eq "1" ]] &>/dev/null; then
-      WD="${R1}$WATCHLIST_CHANGE${N0}"
+    WD="${WATCHLIST_CHANGE:-0}"
+    if [[ "$(echo "${WATCHLIST_CHANGE:-0}" | grep -c "-")" -eq "1" ]] &>/dev/null; then
+      WD="${R1}${WATCHLIST_CHANGE:-0}${N0}"
     else
-      WD="${G1}+$WATCHLIST_CHANGE${N0}"
+      WD="${G1}+${WATCHLIST_CHANGE:-0}${N0}"
     fi
     TIMELINE="Watchlist: ${WATCHLIST_USERS:-0} Change: ${WD} weekly"
     ############################################################################
