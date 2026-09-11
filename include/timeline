@@ -40,7 +40,9 @@ if [ "$RANDOM_INFO_QUOTE" == "1" ] &>/dev/null; then
     fi
     WATCHLIST_USERS_7D="$(cat "$HOME"/node/watchlist.tmp 2>/dev/null)"
     WATCHLIST_DIFF="$(echo "${WATCHLIST_USERS:-0}-${WATCHLIST_USERS_7D:-0}" | bc 2>/dev/null)"
-    if [[ "$(echo "$WATCHLIST_DIFF" | grep -c "-")" -eq "1" ]] &>/dev/null; then
+    if [[ "$WATCHLIST_DIFF" -eq "0" ]] &>/dev/null; then
+      WD="${N0}"
+    elif [[ "$(echo "$WATCHLIST_DIFF" | grep -c "-")" -eq "1" ]] &>/dev/null; then
       WD="${R1}"
     else
       WD="${G1}+"
