@@ -19,26 +19,22 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 
 # if missing
 if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
+
+  printf '%b' "[  ${G1}OK${N0}  ] Deleting corrupt or old data..\n"
+  # cleanup corrupt, old data
+  rm "$HOME_DIR"/.trumpcoin/budget.dat &>/dev/null
+  rm "$HOME_DIR"/.trumpcoin/mncache.dat &>/dev/null
+  rm "$HOME_DIR"/.trumpcoin/mnpayments.dat &>/dev/null
+  rm "$HOME_DIR"/.trumpcoin/peers.dat &>/dev/null
+  rm -rf "$HOME_DIR"/.trumpcoin/sporks/ &>/dev/null
+  rm -rf "$HOME_DIR"/.trumpcoin/zerocoin/ &>/dev/null
+
   # if enough space greater than ng
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G' | tr -d '.')" -gt "10" ]] &>/dev/null; then
 
-    printf '%b' "[  ${G1}OK${N0}  ] Deleting corrupt or old data..\n"
-
-    # cleanup corrupt, old data
-    rm ~/.trumpcoin/budget.dat
-    rm ~/.trumpcoin/mncache.dat
-    rm ~/.trumpcoin/mnpayments.dat
-    rm ~/.trumpcoin/peers.dat
-    rm -rf ~/.trumpcoin/sporks/
-    rm -rf ~/.trumpcoin/zerocoin/
-
     printf '%b' "[  ${G1}OK${N0}  ] Downloading bootstrap.zip..\n"
-
-    # if zero
-    if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
-      BOOTSTRAP_URL="http://45.92.11.251/blocks/bootstrap.zip"
-    fi
-
+    # bootstrap url
+    BOOTSTRAP_URL="http://45.92.11.251/blocks/bootstrap.zip"
     # bootstrap file
     OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
     cd || exit
