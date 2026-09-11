@@ -221,7 +221,6 @@ fi
 # if any rewards, less than n age
 if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
-  WALLET_POS="${Y1}$WALLET_POS${N0}"
   CB="${Y1}"
   DC="${Y1}"
   TX="${Y1}"
@@ -253,7 +252,7 @@ fi
 
 # if any data
 if [[ -n "$WALLET_BALANCES" ]]; then
-  WALLET_BALANCES="${DC}${WALLET_BALANCES:-0}${N0}"
+  WALLET_BALANCES="${WALLET_BALANCES:-0}"
 fi
 
 # if zero
@@ -269,7 +268,7 @@ WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
 # if any data
 if [[ -n "$WALLET_INPUTS" ]]; then
-  WALLET_INPUTS="${DC}${WALLET_INPUTS:-0}${N0}"
+  WALLET_INPUTS="${WALLET_INPUTS:-0}"
 fi
 
 # if zero
