@@ -252,7 +252,7 @@ if [[ "$(echo "${WALLET_BALANCES:-0}" | awk -F. '{ print $1 }')" -gt "0" ]] &>/d
 fi
 
 # if any data
-if [[ -n "$WALLET_BALANCES" ]] &>/dev/null; then
+if [[ -n "$WALLET_BALANCES" ]]; then
   WALLET_BALANCES="${DC}${WALLET_BALANCES:-0}${N0}"
 fi
 
@@ -267,11 +267,14 @@ fi
 
 WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
-# if zero
-if [[ -z "$WALLET_INPUTS" ]] &>/dev/null; then
-  WALLET_INPUTS="${GR}0${N0}"
-else
+# if any data
+if [[ -n "$WALLET_INPUTS" ]]; then
   WALLET_INPUTS="${DC}$WALLET_INPUTS${N0}"
+fi
+
+# if zero
+if [[ -z "$WALLET_INPUTS" ]]; then
+  WALLET_INPUTS="${GR}0${N0}"
 fi
 
 ################################################################################
