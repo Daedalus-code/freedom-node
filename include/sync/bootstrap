@@ -21,6 +21,17 @@ USER_NAME="$(cat /etc/freedom-node/user 2>/dev/null)"
 if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
   # if enough space greater than ng
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G' | tr -d '.')" -gt "10" ]] &>/dev/null; then
+
+    printf '%b' "[  ${G1}OK${N0}  ] Deleting corrupt or old data..\n"
+
+    # cleanup corrupt, old data
+    rm ~/.trumpcoin/budget.dat
+    rm ~/.trumpcoin/mncache.dat
+    rm ~/.trumpcoin/mnpayments.dat
+    rm ~/.trumpcoin/peers.dat
+    rm -rf ~/.trumpcoin/sporks/
+    rm -rf ~/.trumpcoin/zerocoin/
+
     printf '%b' "[  ${G1}OK${N0}  ] Downloading bootstrap.zip..\n"
 
     # if zero
