@@ -63,7 +63,7 @@ if [ -f "$PRICE_FILE" ]; then
 else
   PRICE_AGE="9999" # assume it's too old if the file doesn't exist
 fi
-# if the file is missing or the data is older than 420 seconds, fetch new price
+# if the file is missing or the data is older than 900 seconds, fetch new price
 if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "900" ]; then
   # fetch the latest price from the coingecko api ##############################
   PRICE=$(timeout 10 curl -s --proxy socks5h://localhost:9050 \
@@ -87,11 +87,16 @@ fi
 ################################################################################
 
 COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingecko 2>/dev/null || echo 0)))"
-# if missing, if old
+# if the file is missing or the data is older than 900 seconds, fetch new data
 if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/dev/null; then
-  # watchlist
-  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
-  echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
+  # fetch the latest data from the coingecko api ###############################
+  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 \
+    'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
+  ##############################################################################
+  # update only if we got something
+  if [[ -n "$WATCHLIST" ]]; then
+    echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
+  fi
   # convert jq -r raw data
   echo "$(jq -r . "${HOME_DIR:?}"/node/coingecko)" >"${HOME_DIR:?}"/node/coingecko
 fi
@@ -202,7 +207,7 @@ if [[ -z "$WALLET_MOVEMENT" ]] &>/dev/null; then
 fi
 
 # if any movements, less than n age
-if [[ "$WALLET_MOVEMENT" -gt "0" && "${WALLET_MOVEMENT_AGE:0}" -lt "3600" ]] &>/dev/null; then
+if [[ "${WALLET_MOVEMENT:-0}" -gt "0" && "${WALLET_MOVEMENT_AGE:-0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   DC="${Y1}"
@@ -214,7 +219,7 @@ fi
 ################################################################################
 
 # if any rewards, less than n age
-if [[ "$WALLET_POS" -gt "0" && "${WALLET_POS_AGE:0}" -lt "3600" ]] &>/dev/null; then
+if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
   WALLET_POS="${Y1}$WALLET_POS${N0}"
   CB="${Y1}"
@@ -271,7 +276,7 @@ fi
 # if any password set
 if [[ -n "$WALLET_PASSPHRASE" && ! -f "$HOME_DIR"/node/walletpassphrase.tmp ]] &>/dev/null; then
   # start staking
-  /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE:0}" 0 2>/dev/null | grep -v "Error" && sleep 0.1
+  /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE:-0}" 0 2>/dev/null | grep -v "Error" && sleep 0.1
   echo "wallet_unlocked @ $(date | xargs)" >"$HOME_DIR"/node/walletpassphrase.tmp
 fi
 
@@ -528,7 +533,7 @@ fi
 ################################################################################
 
 # get best block hash
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:0}" -gt "3600" && "${WALLET_MOVEMENT_AGE:0}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:-0}" -gt "3600" && "${WALLET_MOVEMENT_AGE:-0}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
 
