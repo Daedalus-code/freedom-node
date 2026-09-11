@@ -36,13 +36,36 @@ if [ "$RANDOM_INFO_QUOTE" == "1" ] &>/dev/null; then
     TIMELINE="Watchlist: ${WATCHLIST_USERS:-0}"
     ############################################################################
   elif [ "$RANDOM_INFO" == "3" ] &>/dev/null; then
-    FREED_PRICE_CHANGE24="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
-    if [[ "$(echo "$FREED_PRICE_CHANGE24" | grep -c "-")" -eq "1" ]] &>/dev/null; then
+    # random price date
+    RANDOM_PRICE=$((((RANDOM % 7) + 1)))
+    if [ "$RANDOM_PRICE" == "1" ] &>/dev/null; then
+      PRICE_DATE="24h"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_24h" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    elif [ "$RANDOM_PRICE" == "2" ] &>/dev/null; then
+      PRICE_DATE="7d"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_7d" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    elif [ "$RANDOM_PRICE" == "3" ] &>/dev/null; then
+      PRICE_DATE="14d"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_14d" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    elif [ "$RANDOM_PRICE" == "4" ] &>/dev/null; then
+      PRICE_DATE="30d"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_30d" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    elif [ "$RANDOM_PRICE" == "5" ] &>/dev/null; then
+      PRICE_DATE="60d"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_60d" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    elif [ "$RANDOM_PRICE" == "6" ] &>/dev/null; then
+      PRICE_DATE="200d"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_200d" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    elif [ "$RANDOM_PRICE" == "7" ] &>/dev/null; then
+      PRICE_DATE="1y"
+      FREED_PRICE_CHANGE="$(grep "price_change_percentage_1y" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | egrep ".[0-9]+" | tr -d ',' | awk '{ printf "%.2f\n", $1 }')"
+    fi
+    if [[ "$(echo "$FREED_PRICE_CHANGE" | grep -c "-")" -eq "1" ]] &>/dev/null; then
       FPC="${R1}"
     else
       FPC="${G1}+"
     fi
-    TIMELINE="Price: ${FREED_PRICE:-0} USD @ ${FPC}${FREED_PRICE_CHANGE24:-0}%${N0}"
+    TIMELINE="Price: ${FREED_PRICE:-0} USD @ ${FPC}${FREED_PRICE_CHANGE:-0}% $PRICE_DATE${N0}"
     ############################################################################
   fi
 fi
