@@ -256,6 +256,11 @@ if [[ -n "$WALLET_BALANCES" ]] &>/dev/null; then
   WALLET_BALANCES="${DC}${WALLET_BALANCES:-0}${N0}"
 fi
 
+# if zero
+if [[ -z "$WALLET_BALANCES" ]]; then
+  WALLET_BALANCES="${GR}0${N0}"
+fi
+
 ################################################################################
 # wallet inputs
 ################################################################################
