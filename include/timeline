@@ -34,8 +34,8 @@ if [ "$RANDOM_INFO_QUOTE" == "1" ] &>/dev/null; then
   elif [ "$RANDOM_INFO" == "2" ] &>/dev/null; then
     WATCHLIST_USERS="$(grep "watchlist_portfolio_users" "$HOME_DIR"/node/coingecko 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
     WATCHLIST_USERS_AGE="$(stat -c '%Y' "$HOME"/node/watchlist.tmp 2>/dev/null | while read lastedit; do echo "$(($(echo "$DATE") - $lastedit))"; done)"
-    # if any data and if missing, or older than n
-    if [[ -n "$WATCHLIST_USERS" && ! -f "$HOME"/node/watchlist.tmp || "${WATCHLIST_USERS_AGE:-0}" -gt "604800" ]]; then
+    # if any data and greater than n, if missing, older than n
+    if [[ -n "$WATCHLIST_USERS" && "$WATCHLIST_USERS" -gt "0" || ! -f "$HOME"/node/watchlist.tmp || "${WATCHLIST_USERS_AGE:-0}" -gt "604800" ]]; then
       echo "$WATCHLIST_USERS" >"$HOME"/node/watchlist.tmp
     fi
     # weekly watchlist and change
