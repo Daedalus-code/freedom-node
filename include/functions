@@ -337,12 +337,12 @@ fi
 POS_STATUS="$(grep -c "Staking Active" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null)"
 
 # if active
-if [[ "$POS_STATUS" == "1" || -z "$POS_STATUS" ]] &>/dev/null; then
+if [[ "$POS_STATUS" == "1" ]] &>/dev/null; then
   POS_STATUS="${G1}S${N0}"
 fi
 
 # if zero
-if [[ "$POS_STATUS" == "0" ]] &>/dev/null; then
+if [[ "$POS_STATUS" == "0" || -z "$POS_STATUS" ]] &>/dev/null; then
   POS_STATUS="${GR}S${N0}"
 fi
 
