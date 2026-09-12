@@ -30,7 +30,7 @@ if [[ ! $LATEST_PROGRESS == "1.000000" ]] &>/dev/null; then
 
     # default
     PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}" 2>/dev/null)
-    PERCENT_RAW=$(awk "BEGIN {printf \"%.5f\", $PROGRESS * 100}" 2>/dev/null)
+    PERCENT_RAW=$(awk "BEGIN {printf \"%.4f\", $PROGRESS * 100}" 2>/dev/null)
 
     # if 100.000%
     if [[ "$PERCENT" == "100.0000" ]] &>/dev/null; then
