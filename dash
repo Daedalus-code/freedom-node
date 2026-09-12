@@ -43,7 +43,7 @@ ${CB:?}   | ##          ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_
 ${CB:?}   | ##          ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_IP4:?} ${WALLET_PEERS_IP6:?}
 ${CB:?}   | ##          ${N0:?}
 ${CB:?}   |__/          ${N0:?} Balance ${DC}${WALLET_BALANCES:?}${N0} Stakes ${DC}${WALLET_POS:?}${N0} Inputs ${DC}${WALLET_INPUTS:?}${N0}
-${CB:?}                 ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
+${CB:?}                 ${N0:?} TxCount ${DC}${WALLET_TXCOUNT:?}${N0} Mempool ${DC}${WALLET_MEMPOOL:?}${N0} Block ${DC}${WALLET_HEADS:?}${N0}
 ${CB:?}   FreedomCoin   ${N0:?} ${TIMELINE:?}
 
 ${TX:?}${WALLET_TXLAST:?}

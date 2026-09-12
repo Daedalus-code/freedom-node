@@ -92,7 +92,7 @@ fi
 
 if [[ "$RANDOM_INFO_QUOTE" == "2" ]] &>/dev/null; then
   # random quotes/information start
-  RANDOM_INFO=$((((RANDOM % 8) + 1)))
+  RANDOM_INFO=$((((RANDOM % 9) + 1)))
   # wallet timeline
   if [ "$RANDOM_INFO" == "1" ] &>/dev/null; then
     TIMELINE="Difficulty: $(grep "difficulty" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
@@ -117,6 +117,12 @@ if [[ "$RANDOM_INFO_QUOTE" == "2" ]] &>/dev/null; then
   elif [ "$RANDOM_INFO" == "8" ] &>/dev/null; then
     WALLET_POS_AGE_FORMAT=$(printf '%dh:%dm:%ds\n' $(("$(echo "${WALLET_POS_AGE:-0}" 2>&1)/3600")) $(("$(echo "${WALLET_POS_AGE:-0}" 2>&1)%3600/60")) $(("$(echo "${WALLET_POS_AGE:-0}" 2>&1)%60")))
     TIMELINE="Last Stake: $WALLET_POS_AGE_FORMAT"
+  elif [ "$RANDOM_INFO" == "9" ] &>/dev/null; then
+    WALLET_DEVICE_MODEL="$(grep "Model" /proc/cpuinfo 2>/dev/null | awk -F: '{ print $2 }' | xargs)"
+    if [[ -z "$WALLET_DEVICE_MODEL" ]]; then
+      WALLET_DEVICE_MODEL="$(uname -m) $(uname -p) $(uname -i)"
+    fi
+    TIMELINE="Model: $WALLET_DEVICE_MODEL"
   fi
 fi
 
