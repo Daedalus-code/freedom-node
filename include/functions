@@ -505,7 +505,7 @@ fi
 
 # if active
 if [[ "$WALLET_MEMPOOL" > "0" ]] &>/dev/null; then
-  WALLET_MEMPOOL="${Y1}$WALLET_MEMPOOL${N0}"
+  WALLET_MEMPOOL="${DC}$WALLET_MEMPOOL${N0}"
 fi
 
 ################################################################################
