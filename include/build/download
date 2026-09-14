@@ -67,6 +67,8 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
         # unzip file
         unzip "$WALLET_DOWNLOAD".zip
         printf '%b' "[  ${G1}OK${N0}  ] Unzip complete!\n"
+        rm -r __MACOSX
+        printf '%b' "[  ${G1}OK${N0}  ] Removing leftovers..\n"
       fi
       # clean up __MACOSX & zip
       rm -r "$HOME_DIR"/__MACOSX &>/dev/null
