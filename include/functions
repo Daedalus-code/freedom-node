@@ -231,7 +231,7 @@ if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/
 fi
 
 # if zero
-if [[ -z "$WALLET_POS" && "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 fi
 
