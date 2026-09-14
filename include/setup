@@ -344,7 +344,7 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
     fi
 
     # display detected
-    DISPLAY_RESOLUTION="$(cat /sys/class/graphics/fb1/virtual_size 2>/dev/null | tr ',' 'x')"
+    DISPLAY_RESOLUTION="$(cat /sys/class/graphics/fb*/virtual_size 2>/dev/null | tr ',' 'x' | head -1)"
 
     # if zero
     if [[ -z "$DISPLAY_RESOLUTION" ]] &>/dev/null; then

@@ -22,12 +22,18 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
 
   printf '%b' "[  ${G1}OK${N0}  ] Deleting corrupt or old data..\n"
   # cleanup corrupt, old data
-  rm "$HOME_DIR"/.trumpcoin/budget.dat &>/dev/null
-  rm "$HOME_DIR"/.trumpcoin/mncache.dat &>/dev/null
-  rm "$HOME_DIR"/.trumpcoin/mnpayments.dat &>/dev/null
-  rm "$HOME_DIR"/.trumpcoin/peers.dat &>/dev/null
-  rm -rf "$HOME_DIR"/.trumpcoin/sporks/ &>/dev/null
-  rm -rf "$HOME_DIR"/.trumpcoin/zerocoin/ &>/dev/null
+  rm -rf "$HOME_DIR"/.trumpcoin/blocks/
+  rm -rf "$HOME_DIR"/.trumpcoin/chainstate/
+  rm -rf "$HOME_DIR"/.trumpcoin/database/
+  rm -rf "$HOME_DIR"/.trumpcoin/evodb/
+  rm -rf "$HOME_DIR"/.trumpcoin/sporks/
+  rm -rf "$HOME_DIR"/.trumpcoin/zerocoin/
+  rm -rf "$HOME_DIR"/.trumpcoin/mempool.dat
+  rm -rf "$HOME_DIR"/.trumpcoin/peers.dat
+  rm -rf "$HOME_DIR"/.trumpcoin/banlist.dat
+  rm -rf "$HOME_DIR"/.trumpcoin/mncache.dat
+  rm -rf "$HOME_DIR"/.trumpcoin/mnpayments.dat
+  rm -rf "$HOME_DIR"/.trumpcoin/budget.dat
 
   # if enough space greater than ng
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G' | tr -d '.')" -gt "10" ]] &>/dev/null; then
@@ -58,7 +64,7 @@ if [[ ! -d "$HOME_DIR"/.trumpcoin/bootstrap/ ]] &>/dev/null; then
 
     # backup wallet.dat
     printf '%b' "[  ${G1}OK${N0}  ] Creating wallet.dat backup..\n"
-    cp "$HOME_DIR"/.trumpcoin/wallet.dat /home/"$USER_NAME"/node/ &>/dev/null
+    cp "$HOME_DIR"/.trumpcoin/wallet.dat /home/"$USER_NAME"/node/ "$HOME" &>/dev/null
     # remove old blockchain files and folders
     printf '%b' "[  ${G1}OK${N0}  ] Removing old blockchain..\n"
     rm -rf "$HOME_DIR"/.trumpcoin/* &>/dev/null
