@@ -227,7 +227,7 @@ if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/
 fi
 
 # if zero
-if [[ -z "$WALLET_POS" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS" && ! "$(cat "$HOME_DIR"/node/progress.tmp 2>/dev/null)" -eq "1.00" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 fi
 
