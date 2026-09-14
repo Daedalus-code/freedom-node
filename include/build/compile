@@ -109,6 +109,7 @@ export BDB_PREFIX="$HOME_DIR/db4"
 
 # use configure script from the official guide
 ./configure --prefix=$PWD/depends/$HOST \
+  --with-incompatible-bdb \
   --enable-glibc-back-compat \
   --enable-reduce-exports \
   --disable-tests \
