@@ -175,6 +175,10 @@ if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
   # fetch signed proof-of-stake block
   grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
 fi
+# if missing
+if [[ ! -f "$HOME_DIR"/node/stakes.tmp ]]; then
+  touch "$HOME_DIR"/node/stakes.tmp &>/dev/null
+fi
 WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
 WALLET_POS_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null || echo 0)))"
 
@@ -227,7 +231,7 @@ if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/
 fi
 
 # if zero
-if [[ ! -n "$WALLET_POS" && ! "$(cat "$HOME_DIR"/node/progress.tmp 2>/dev/null)" -eq "1.00" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS" && ! "$(cat "$HOME_DIR"/node/progress.tmp 2>/dev/null)" -eq "1.00" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 fi
 
