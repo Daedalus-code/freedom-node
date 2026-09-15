@@ -246,6 +246,12 @@ fi
 ################################################################################
 
 WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
+
+# if zero
+if [[ -z "$WALLET_POS" ]]; then
+  WALLET_POS="0"
+fi
+
 WALLET_POS_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null || echo 0)))"
 
 # if any rewards, less than n age
@@ -256,8 +262,8 @@ if [[ "${WALLET_POS}" -gt "0" && "${WALLET_POS_AGE}" -lt "3600" ]] &>/dev/null; 
   TX="${Y1}"
 fi
 
-# if zero
-if [[ -z "$WALLET_POS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
+# if loading block index, downloading block true
+if [[ "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
   WALLET_POS="${GR}${WALLET_POS}${N0}"
 else
   WALLET_POS="${DC}${WALLET_POS}${N0}"
@@ -268,6 +274,12 @@ fi
 ################################################################################
 
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
+
+# if zero
+if [[ -z "$WALLET_BALANCES" ]]; then
+  WALLET_BALANCES="0"
+fi
+
 WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
 # if any balance
@@ -275,8 +287,8 @@ if [[ "$(echo "${WALLET_BALANCES}" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/
   WALLET_BALANCES="$(echo "${WALLET_BALANCES}" | awk '{ printf "%.2f\n", $1 }')"
 fi
 
-# if zero
-if [[ -z "$WALLET_BALANCES" || "${LOADING_BLOCK_INDEX}" ]]; then
+# if loading block index, downloading block true
+if [[ "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]]; then
   WALLET_BALANCES="${GR}${WALLET_BALANCES}${N0}"
 else
   WALLET_BALANCES="${DC}${WALLET_BALANCES}${N0}"
@@ -297,6 +309,11 @@ WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
 # if zero
 if [[ -z "$WALLET_INPUTS" ]]; then
+  WALLET_INPUTS="0"
+fi
+
+# if loading block index, downloading block true
+if [[ "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]]; then
   WALLET_INPUTS="${GR}${WALLET_INPUTS}${N0}"
 else
   WALLET_INPUTS="${DC}${WALLET_INPUTS}${N0}"
@@ -487,7 +504,12 @@ fi
 WALLET_TXCOUNT="$(grep "txcount" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_TXCOUNT" && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXCOUNT" ]]; then
+  WALLET_TXCOUNT="0"
+fi
+
+# if zero
+if [[ "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
   WALLET_TXCOUNT="${GR}${WALLET_TXCOUNT}${N0}"
 else
   WALLET_TXCOUNT="${DC}${WALLET_TXCOUNT}${N0}"
@@ -500,7 +522,12 @@ fi
 WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_MEMPOOL" || "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
+if [[ -z "$WALLET_MEMPOOL" ]]; then
+  WALLET_MEMPOOL="0"
+fi
+
+# if loading block index, downloading block true
+if [[ "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}${WALLET_MEMPOOL}${N0}"
 else
   if [[ "$WALLET_MEMPOOL" -eq "0" ]]; then
@@ -517,7 +544,12 @@ fi
 WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_HEADS" || "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
+if [[ -z "$WALLET_HEADS" ]]; then
+  WALLET_HEADS="0"
+fi
+
+# if loading block index, downloading block true
+if [[ "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
   WALLET_HEADS="${GR}${WALLET_HEADS}${N0}"
 else
   WALLET_HEADS="${WALLET_HEADS}"
