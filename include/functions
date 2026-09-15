@@ -517,7 +517,7 @@ fi
 WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_HEADS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
+if [[ -z "$WALLET_HEADS" || "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
   WALLET_HEADS="${GR}${WALLET_HEADS}${N0}"
 else
   WALLET_HEADS="${WALLET_HEADS}"
