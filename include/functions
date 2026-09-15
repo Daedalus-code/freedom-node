@@ -101,9 +101,10 @@ fi
 
 # client updated data age (seconds)
 CLIENT_UPDATED_DATA="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/KEK.tmp 2>/dev/null || echo 0)))"
+LOADING_BLOCK_INDEX="$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")"
 
 # if older than n, if not syncing
-if [[ "$PID_OF_DAEMON" == "1" && "$CLIENT_UPDATED_DATA" -gt "55" && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ "${PID_OF_DAEMON}" == "1" && "${CLIENT_UPDATED_DATA}" -gt "55" && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
   echo "CHECKED @ $(date | xargs)" >"$HOME_DIR"/node/KEK.tmp
   # getinfo
   /usr/local/bin/freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >"$HOME_DIR"/node/getinfo.tmp 2>/dev/null && sleep 0.1 ##
@@ -256,7 +257,7 @@ if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/
 fi
 
 # if zero
-if [[ -z "$WALLET_POS" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ -z "$WALLET_POS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 else
   WALLET_POS="${DC}$WALLET_POS${N0}"
@@ -326,7 +327,7 @@ PATRIOT_STATUS="$(grep -v "Example" "$HOME_DIR"/.trumpcoin/patriotnode.conf 2>/d
 # if any data
 if [[ "$PATRIOT_STATUS" -gt "0" ]] &>/dev/null; then
   PATRIOT_STATUS="${Y1}P${N0}"
-  if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
     start_patriotnode
   fi
 fi
@@ -350,7 +351,7 @@ fi
 
 if [[ "$CONTROL_STATUS" -ge "2" ]] &>/dev/null; then
   CONTROL_STATUS="${Y1}CW${N0}"
-  if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+  if [[ ! -f "$HOME_DIR"/node/startpatriotnode.tmp && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
     start_patriotnode
   fi
 fi
@@ -486,8 +487,10 @@ fi
 WALLET_TXCOUNT="$(grep "txcount" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXCOUNT" && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
   WALLET_TXCOUNT="${GR}0${N0}"
+else
+  WALLET_TXCOUNT="${DC}$WALLET_TXCOUNT${N0}"
 fi
 
 ################################################################################
@@ -517,7 +520,7 @@ fi
 ################################################################################
 
 # if loading block index
-if [[ "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
+if [[ "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
   WALLET_TXLAST="   ${CY}Loading${N0}"
   CB="${CY}"
 fi
