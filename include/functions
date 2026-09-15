@@ -258,7 +258,7 @@ fi
 
 # if zero
 if [[ -z "$WALLET_POS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_POS="${GR}0${N0}"
+  WALLET_POS="${GR}${WALLET_POS:-0}${N0}"
 else
   WALLET_POS="${DC}$WALLET_POS${N0}"
 fi
@@ -488,7 +488,7 @@ WALLET_TXCOUNT="$(grep "txcount" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null 
 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_TXCOUNT="${GR}0${N0}"
+  WALLET_TXCOUNT="${GR}${WALLET_TXCOUNT:-0}${N0}"
 else
   WALLET_TXCOUNT="${DC}$WALLET_TXCOUNT${N0}"
 fi
@@ -501,7 +501,7 @@ WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | 
 
 # if zero
 if [[ -z "$WALLET_MEMPOOL" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_MEMPOOL="${GR}0${N0}"
+  WALLET_MEMPOOL="${GR}${WALLET_MEMPOOL:-0}${N0}"
 fi
 
 ################################################################################
@@ -511,8 +511,8 @@ fi
 WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
-  WALLET_HEADS="${GR}0${N0}"
+if [[ -z "$WALLET_HEADS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
+  WALLET_HEADS="${GR}${WALLET_HEADS:-0}${N0}"
 fi
 
 ################################################################################
