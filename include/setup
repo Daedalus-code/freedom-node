@@ -426,7 +426,7 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
   # daemon running
   if pgrep -x freedomcoind >/dev/null; then
-    WALLET_SYNC="$(awk '{ printf "%.2f\n", $1 }' "$HOME"/node/progress.tmp 2>/dev/null | tr -d '.')"
+    WALLET_SYNC="$(awk '{ printf "%.2f\n", $1 }' "$HOME"/node/progress.tmp 2>/dev/null | tr -d '.' | sed 's/^0*//g; s/\.0*/./g')"
     if [[ "$WALLET_SYNC" -eq "100" ]]; then
       WSC="${G1}"
     else
