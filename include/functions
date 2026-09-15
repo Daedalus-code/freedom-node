@@ -65,14 +65,11 @@ else
 fi
 # if the file is missing or the data is older than 900 seconds, fetch new price
 if [ ! -f "$PRICE_FILE" ] || [ "$PRICE_AGE" -gt "900" ]; then
-  # fetch the latest price from the coingecko api ##############################
-  PRICE=$(timeout 10 curl -s --proxy socks5h://localhost:9050 \
-    "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" |
-    jq -r ".$CRYPTO.$CURRENCY // empty")
-  ##############################################################################
+  # fetch the latest price from the coingecko api
+  PRICE=$(timeout 10 curl -s --proxy socks5h://localhost:9050 "https://api.coingecko.com/api/v3/simple/price?ids=$CRYPTO&vs_currencies=$CURRENCY" | jq .)
   # update only if we got something
-  if [[ -n "$PRICE" ]]; then
-    echo "$PRICE" >"$PRICE_FILE"
+  if [[ "$(echo "$PRICE" | grep -c "$CURRENCY")" -gt "0" ]]; then
+    echo "$(echo "$PRICE" | grep "$CURRENCY" | awk '{ print $NF }')" >"$PRICE_FILE"
   fi
 # read the (possibly updated) cached price
 fi
@@ -89,16 +86,13 @@ fi
 COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingecko 2>/dev/null || echo 0)))"
 # if the file is missing or the data is older than 900 seconds, fetch new data
 if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/dev/null; then
-  # fetch the latest data from the coingecko api ###############################
-  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 \
-    'GET' "https://api.coingecko.com/api/v3/coins/${CRYPTO:?}" -H 'accept:application/json')"
-  ##############################################################################
+  # fetch the latest data from the coingecko api
+  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 'GET' "https://api.coingecko.com/api/v3/coins/freedomcoin" | jq .)"
   # update only if we got something
-  if [[ -n "$WATCHLIST" ]]; then
+  if [[ "$(echo "$WATCHLIST" | grep "freedomcoin" | grep -c "id")" -eq "1" ]]; then
+    # keep data
     echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
   fi
-  # convert jq -r raw data
-  echo "$(jq -r . "${HOME_DIR:?}"/node/coingecko)" >"${HOME_DIR:?}"/node/coingecko
 fi
 
 ################################################################################
