@@ -426,7 +426,17 @@ WantedBy=multi-user.target" >/home/"$USER_NAME"/node/service.tmp
 
   # daemon running
   if pgrep -x freedomcoind >/dev/null; then
-    printf '%b' "[  ${G1}OK${N0}  ] Already running! PID: ${G1}$(pgrep -x freedomcoind)${N0}\n"
+    WALLET_SYNC="$(cat "$HOME"/node/progress.tmp | awk '{ printf "%.2f\n", $1 }' | awk -F. '{ print $2 }' | grep -v "00" | sed 's/^0*//g; s/\.0*/./g')"
+    if [[ "$WALLET_SYNC" -eq "100" ]]; then
+      WSC="${G1}"
+    else
+      WSC="${GR}"
+    fi
+    if [[ -z "$WALLET_SYNC" ]]; then
+      WALLET_SYNC="0"
+      WSC="${GR}"
+    fi
+    printf '%b' "[  ${G1}OK${N0}  ] Already running! PID: ${G1}$(pgrep -x freedomcoind)${N0} Sync: ${WSC}${WALLET_SYNC}%${N0}\n"
     printf '%b' "[  ${G1}OK${N0}  ] Run ${CY}dash${N0} to monitor!\n"
   else
     # start service
