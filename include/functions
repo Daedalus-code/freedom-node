@@ -238,7 +238,7 @@ fi
 if [[ -z "$WALLET_POS" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
 else
-  WALLET_POS="${DC}0${N0}"
+  WALLET_POS="${DC}$WALLET_POS${N0}"
 fi
 
 ################################################################################
