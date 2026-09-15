@@ -168,19 +168,20 @@ WALLET_MOVEMENT="$(wc -l "$HOME_DIR"/node/movements.tmp 2>/dev/null | awk '{ pri
 WALLET_MOVEMENT_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/movements.tmp 2>/dev/null || echo 0)))"
 
 # proof of stake ###############################################################
+
+# if missing
+if [[ ! -f "$HOME_DIR"/node/stakes.tmp ]]; then
+  touch "$HOME_DIR"/node/stakes.tmp &>/dev/null
+fi
+
 BLOCK_WAS_SIGNED="$(grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)"
 LAST_PROOF_OF_STAKE="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)"
+
 # if new signed block
 if [[ ! "$BLOCK_WAS_SIGNED" == "$LAST_PROOF_OF_STAKE" ]] &>/dev/null; then
   # fetch signed proof-of-stake block
   grep "BitcoinMiner : proof-of-stake block was signed" "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | awk '{ print $NF }' >>"$HOME_DIR"/node/stakes.tmp
 fi
-# if missing
-if [[ ! -f "$HOME_DIR"/node/stakes.tmp ]]; then
-  touch "$HOME_DIR"/node/stakes.tmp &>/dev/null
-fi
-WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
-WALLET_POS_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null || echo 0)))"
 
 ################################################################################
 # repository version
@@ -222,6 +223,9 @@ fi
 # proof of stake status
 ################################################################################
 
+WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }')"
+WALLET_POS_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null || echo 0)))"
+
 # if any rewards, less than n age
 if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
@@ -233,6 +237,8 @@ fi
 # if zero
 if [[ -z "$WALLET_POS" || "$(tail -1 "$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null | grep "Loading block index...")" ]] &>/dev/null; then
   WALLET_POS="${GR}0${N0}"
+else
+  WALLET_POS="${DC}0${N0}"
 fi
 
 ################################################################################
@@ -242,26 +248,23 @@ fi
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
 WALLET_VALUE="$(echo "${WALLET_BALANCES:-0}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
-# if zero
-if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
-  WALLET_VALUE="0"
-else
-  WALLET_VALUE="${G1}$WALLET_VALUE${N0}"
-fi
-
 # if any balance
 if [[ "$(echo "${WALLET_BALANCES:-0}" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
-  WALLET_BALANCES="$(echo "${WALLET_BALANCES:-0}" | awk '{ printf "%.2f\n", $1 }')"
-fi
-
-# if any data
-if [[ -n "$WALLET_BALANCES" ]]; then
-  WALLET_BALANCES="${WALLET_BALANCES:-0}"
+  WALLET_BALANCES="$(echo "${WALLET_BALANCES}" | awk '{ printf "%.2f\n", $1 }')"
 fi
 
 # if zero
 if [[ -z "$WALLET_BALANCES" ]]; then
   WALLET_BALANCES="${GR}0${N0}"
+else
+  WALLET_BALANCES="${DC}$WALLET_BALANCES${N0}"
+fi
+
+# if any data
+if [[ -n "$WALLET_VALUE" ]] &>/dev/null; then
+  WALLET_VALUE="${G1}$WALLET_VALUE${N0}"
+else
+  WALLET_VALUE="0"
 fi
 
 ################################################################################
@@ -270,14 +273,11 @@ fi
 
 WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
-# if any data
-if [[ -n "$WALLET_INPUTS" ]]; then
-  WALLET_INPUTS="${WALLET_INPUTS:-0}"
-fi
-
 # if zero
 if [[ -z "$WALLET_INPUTS" ]]; then
   WALLET_INPUTS="${GR}0${N0}"
+else
+  WALLET_INPUTS="${DC}${WALLET_INPUTS}${N0}"
 fi
 
 ################################################################################
@@ -492,7 +492,7 @@ fi
 WALLET_TXCOUNT="$(grep "txcount" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_TXCOUNT" || "$WALLET_TXCOUNT" == "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
   WALLET_TXCOUNT="${GR}0${N0}"
 fi
 
@@ -502,14 +502,9 @@ fi
 
 WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
 
-# if zero, if syncing
-if [[ -z "$WALLET_MEMPOOL" || ! "$(echo "$SYNC_PROGRESS" | egrep "[0-9]+.[0-9]+")" == "1000000" ]] &>/dev/null; then
+# if zero
+if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}0${N0}"
-fi
-
-# if active
-if [[ "$WALLET_MEMPOOL" > "0" ]] &>/dev/null; then
-  WALLET_MEMPOOL="${Y1}$WALLET_MEMPOOL${N0}"
 fi
 
 ################################################################################
@@ -672,16 +667,10 @@ if [[ "$(echo "$SYSTEM_CLOCK" | awk -F: '{ print $1":"$2 }')" == "00:00" ]] &>/d
   truncate -s 0 "$HOME_DIR"/.trumpcoin/debug.log &>/dev/null
   # add last line
   echo "$LAST_DEBUG" >"$HOME_DIR"/.trumpcoin/debug.log 2>/dev/null
-  # if any data
-  if [[ "$(wc -l "$HOME_DIR"/node/movements.tmp | awk '{ print $1 }')" -gt "0" ]] &>/dev/null; then
-    # reset movements
-    truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
-  fi
-  # if any data
-  if [[ "$(wc -l "$HOME_DIR"/node/stakes.tmp | awk '{ print $1 }')" -gt "0" ]] &>/dev/null; then
-    # reset stakes
-    truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
-  fi
+  # reset movements
+  truncate -s 0 "$HOME_DIR"/node/movements.tmp &>/dev/null
+  # reset stakes
+  truncate -s 0 "$HOME_DIR"/node/stakes.tmp &>/dev/null
   # remove wanip
   rm "$HOME_DIR"/node/wanip.tmp &>/dev/null
   # remove arp.peers
