@@ -500,7 +500,7 @@ fi
 WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_MEMPOOL" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
+if [[ -z "$WALLET_MEMPOOL" || "${LOADING_BLOCK_INDEX}" || "$DOWNLOADING_BLOCK" == "true" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}${WALLET_MEMPOOL}${N0}"
 else
   if [[ "$WALLET_MEMPOOL" -eq "0" ]]; then
