@@ -502,6 +502,8 @@ WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | 
 # if zero
 if [[ -z "$WALLET_MEMPOOL" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR}${WALLET_MEMPOOL}${N0}"
+else
+  WALLET_MEMPOOL="${DC}${WALLET_MEMPOOL}${N0}"
 fi
 
 ################################################################################
@@ -513,6 +515,8 @@ WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ 
 # if zero
 if [[ -z "$WALLET_HEADS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
   WALLET_HEADS="${GR}${WALLET_HEADS}${N0}"
+else
+  WALLET_HEADS="${DC}${WALLET_HEADS}${N0}"
 fi
 
 ################################################################################
