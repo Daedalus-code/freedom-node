@@ -234,7 +234,7 @@ if [[ -z "$WALLET_MOVEMENT" ]] &>/dev/null; then
 fi
 
 # if any movements, less than n age
-if [[ "${WALLET_MOVEMENT:-0}" -gt "0" && "${WALLET_MOVEMENT_AGE:-0}" -lt "3600" ]] &>/dev/null; then
+if [[ "${WALLET_MOVEMENT}" -gt "0" && "${WALLET_MOVEMENT_AGE}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/movements.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   DC="${Y1}"
@@ -249,7 +249,7 @@ WALLET_POS="$(wc -l "$HOME_DIR"/node/stakes.tmp 2>/dev/null | awk '{ print $1 }'
 WALLET_POS_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "$HOME_DIR"/node/stakes.tmp 2>/dev/null || echo 0)))"
 
 # if any rewards, less than n age
-if [[ "${WALLET_POS:-0}" -gt "0" && "${WALLET_POS_AGE:-0}" -lt "3600" ]] &>/dev/null; then
+if [[ "${WALLET_POS}" -gt "0" && "${WALLET_POS_AGE}" -lt "3600" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/stakes.tmp 2>/dev/null)${N0}"
   CB="${Y1}"
   DC="${Y1}"
@@ -258,9 +258,9 @@ fi
 
 # if zero
 if [[ -z "$WALLET_POS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_POS="${GR}${WALLET_POS:-0}${N0}"
+  WALLET_POS="${GR}${WALLET_POS}${N0}"
 else
-  WALLET_POS="${DC}$WALLET_POS${N0}"
+  WALLET_POS="${DC}${WALLET_POS}${N0}"
 fi
 
 ################################################################################
@@ -268,18 +268,18 @@ fi
 ################################################################################
 
 WALLET_BALANCES="$(grep "balance" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
-WALLET_VALUE="$(echo "${WALLET_BALANCES:-0}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
+WALLET_VALUE="$(echo "${WALLET_BALANCES}*${FREED_PRICE}" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')"
 
 # if any balance
-if [[ "$(echo "${WALLET_BALANCES:-0}" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+if [[ "$(echo "${WALLET_BALANCES}" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_BALANCES="$(echo "${WALLET_BALANCES}" | awk '{ printf "%.2f\n", $1 }')"
 fi
 
 # if zero
-if [[ -z "$WALLET_BALANCES" ]]; then
-  WALLET_BALANCES="${GR}0${N0}"
+if [[ -z "$WALLET_BALANCES" || "${LOADING_BLOCK_INDEX}" ]]; then
+  WALLET_BALANCES="${GR}${WALLET_BALANCES}${N0}"
 else
-  WALLET_BALANCES="${DC}$WALLET_BALANCES${N0}"
+  WALLET_BALANCES="${DC}${WALLET_BALANCES}${N0}"
 fi
 
 # if any data
@@ -297,7 +297,7 @@ WALLET_INPUTS="$(grep -c "amount" "$HOME_DIR"/node/listunspent.tmp 2>/dev/null)"
 
 # if zero
 if [[ -z "$WALLET_INPUTS" ]]; then
-  WALLET_INPUTS="${GR}0${N0}"
+  WALLET_INPUTS="${GR}${WALLET_INPUTS}${N0}"
 else
   WALLET_INPUTS="${DC}${WALLET_INPUTS}${N0}"
 fi
@@ -307,7 +307,7 @@ fi
 # if any password set
 if [[ -n "$WALLET_PASSPHRASE" && ! -f "$HOME_DIR"/node/walletpassphrase.tmp ]] &>/dev/null; then
   # start staking
-  /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE:-0}" 0 2>/dev/null | grep -v "Error" && sleep 0.1
+  /usr/local/bin/freedomcoin-cli walletpassphrase "${WALLET_PASSPHRASE}" 0 2>/dev/null | grep -v "Error" && sleep 0.1
   echo "wallet_unlocked @ $(date | xargs)" >"$HOME_DIR"/node/walletpassphrase.tmp
 fi
 
@@ -488,9 +488,9 @@ WALLET_TXCOUNT="$(grep "txcount" "$HOME_DIR"/node/getwalletinfo.tmp 2>/dev/null 
 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" && ! "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_TXCOUNT="${GR}${WALLET_TXCOUNT:-0}${N0}"
+  WALLET_TXCOUNT="${GR}${WALLET_TXCOUNT}${N0}"
 else
-  WALLET_TXCOUNT="${DC}$WALLET_TXCOUNT${N0}"
+  WALLET_TXCOUNT="${DC}${WALLET_TXCOUNT}${N0}"
 fi
 
 ################################################################################
@@ -501,7 +501,7 @@ WALLET_MEMPOOL="$(grep "size" "$HOME_DIR"/node/getmempoolinfo.tmp 2>/dev/null | 
 
 # if zero
 if [[ -z "$WALLET_MEMPOOL" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_MEMPOOL="${GR}${WALLET_MEMPOOL:-0}${N0}"
+  WALLET_MEMPOOL="${GR}${WALLET_MEMPOOL}${N0}"
 fi
 
 ################################################################################
@@ -512,7 +512,7 @@ WALLET_HEADS="$(grep "blocks" "$HOME_DIR"/node/getinfo.tmp 2>/dev/null | awk '{ 
 
 # if zero
 if [[ -z "$WALLET_HEADS" || "${LOADING_BLOCK_INDEX}" ]] &>/dev/null; then
-  WALLET_HEADS="${GR}${WALLET_HEADS:-0}${N0}"
+  WALLET_HEADS="${GR}${WALLET_HEADS}${N0}"
 fi
 
 ################################################################################
@@ -536,7 +536,7 @@ fi
 ################################################################################
 
 # get best block hash
-if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE:-0}" -gt "3600" && "${WALLET_MOVEMENT_AGE:-0}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
+if [[ -s "$HOME_DIR"/node/getbestblockhash.tmp && "${WALLET_POS_AGE}" -gt "3600" && "${WALLET_MOVEMENT_AGE}" -gt "3600" && -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 "$HOME_DIR"/node/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
 
