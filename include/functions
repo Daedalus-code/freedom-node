@@ -87,9 +87,9 @@ COINGECKO_AGE="$(($(echo "$DATE") - $(stat -c '%Y' "${HOME_DIR:?}"/node/coingeck
 # if the file is missing or the data is older than 900 seconds, fetch new data
 if [[ ! -f "${HOME_DIR:?}"/node/coingecko || "$COINGECKO_AGE" -gt "900" ]] &>/dev/null; then
   # fetch the latest data from the coingecko api
-  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 'GET' "https://api.coingecko.com/api/v3/coins/freedomcoin" | jq .)"
+  WATCHLIST="$(timeout 10 curl -s --proxy socks5h://localhost:9050 'GET' "https://api.coingecko.com/api/v3/coins/$CRYPTO" | jq .)"
   # update only if we got something
-  if [[ "$(echo "$WATCHLIST" | grep "freedomcoin" | grep -c "id")" -eq "1" ]]; then
+  if [[ "$(echo "$WATCHLIST" | grep "$CRYPTO" | grep -c "id")" -eq "1" ]]; then
     # keep data
     echo "$WATCHLIST" >"${HOME_DIR:?}"/node/coingecko
   fi
